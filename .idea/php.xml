@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MessDetectorOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCSFixerOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpCSFixer">
+    <phpcsfixer_settings>
+      <PhpCSFixerConfiguration tool_path="$PROJECT_DIR$/alcazan-back-prod/vendor/bin/php-cs-fixer" />
+    </phpcsfixer_settings>
+  </component>
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/league/uri-parser" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/league/uri" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/fidry/cpu-core-counter" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/clock" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/expression-language" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/form" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/monolog-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/nelmio/api-doc-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/kelunik/certificate" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/property-info" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/nelmio/cors-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/security-core" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/property-access" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/daverandom/libdns" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/password-hasher" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/security-csrf" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/proxy-manager-bridge" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/link" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/apache-pack" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/stopwatch" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/flex" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/framework-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/validator" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/dom-crawler" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/web-link" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/orm" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/sql-formatter" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/collections" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/doctrine-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/security-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/friendsofphp/proxy-manager-lts" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/annotations" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/intl" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/persistence" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/monolog-bridge" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/doctrine-migrations-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/doctrine-bridge" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/friendsofphp/php-cs-fixer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/migrations" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/doctrine/common" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/mailer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/security-http" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/twig-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/debug-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/web-profiler-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/maker-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/mercure-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/mercure" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-intl-icu" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/browser-kit" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/notifier" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/twig-bridge" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/serializer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/cache-contracts" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/asset" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/dotenv" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/laminas/laminas-code" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/lcobucci/clock" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/rector/rector" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/amp" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/sync" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/hpack" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/composer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/dns" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/http-client" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/parser" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/cache" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/symfony/phpunit-bridge" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/phpstan/phpstan" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/serialization" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/windows-registry" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/socket" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/http" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/byte-stream" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/amphp/process" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/clue/ndjson-react" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/twig/extra-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/lexik/jwt-authentication-bundle" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/react/child-process" />
+      <path value="$PROJECT_DIR$/alcazan-back-prod/vendor/zircote/swagger-php" />
+    </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
+  <component name="PhpStan">
+    <PhpStan_settings>
+      <PhpStanConfiguration tool_path="$PROJECT_DIR$/alcazan-back-prod/vendor/bin/phpstan" />
+    </PhpStan_settings>
+  </component>
+  <component name="PhpStanOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/alcazan-back-prod/vendor/autoload.php" />
+    </phpunit_settings>
+  </component>
+  <component name="PsalmOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+</project>

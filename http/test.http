@@ -1,0 +1,7 @@
+POST http://localhost:8080/api/login_check
+Content-Type: application/json
+
+{
+  "username": "your_username",
+  "password": "your_password"
+}
