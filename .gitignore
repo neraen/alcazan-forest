@@ -1,0 +1,13 @@
+# IDE / OS
+.idea/
+.DS_Store
+
+# Ancien datadir MySQL — les vraies données vivent dans le volume Docker
+# `alcazan-docker_db_data` (voir DOCUMENTATION.md §1)
+database/
+
+# Sauvegardes locales de la base (à conserver hors git)
+backups/
+
+# Fichiers temporaires
+*.tmp

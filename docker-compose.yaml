@@ -28,6 +28,21 @@ services:
       - ./alcazan-front-prod:/usr/src/app
     environment:
       - NODE_ENV=development
+      - REACT_APP_API_URL=http://127.0.0.1:8080/api/
+
+  # Régénération horaire des PA/PM (voir src/Command/RegenPointsCommand.php)
+  scheduler:
+    image: alcazan-docker-backend
+    container_name: alcazan-scheduler
+    volumes:
+      - ./alcazan-back-prod:/var/www/html
+      - /var/www/html/var/cache
+    environment:
+      DATABASE_URL: mysql://root:password@mysql:3306/chusei
+    command: bash -c "sleep 30; while true; do php bin/console app:regen-points || true; sleep 3600; done"
+    depends_on:
+      - mysql
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
