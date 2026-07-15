@@ -35,8 +35,15 @@ La base `chusei` (schéma + contenu du jeu) n'existe QUE dans le volume `alcazan
   par `doctrine:migrations:diff` puis `migrate`. `doctrine:schema:validate` doit rester vert.
 - Tests : `docker exec symfony-backend php vendor/bin/phpunit` (unitaires + fonctionnels sur la
   base isolée `chusei_test` — DATABASE_URL forcée dans phpunit.xml.dist, recréation §10 de la doc).
-- Les 9 actions de quête ont leur endpoint dans `ActionController` (pattern DTO). Le référentiel
-  `action_type` est aligné sur `App\Enum\ActionType` — ne JAMAIS les désynchroniser.
+- Quêtes (refondu 15/07/2026, doc §11) : `QuestProgressionService` est l'UNIQUE machine à états
+  (démarrage/conditions/récompenses/avancement par `position + 1`). Un seul endpoint d'action
+  `POST /api/quest/action` ; les effets scriptés passent par l'enum `QuestEffect` +
+  `QuestEffectRegistry` (JAMAIS d'URL en base). `action.action_type` = enum `ActionType` en dur ;
+  `BATTRE_MONSTRE`/`CHOIX`/`KILL_PVP` sont réservés (le dispatcher jette). QuestMaker sous
+  `/api/quest/editor/*` (ROLE_ADMIN), champs pilotés par `Config\QuestActionTypeConfig`.
+- Front quêtes : la modale PNJ est rendue UNE fois (`PnjInteractionHost` dans MapPage), pilotée
+  par le state Redux `pnjInteraction` — ne jamais remettre de modale par tuile ni de fetch au
+  mount des PNJ. Les dialogues sont des paragraphes texte (pas de HTML injecté).
 - Ids de contenu (spawn, classe par défaut, équipements de départ…) : `src/Config/GameContent.php`.
 - Secrets : `JWT_PASSPHRASE` vit dans `.env.local` / `.env.test.local` (non committés),
   les clés `config/jwt/*.pem` ne sont plus suivies par git.

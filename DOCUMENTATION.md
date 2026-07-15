@@ -71,8 +71,9 @@ Incohérences à connaître :
   `caracteristique` ids 1–6, dont `constitution` et `armure` cherchées **par nom**.
 - Classe par défaut et spawn : carte 2, case (9,9) — ids centralisés dans
   `src/Config/GameContent.php` (l'incohérence carte 1/carte 2 a été corrigée le 13/07/2026).
-- La vraie classe est choisie en jeu via une quête (`/api/user/choice/classe`) : `archer`,
-  `sorcier`, `guerrier`, `moine`, équipement de départ défini dans `GameContent`.
+- La vraie classe est choisie en jeu via la quête initiale (effet scripté `choisir_classe`,
+  `QuestEffectRegistry`) : `archer`, `sorcier`, `guerrier`, `moine`, équipement de départ
+  défini dans `GameContent`.
 
 ### Cartes & déplacement
 - Une `Carte` = grille de `CarteCarreau` **24×16** (abscisse 0–23, ordonnée 0–15). Chaque case a
@@ -116,22 +117,29 @@ Incohérences à connaître :
 - Auberge (`/api/auberge/entrer`) : téléportation à l'auberge la plus proche, `time_auberge`
   horodaté (régénération probablement prévue, non implémentée).
 
-### Quêtes (le système le plus riche)
-- `Quete` → suite ordonnée de `Sequence` (position, `is_last`, dialogue, PNJ porteur), chaque
-  séquence pouvant exiger des `Action` (via `SequenceAction`).
-- Types d'action (`App\Enum\ActionType`) : JSON (appel API libre), DONNER_OBJET/OR/EQUIPEMENT/
-  CONSOMMABLE, ATTEINDRE_LEVEL, PARLER_PNJ, BATTRE_BOSS/MONSTRE, CHOIX, PASSER_DIALOGUE,
-  POSSEDER_OBJET, VISITER_CARTE, KILL_PVP. Les « conditionnelles » (`ConditionalAction`) bloquent
-  la progression (vérif serveur : `QuestService::verifySequenceCondition`).
-- Récompense par séquence (`Recompense`) : or, xp, objet, équipement, consommable (+quantité),
-  donnée par `QuestService::giveRecompenseToUser`.
-- Progression dans `UserQuete` (quête, séquence courante, isDone). Parler à un PNJ `quest`
-  **démarre automatiquement** la quête.
-- Prérequis de quête : alignement, objet possédé, niveau minimum.
-- **Endpoints d'action manquants** : seuls `action/passer/dialogue`, `action/donner/objet`,
-  `action/atteindre/level` existent (`ActionController`). Les `api_link` `action/donner/or|
-  equipement|consommable`, `action/battre/boss`, `action/parler/pnj`, `action/posseder/objet`
-  sont écrits en base par le QuestMaker **mais n'ont pas de contrôleur**.
+### Quêtes — REFONDU le 15/07/2026 (voir §11)
+- Modèle : `Quete` → suite ordonnée de `Sequence` (la **position est l'unique source d'ordre**,
+  fin de quête = pas de position suivante ; dialogue **inliné** : `dialogueTitre`/`dialogueContenu`),
+  chaque séquence portant ses `Action` (via `SequenceAction`). Une séquence **sans quête** =
+  dialogue autonome d'un PNJ type `action` (auberge). Contraintes uniques en base :
+  `(quete_id, position)`, `(user_id, quete_id)`, `recompense.sequence_id`.
+- Types d'action : `App\Enum\ActionType` **stocké directement** (`action.action_type`, plus de
+  table `action_type` → plus de désynchronisation possible). `SCRIPTED_EFFECT` remplace l'ancien
+  `JSON` : l'effet est une case de l'enum `QuestEffect` exécutée par `QuestEffectRegistry`
+  (choisir_classe, choisir_alignement, entrer_auberge, recompense_boss) — **plus d'URL en base**.
+  `BATTRE_MONSTRE`, `CHOIX`, `KILL_PVP` sont réservés : refusés bruyamment tant que non implémentés.
+- **`QuestProgressionService`** est l'unique machine à états : démarrage explicite (prérequis
+  niveau/alignement/quête/objet enforced), garde-fous (action ∈ séquence, séquence courante),
+  vérification + consommation, récompense, avancement `position + 1`, complétion — le tout
+  transactionnel. Consulter un PNJ (`/api/pnj/interaction`) est une **lecture pure** ;
+  la quête ne démarre que sur `/api/quest/start`.
+- Réponses **structurées sans HTML** : `{status: step|blocked|done|locked, quest, step:
+  {sequenceId, dialogue: {title, paragraphs}, actions: [{actionId, type, label}]},
+  blockedMessages, feedback: {rewards, messages}, needRefresh}`.
+- QuestMaker : endpoints admin `/api/quest/editor/*` (ROLE_ADMIN, lectures comprises),
+  sauvegarde transactionnelle par correspondance d'ids (`QuestEditorService`) — **les ids ne
+  churnent plus**. Les champs du formulaire sont pilotés par `Config\QuestActionTypeConfig`
+  (exposée par `/editor/config`), les tables `action_field*` ont été supprimées.
 
 ### PNJ, boutiques, social
 - PNJ typés : `shop` (via `Shop`/`ShopEquipement`/`ShopObjet`), `quest`, `action`, `guilde`.
@@ -251,17 +259,22 @@ auth JWT obligatoire (`^/api`) sauf mention.
 | `/api/joueur/buy/shop` | `{item}` (⚠️ lit aussi `idEquipement` dans une branche — bug) |
 | `/api/user/recompense/boss` | `{bossId}` → message (⚠️ ne donne pas la récompense) |
 
-### Quêtes & PNJ
+### Quêtes & PNJ (contrat refondu le 15/07/2026)
 | Endpoint | Rôle |
 |---|---|
-| `/api/pnj` | `{pnjId}` → infos + **démarre la quête** si type quest |
-| `/api/pnj/sequence` | `{pnjId}` → dialogue + actions + état des conditions |
-| `/api/pnj/action`, `/api/pnj/guildes` | Dialogue action / guildes (⚠️ `dump()` laissé) |
-| `/api/action/passer/dialogue`, `/api/action/donner/objet`, `/api/action/atteindre/level` | Actions de quête (pattern DTO `#[MapRequestPayload]` — à généraliser) |
-| `/api/user/choice/classe`, `/api/user/choice/alignement` | Choix scénarisés `{..., sequenceId}` |
-| `/api/joueur/quete/next` | Avance manuelle `{questId}` |
+| `/api/pnj/interaction` | `{pnjId}` → **lecture pure**, réponse discriminée par `view: quest\|dialogue\|shop\|guilde` |
+| `/api/quest/start` | `{pnjId}` → démarre la quête (prérequis vérifiés, unique par joueur) |
+| `/api/quest/action` | `{sequenceId, actionId}` → **l'unique endpoint d'action**, tous types confondus |
+| `/api/map/action` | `{actionId}` → action de case (effet scripté, adjacence vérifiée) |
+| `/api/quest/editor/list\|get\|referentiels\|config\|save\|delete` | QuestMaker (ROLE_ADMIN, lectures comprises) |
 | `/api/joueur/guilde/join`, `/api/guildes/player`, `/api/guilde/infos`, `/api/guildes/player/check` | Guildes |
 | `/api/historique/infos`, `/api/profil/joueur/equipement` | Historique ; équipement d'un profil |
+
+Supprimés par la refonte : `/api/pnj` (démarrait la quête à la consultation !), `/api/pnj/sequence`,
+`/api/pnj/action`, `/api/pnj/guildes`, les 9 `/api/action/*` par type, `/api/user/choice/classe|alignement`
+(→ effets scriptés), `/api/user/recompense/boss`, `/api/joueur/quete/next`, `/api/quests`, `/api/quest`,
+`/api/quest/infos`, `/api/quest/create`, `/api/quest/update`, `/api/sequences`, `/api/action/types`,
+`/api/action/type/fields`.
 
 ### Inventaire & équipement
 `/api/inventaire`, `/api/inventaire/equipement/equipe`, `/api/inventaire/equipement/wear`,
@@ -599,3 +612,64 @@ raisonnable pour tester, pas pour durer.
   pour un gain cosmétique.
 
 ---
+
+## 11. Refonte du système de quêtes — 15/07/2026
+
+Refonte complète back + front + QuestMaker (contrat API, modèle de données, orchestration
+des modales). Motivée par : 3 algorithmes d'avancement divergents, démarrage silencieux des
+quêtes au chargement de la carte (`POST /api/pnj` au mount de chaque tuile), un `updateQuest`
+delete/recreate sans transaction (churn d'ids), prérequis jamais vérifiés, HTML généré en PHP,
+URLs arbitraires en base (`api_link`), quest maker avec double système d'état (Redux mort +
+react-hook-form) et bouton « Supprimer » cassé.
+
+### Backend (`alcazan-back-prod`)
+- **Modèle** : dialogue inliné dans `sequence` (`dialogue_titre`/`dialogue_contenu`),
+  suppression de `is_last`/`has_action`/`last_sequence`/`next_sequence` (l'ordre = `position`,
+  la fin = pas de position suivante). `action.action_type` = enum `App\Enum\ActionType` en dur
+  (table `action_type` supprimée), `api_link`/`params` → `effect`/`effect_params`
+  (enum `QuestEffect`, whitelist `QuestEffectRegistry`). Tables supprimées : `dialogue`,
+  `joueur_dialogue`, `user_sequence`, `action_type`, `action_field`, `action_field_type`.
+  Contraintes uniques : `sequence(quete_id, position)`, `user_quete(user_id, quete_id)`,
+  `recompense(sequence_id)`. Migration `Version20260714225015` (schéma + données legacy
+  retypées + bouton « Terminer » ajouté aux séquences sans action).
+- **Services** : `QuestProgressionService` (l'unique machine à états — démarrage avec prérequis,
+  garde-fous, conditions, consommation, récompenses [bug objet→consommable corrigé],
+  avancement `position+1`, transactions), `QuestEffectRegistry` (effets scriptés),
+  `PnjInteractionService` (vue par type de PNJ, lecture pure), `QuestEditorService`
+  (upsert par correspondance d'ids, ids stables), `AubergeService` (extrait, réutilisé par
+  le contrôleur et l'effet `entrer_auberge`).
+- **Contrôleurs** : `QuestController` (`/api/pnj/interaction`, `/api/quest/start`,
+  `/api/quest/action`, `/api/map/action` — DTO `#[MapRequestPayload]`, erreurs métier
+  `QuestException` → 400 + message FR), `QuestEditorController` (`/api/quest/editor/*`,
+  préfixe entier ROLE_ADMIN dans security.yaml). Supprimés : `ActionController`,
+  `QuestActionControlleur`, `SequenceControlleur`, `QuestService`, `QuestSubscriber`/
+  `NextQuestSequenceEvent` (event jamais dispatché), `choice/classe|alignement`,
+  `recompense/boss`, `quete/next`, enums `ConditionalAction`/`UnconditionalAction`
+  (→ `ActionType::isCondition()`).
+- **Tests** (52, ~1380 assertions, verts) : `QuestProgressionServiceTest` (prérequis, conditions,
+  consommation, récompenses, avancement, types réservés → exception, garde-fous),
+  `QuestEffectRegistryTest`, `QuestApiFunctionalTest` (interaction **sans effet de bord**,
+  parcours complet de la quête initiale, doublons, auberge avec proximité serveur, action de
+  case, 403 éditeur, sauvegarde idempotente sans churn d'ids).
+
+### Frontend (`alcazan-front-prod`)
+- **In-game** : state global `pnjInteraction` (reducer) + `PnjInteractionHost` rendu une seule
+  fois dans `MapPage` — fetch **au clic uniquement** (fin de la tempête de requêtes au
+  chargement), fermeture par éloignement gérée à UN seul endroit. `Pnj.jsx` est devenu bête
+  (sprite + dispatch). `QuestDialogue` (états available/locked/inProgress/done, rendu en
+  paragraphes — **zéro HTML injecté**), `PnjActionDialogue`, `ActionMap` re-branché sur
+  `/api/map/action`. `react-toastify@8` ajouté (feedback récompenses/messages).
+  Fixes : interval fuité de `GuildeView`, listener clavier de `Map` jamais retiré,
+  double fetch sur `needRefresh`. Supprimés : `PnjModal`, `QuestView`, `ActionView`,
+  `UserActionApi.applyUserAction` (le `JSON.parse` de params backend), `sequenceApi`.
+- **QuestMaker** : réécriture des 4 formulaires sur react-hook-form + `QuestEditorContext`
+  (référentiels + config fetchés une fois — fin du N+1). Champs d'action 100 % pilotés par
+  la config du back, ordre des séquences = position (boutons monter/descendre), suppression
+  réparée, payload miroir du DTO back. Purge du bloc Redux questMaker mort (reducers/actions)
+  et d'`actionTypeApi`.
+
+### Reste à faire (hors périmètre, notes)
+- `RECOMPENSE_BOSS` annonce la récompense sans la distribuer (comportement historique conservé).
+- `BATTRE_MONSTRE`/`KILL_PVP` : nécessitent un tracking par joueur avant activation.
+- Un utilisateur de test `test-refonte-quete@test.alcazan.fr` (ROLE_ADMIN) existe dans la base
+  de dev suite à la vérification bout en bout — à supprimer ou déclasser si gênant.
