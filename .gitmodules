@@ -1,0 +1,6 @@
+[submodule "alcazan-back-prod"]
+	path = alcazan-back-prod
+	url = git@github.com:neraen/alcazan-forest-back-prod.git
+[submodule "alcazan-front-prod"]
+	path = alcazan-front-prod
+	url = git@github.com:neraen/alcazan-forest-front-prod.git
