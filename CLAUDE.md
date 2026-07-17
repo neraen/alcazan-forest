@@ -18,6 +18,29 @@ Le code est bind-mounté dans les conteneurs ; `vendor/` et `node_modules/` vive
 La base `chusei` (schéma + contenu du jeu) n'existe QUE dans le volume `alcazan-docker_db_data` :
 **aucune migration Doctrine** — sauvegarder avant toute manip (`mysqldump` ci-dessus).
 
+## Partager / sauvegarder le contenu du jeu (OBLIGATOIRE)
+
+Le contenu du jeu (classes, PNJ, quêtes, sorts, niveaux, cartes, carreaux, monstres, boss,
+objets, consommables…) vit dans la base `chusei`, donc dans un volume Docker local — pas dans
+git. La **source de vérité partagée entre machines** est `seeds/content-seed.sql`, versionné.
+Deux scripts automatisent le va-et-vient (liste noire des tables joueur → tout nouveau contenu
+est capturé automatiquement) :
+
+```bash
+./scripts/content-dump.sh --push   # après AVOIR MODIFIÉ du contenu : dump + git commit + push
+./scripts/content-load.sh --pull   # sur l'autre machine / après recréation du volume : pull + import
+```
+
+- **Toute modification de contenu par un agent DOIT se terminer par `./scripts/content-dump.sh`**
+  (avec `--push` si l'utilisateur veut synchroniser) — sinon la modif n'existe que dans le
+  volume Docker local et sera perdue.
+- Le seed **exclut volontairement** les tables joueur (`user`, `inventaire*`, `user_quete`,
+  progression…) : `content-load.sh` écrase le contenu **sans toucher aux comptes joueurs**. Les
+  données joueur ne sont donc PAS synchronisées entre machines (filet de sécurité local :
+  `backups/`, gitignoré).
+- La liste noire est en tête de `scripts/content-dump.sh` ; ajouter toute nouvelle table
+  joueur/runtime avant de dumper, pour ne jamais fuiter de données de partie dans le seed.
+
 ## Pièges connus (ne pas découvrir deux fois)
 
 - L'inscription `POST /api/users` vit dans `src/Controller/RegistrationController.php` ;

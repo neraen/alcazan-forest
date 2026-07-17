@@ -11,3 +11,6 @@ backups/
 
 # Fichiers temporaires
 *.tmp
+
+# Override compose local (ports spécifiques à la machine)
+docker-compose.override.yml

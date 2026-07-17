@@ -406,8 +406,17 @@ Supprimés par la refonte : `/api/pnj` (démarrait la quête à la consultation 
       (inversedBy/mappedBy erronés) et le schéma BDD aligné : `doctrine:schema:validate` est
       **vert**. Les futures évolutions passent par `doctrine:migrations:diff` + `migrate`.
 - [x] **Seed du contenu** : `seeds/content-seed.sql` (toutes les tables de référentiel et de
-      contenu : cartes, classes, sorts, quêtes, PNJ, boss, équipements…). Réimport :
-      `docker exec -i mysql mysql -uroot -ppassword chusei < seeds/content-seed.sql`
+      contenu : cartes, classes, sorts, quêtes, PNJ, boss, équipements…), **versionné dans git =
+      source de vérité partagée entre machines**. Deux scripts automatisent le va-et-vient
+      (liste noire des tables joueur en tête de `scripts/content-dump.sh` → tout nouveau contenu
+      est capturé automatiquement, aucune donnée de partie ne fuite dans le seed) :
+      - `./scripts/content-dump.sh --push` — après toute modification de contenu : régénère le
+        seed depuis `chusei`, puis `git commit` + `push`. **À lancer systématiquement**, sinon la
+        modif n'existe que dans le volume Docker local et sera perdue.
+      - `./scripts/content-load.sh --pull` — sur l'autre machine ou après recréation du volume :
+        `git pull` puis import. **Écrase le contenu sans toucher aux comptes joueurs** (le seed
+        exclut `user`, `inventaire*`, `user_quete`, progression…). Les données joueur ne sont donc
+        pas synchronisées entre machines — filet local dans `backups/` (gitignoré).
 - [x] `database/` et `.idea/` **retirés du suivi git** (fichiers conservés sur disque),
       `.gitignore` créé, `docker-composer.prod.yml.yml` renommé en `docker-compose.prod.yml`.
       ⚠️ Reste à toi : le workflow des sous-modules (commits locaux non poussés).

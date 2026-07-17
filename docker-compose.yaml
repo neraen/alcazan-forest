@@ -1,11 +1,10 @@
 # docker-compose.yml
-version: '3.8'
-
 services:
   backend:
     build:
       context: .
       dockerfile: ./backend.Dockerfile
+    image: alcazan-backend
     container_name: symfony-backend
     ports:
       - "8080:80"
@@ -32,7 +31,10 @@ services:
 
   # Régénération horaire des PA/PM (voir src/Command/RegenPointsCommand.php)
   scheduler:
-    image: alcazan-docker-backend
+    build:
+      context: .
+      dockerfile: ./backend.Dockerfile
+    image: alcazan-backend
     container_name: alcazan-scheduler
     volumes:
       - ./alcazan-back-prod:/var/www/html

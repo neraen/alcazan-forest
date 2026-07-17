@@ -28,10 +28,12 @@ WORKDIR /var/www/html
 COPY ./alcazan-back-prod .
 
 # Installation des dépendances via Composer
-RUN composer install --no-interaction
+# --no-scripts : ne pas booter le kernel Symfony pendant le build (pas de .env dispo ici ;
+# le .env réel arrive via le bind-mount au runtime). vendor/ de l'hôte prime de toute façon.
+RUN composer install --no-interaction --no-scripts --no-progress
 
 # Droits pour le cache de Symfony
-RUN chown -R www-data:www-data var/cache var/log
+RUN mkdir -p var/cache var/log && chown -R www-data:www-data var
 
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
