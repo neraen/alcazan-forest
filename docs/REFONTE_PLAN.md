@@ -282,20 +282,43 @@ police Modern Antiqua. Vérifié navigateur : quête du tutoriel jouée de bout 
 bout (accepter → choix de classe → classe changée), échoppe/guilde restylées sur
 les mêmes primitives.
 
-## Phase 5 — Guilde
+## Phase 5 — Guilde (FAIT le 19/07/2026)
 
-**Maquette** : `design/guilde/GuildModal.jsx` (+ README : couleurs de grade/classe/
-statut dérivées). **Code** : `pages/guildePage/`, `components/pnj/guildeView/`,
-`components/social/Guilde.jsx`.
-Validation : roster (table stylée tokens), identité, objectifs, journal, trésor ;
-suppression des styles `.table-guilde*`, police Modern Antiqua.
+**Maquette** : `design/guilde/GuildModal.jsx` (+ README).
+**Back** : `guilde/infos` complété (identité : nom, description, niveau, icône,
+placeMax) et **bug corrigé** — le niveau affiché pour chaque membre était celui
+de l'appelant (`$user->getId()` au lieu de l'id du membre ; le repo sélectionne
+maintenant `userId`).
+**Front** : `GuildePage` refaite sur `ModalShell` (cadre pleine page) — roster
+en lignes-grille (initiale cerclée couleur de classe, badge de grade
+color-mix sur les 6 grades de la maquette, classe colorée, niveau Cinzel,
+badge « Vous », recherche client, surbrillance de sa propre ligne) + panneau
+identité (emblème, nom `--gold-pale`, badges Niveau / places, devise en
+italique Cinzel). État « sans guilde » stylé (message + indication).
+**Sections maquette NON reprises faute de données jeu** : objectifs, journal
+d'activité, trésor, statut de présence, contribution, bouton Inviter — à
+brancher si le gameplay les ajoute un jour (ne pas afficher de fausses données).
+Purge : `components/social/Guilde.jsx`, styles `.table-guilde`/`.td-table-guilde`.
+Vérifié navigateur : roster réel 2 membres (niveaux distincts 21 / 1 → fix
+prouvé), identité RATP, état sans guilde.
 
-## Phase 6 — Historique
+## Phase 6 — Historique (FAIT le 19/07/2026)
 
-**Maquette** : `design/react/HistoryModal.jsx` (+ README : catégories d'événements →
-couleur/icône/filtre). **Code** : `pages/historyPage/`, `components/historique/`.
-Validation : chronologie, filtres par groupe, résumé ; suppression des styles
-`.history-*`.
+**Maquette** : `design/react/HistoryModal.jsx`.
+**Front** : `HistoryPage` refaite sur `ModalShell` — chronologie groupée par jour
+(Aujourd'hui / Hier / date, séparateurs dégradés, compteur par jour), lignes
+d'événement (tuile d'icône teintée, texte multi-lignes — les `<br/>` du back
+sont découpés en paragraphes, pas d'HTML injecté —, chip de catégorie, heure),
+rail gauche (résumé 4 tuiles + filtres avec compteurs + recherche client).
+**Catégories honnêtes** : la table `historique` ne porte que
+message/date/is_external → deux catégories réelles « Mes actions » (or/orange,
+glyphe épée) et « Subis » (rouge, bouclier). Les 8 catégories de la maquette
+(soins, butin, or…) nécessiteraient un typage des événements côté back — à
+faire si le gameplay l'ajoute. Résumé = compteurs réels (total, aujourd'hui,
+actions, subis) — pas de faux « faits marquants ».
+Purge : `components/historique/`, styles `.history-*`.
+Vérifié navigateur : 3 événements sur 2 jours, filtre Subis → 1 entrée,
+multi-lignes OK, zéro scroll.
 
 ## Phase 7 — Purge finale
 
