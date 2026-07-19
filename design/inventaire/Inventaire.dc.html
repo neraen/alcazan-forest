@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #041e26; font-family: 'Nunito Sans', sans-serif; }
+  a { color: #e3b64f; } a:hover { color: #f2d488; }
+  *::-webkit-scrollbar { width: 10px; }
+  *::-webkit-scrollbar-track { background: rgba(255,255,255,.04); border-radius: 8px; }
+  *::-webkit-scrollbar-thumb { background: rgba(227,182,79,.35); border-radius: 8px; }
+  *::-webkit-scrollbar-thumb:hover { background: rgba(227,182,79,.55); }
+</style>
+</helmet>
+
+<section data-screen-label="Modale Inventaire" style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #041e26; display: flex; align-items: center; justify-content: center;">
+  <sc-if value="{{ showBackdrop }}" hint-placeholder-val="{{ true }}">
+    <img src="assets/map.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(6px) saturate(.85) brightness(.55);">
+  </sc-if>
+  <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 90% 90% at 50% 45%, rgba(4,20,26,.72), rgba(4,20,26,.94));"></div>
+
+  <!-- ================= MODAL ================= -->
+  <div style="position: relative; width: 1460px; height: 916px; display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; background: linear-gradient(165deg, #0a2c36, #06232b 62%); border: 1px solid rgba(227,182,79,.45); box-shadow: 0 40px 120px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.05);">
+
+    <!-- Header -->
+    <header style="flex-shrink: 0; height: 74px; display: flex; align-items: center; gap: 20px; padding: 0 24px; background: linear-gradient(180deg, rgba(4,26,33,.9), rgba(4,26,33,.4)); border-bottom: 1px solid rgba(227,182,79,.35);">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(227,182,79,.5); background: rgba(227,182,79,.1); display: flex; align-items: center; justify-content: center;">{{ headerIcon }}</div>
+        <div style="display: flex; flex-direction: column; line-height: 1.15;">
+          <div style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 27px; color: #e3b64f; letter-spacing: .04em;">Inventaire</div>
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #7fa8ae;">42 / 60 emplacements</div>
+        </div>
+      </div>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+        <sc-for list="{{ currencies }}" as="c" hint-placeholder-count="3">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(227,182,79,.22);">
+            <img src="{{ c.icon }}" alt="" style="width: 22px; height: 22px; object-fit: contain;">
+            <span style="font-weight: 800; font-size: 15px; color: {{ c.color }};">{{ c.value }}</span>
+          </div>
+        </sc-for>
+        <button onClick="{{ onClose }}" style-hover="background: rgba(224,74,57,.25); border-color: #e04a39; color: #ffd9d2;" style="margin-left: 6px; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(227,182,79,.35); background: rgba(255,255,255,.04); color: #cfe3e5; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s;">✕</button>
+      </div>
+    </header>
+
+    <!-- Body: two panels -->
+    <div style="flex: 1; display: flex; gap: 20px; padding: 20px; min-height: 0;">
+
+      <!-- ===== LEFT: sac ===== -->
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+        <!-- Tabs -->
+        <div style="display: flex; gap: 6px; padding: 6px; border-radius: 14px; background: rgba(4,26,33,.6); border: 1px solid rgba(227,182,79,.22);">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+            <button onClick="{{ t.onSelect }}" style-hover="background: rgba(227,182,79,.12);" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px 8px; border-radius: 10px; border: 1px solid {{ t.borderColor }}; background: {{ t.bg }}; cursor: pointer; transition: all .15s;">
+              <span style="display: flex; color: {{ t.iconColor }};">{{ t.iconEl }}</span>
+              <span style="font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: {{ t.labelColor }};">{{ t.label }}</span>
+              <span style="font-size: 10px; font-weight: 700; color: #6f959b;">{{ t.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <!-- Search -->
+        <sc-if value="{{ showSearch }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 0 14px; height: 44px; border-radius: 11px; background: rgba(4,26,33,.55); border: 1px solid rgba(227,182,79,.22);">
+            <span style="display: flex; color: #6f959b;">{{ searchIcon }}</span>
+            <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Rechercher un objet…" style="flex: 1; border: none; outline: none; background: transparent; color: #eef6f6; font-family: inherit; font-size: 15px; font-weight: 600;">
+          </div>
+        </sc-if>
+
+        <!-- Grid -->
+        <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px; border-radius: 14px;">
+          <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;">
+            <sc-for list="{{ items }}" as="it" hint-placeholder-count="24">
+              <button onClick="{{ it.onSelect }}" style-hover="transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.4);" style="position: relative; aspect-ratio: 1; border-radius: 12px; padding: 0; cursor: pointer; background: linear-gradient(160deg, #f3e8cc, #e6d3a8); border: 2.5px solid {{ it.borderColor }}; box-shadow: {{ it.selShadow }}; display: flex; align-items: center; justify-content: center; transition: transform .12s, box-shadow .12s;">
+                <span style="position: absolute; top: 4px; left: 4px; width: 10px; height: 10px; border-radius: 50%; background: {{ it.borderColor }};"></span>
+                {{ it.iconEl }}
+                <sc-if value="{{ it.showQty }}" hint-placeholder-val="{{ true }}">
+                  <span style="position: absolute; right: 4px; bottom: 4px; min-width: 20px; padding: 1px 6px; border-radius: 8px; background: rgba(6,26,33,.92); color: #fff; font-size: 12px; font-weight: 800; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.4);">{{ it.qty }}</span>
+                </sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RIGHT: personnage ===== -->
+      <div style="width: 588px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; border-radius: 16px; background: rgba(4,26,33,.5); border: 1px solid rgba(227,182,79,.25); padding: 18px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="width: 6px; height: 20px; border-radius: 3px; background: #e3b64f;"></span>
+          <div style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; color: #e3b64f; letter-spacing: .06em; text-transform: uppercase;">Équipement</div>
+          <div style="margin-left: auto; font-size: 13px; font-weight: 700; color: #9fc3c9;">{{ char.name }} · Niv. {{ char.level }}</div>
+        </div>
+
+        <!-- Paperdoll -->
+        <div style="display: grid; grid-template-columns: 70px 1fr 70px; gap: 12px; align-items: stretch;">
+          <!-- left slots -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <sc-for list="{{ equipLeft }}" as="e" hint-placeholder-count="5">
+              <button onClick="{{ e.onSelect }}" style-hover="border-color: #e3b64f;" style="position: relative; width: 70px; height: 70px; border-radius: 12px; cursor: pointer; background: {{ e.bg }}; border: 2px solid {{ e.borderColor }}; box-shadow: {{ e.selShadow }}; display: flex; align-items: center; justify-content: center; transition: border-color .15s;">
+                {{ e.content }}
+                <span style="position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 1px 7px; border-radius: 7px; background: #0a2c36; border: 1px solid rgba(227,182,79,.3); font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #9fc3c9;">{{ e.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <!-- character image -->
+          <div style="position: relative; border-radius: 14px; overflow: hidden; background: radial-gradient(ellipse 80% 70% at 50% 38%, #12414d, #061c22 78%); border: 1px solid rgba(227,182,79,.3); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 22px 0 14px;">
+            <div style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, rgba(227,182,79,.14), transparent 55%);"></div>
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 44%; background: linear-gradient(180deg, transparent, rgba(6,28,34,.9));"></div>
+            <div style="position: relative; width: 176px; height: 176px; border-radius: 50%; padding: 4px; background: conic-gradient(from 210deg, #e3b64f, #8a6a22, #e3b64f); box-shadow: 0 10px 30px rgba(0,0,0,.5);">
+              <img src="{{ char.avatar }}" alt="Portrait de {{ char.name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 3px solid #061c22;">
+            </div>
+            <div style="position: relative; margin-top: 14px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 22px; color: #eef6f6;">{{ char.name }}</div>
+            <div style="position: relative; margin-top: 2px; font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #e3b64f;">{{ char.cls }}</div>
+            <div style="position: relative; margin-top: 10px; display: flex; align-items: center; gap: 7px; padding: 4px 14px; border-radius: 20px; background: rgba(6,28,34,.8); border: 1px solid rgba(227,182,79,.4);">
+              <span style="font-size: 11px; font-weight: 800; letter-spacing: .1em; color: #7fa8ae;">NIVEAU</span>
+              <span style="font-size: 16px; font-weight: 800; color: #cbe64f;">{{ char.level }}</span>
+            </div>
+          </div>
+
+          <!-- right slots -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <sc-for list="{{ equipRight }}" as="e" hint-placeholder-count="5">
+              <button onClick="{{ e.onSelect }}" style-hover="border-color: #e3b64f;" style="position: relative; width: 70px; height: 70px; border-radius: 12px; cursor: pointer; background: {{ e.bg }}; border: 2px solid {{ e.borderColor }}; box-shadow: {{ e.selShadow }}; display: flex; align-items: center; justify-content: center; transition: border-color .15s;">
+                {{ e.content }}
+                <span style="position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 1px 7px; border-radius: 7px; background: #0a2c36; border: 1px solid rgba(227,182,79,.3); font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #9fc3c9;">{{ e.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <sc-if value="{{ showStats }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-top: 14px; border-top: 1px solid rgba(227,182,79,.2);">
+            <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border-radius: 11px; background: rgba(255,255,255,.04); border: 1px solid rgba(227,182,79,.16);">
+                <span style="display: flex; color: {{ s.color }};">{{ s.iconEl }}</span>
+                <span style="font-size: 15px; font-weight: 800; color: #eef6f6;">{{ s.value }}</span>
+                <span style="font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #7fa8ae;">{{ s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <!-- Detail bar -->
+    <footer style="flex-shrink: 0; min-height: 128px; display: flex; align-items: center; gap: 20px; padding: 18px 24px; background: linear-gradient(0deg, rgba(4,26,33,.9), rgba(4,26,33,.35)); border-top: 1px solid rgba(227,182,79,.35);">
+      <div style="flex-shrink: 0; width: 92px; height: 92px; border-radius: 14px; background: linear-gradient(160deg, #f3e8cc, #e6d3a8); border: 3px solid {{ sel.borderColor }}; box-shadow: 0 6px 18px rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">{{ sel.iconEl }}</div>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 22px; color: #eef6f6;">{{ sel.name }}</div>
+          <span style="padding: 3px 11px; border-radius: 8px; background: {{ sel.rarityBg }}; border: 1px solid {{ sel.borderColor }}; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: {{ sel.borderColor }};">{{ sel.rarityLabel }}</span>
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #7fa8ae;">{{ sel.typeLabel }}</span>
+        </div>
+        <div style="font-size: 15px; font-weight: 500; color: #c4dbde; font-style: italic; max-width: 720px;">{{ sel.desc }}</div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+          <img src="assets/cur-or.png" alt="Or" style="width: 18px; height: 18px; object-fit: contain;">
+          <span style="font-size: 14px; font-weight: 800; color: #e3b64f;">{{ sel.value }}</span>
+        </div>
+      </div>
+      <div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
+        <button onClick="{{ sel.onPrimary }}" style-hover="background: #f2d488;" style="min-width: 168px; padding: 12px 24px; border-radius: 11px; border: none; cursor: pointer; background: #e3b64f; color: #06232b; font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; letter-spacing: .04em; transition: background .15s;">{{ sel.primaryLabel }}</button>
+        <button onClick="{{ sel.onDrop }}" style-hover="background: rgba(224,74,57,.18); color: #ffb3a8;" style="min-width: 168px; padding: 10px 24px; border-radius: 11px; border: 1px solid rgba(224,74,57,.5); cursor: pointer; background: transparent; color: #e78a7d; font-weight: 800; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; transition: all .15s;">Jeter</button>
+      </div>
+    </footer>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1920, &quot;height&quot;: 1080}, &quot;showBackdrop&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Affichage&quot;}, &quot;showSearch&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Affichage&quot;}, &quot;showStats&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Affichage&quot;}}">
+class Component extends DCLogic {
+  state = { tab: "tous", selectedId: 7, query: "" };
+
+  glyphs() {
+    return {
+      infinity: '<path d="M6 8a4 4 0 100 8c3 0 5-8 8-8a4 4 0 110 8c-3 0-5-8-8-8z"/>',
+      sword: '<path d="M14.5 4.5L20 4l-.5 5.5-8 8"/><path d="M4 20l3.5-3.5"/><path d="M6.5 13.5l4 4"/><path d="M4 17l3 3"/>',
+      potion: '<path d="M9 3h6"/><path d="M10 3v4l-3.5 8A3.5 3.5 0 0010 20h4a3.5 3.5 0 003.5-5L14 7V3"/><path d="M7.5 14h9"/>',
+      material: '<path d="M4 8a2.5 4 0 004 0 2.5 4 0 00-4 0z"/><path d="M6 4h9a4 4 0 010 8H6"/><path d="M6 12h9a4 4 0 010 8H6"/>',
+      book: '<path d="M6 4h9a3 3 0 013 3v13H8a2 2 0 01-2-2z"/><path d="M6 4a2 2 0 00-2 2 2 2 0 002 2"/><path d="M10 9h5M10 13h5"/>',
+      bow: '<path d="M5 3c8 3 8 15 0 18"/><path d="M5 3l15 9-15 9"/><path d="M11 12h9"/>',
+      ring: '<circle cx="12" cy="15" r="5.5"/><path d="M9 8.5L12 3l3 5.5"/>',
+      amulet: '<path d="M7 3l5 5 5-5"/><circle cx="12" cy="15" r="4.5"/><path d="M12 12.5v5M9.5 15h5"/>',
+      helmet: '<path d="M4 15a8 8 0 0116 0v2a1 1 0 01-1 1H5a1 1 0 01-1-1z"/><path d="M12 7v11"/><path d="M8 18l1-3M16 18l-1-3"/>',
+      chest: '<path d="M6 4l6 2.5L18 4l1.5 6-3.5 2v7H8v-7l-3.5-2z"/>',
+      legs: '<path d="M7 3h10l-.5 8-2 10h-3.5L11 13l-.5 8H7L5 11z"/>',
+      boots: '<path d="M7 3h4v9l6.5 4.5V20H7z"/><path d="M7 16h10"/>',
+      gloves: '<path d="M8 21v-8M8 13a2 2 0 014 0M12 13v-4a2 2 0 014 0v6l3 2v2H8"/>',
+      cape: '<path d="M8 3l4 4 4-4 2.5 18h-13z"/><path d="M12 7v13"/>',
+      shield: '<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+      belt: '<rect x="3" y="9" width="18" height="6" rx="1.5"/><rect x="9.5" y="9" width="5" height="6" rx="1"/>',
+      scroll: '<path d="M6 5a2 2 0 012-2h9v14a2 2 0 002 2H8a2 2 0 01-2-2z"/><path d="M17 3a2 2 0 012 2v0a2 2 0 01-2 2"/><path d="M9 8h5M9 12h5"/>',
+      gem: '<path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18M9 3l-3 6 6 12 6-12-3-6"/>',
+      food: '<path d="M3 15l13-8 5 3.5V15z"/><circle cx="8" cy="13" r="1"/><circle cx="14" cy="13.5" r="1"/>',
+      feather: '<path d="M20 4c-9 1-13 7-14 14"/><path d="M6 18C4 12 8 6 20 4c0 6-3 12-9 14z"/><path d="M11 13l4-4"/>',
+      snail: '<circle cx="14" cy="14" r="5.5"/><path d="M14 14a2 2 0 112.5-2"/><path d="M8.5 19.5H4M4 12l3-2M5 10l1-3"/>',
+      heart: '<path d="M12 20C7 16 3 12 3 8a4 4 0 018-1 4 4 0 018 1c0 4-4 8-9 12z"/>',
+      speed: '<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',
+      target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>',
+      strength: '<path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>',
+      wisdom: '<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/>',
+      luck: '<path d="M12 12c-1.2-3-5-3.6-6-.8s2 4.6 6 .8zM12 12c1.2-3 5-3.6 6-.8s-2 4.6-6 .8zM12 12c-3-1.2-3.6-5-.8-6s4.6 2 .8 6zM12 12c-3 1.2-3.6 5-.8 6s4.6-2 .8-6zM12 13.5V20"/>'
+    };
+  }
+
+  glyph(name, color, size) {
+    const g = this.glyphs();
+    return React.createElement("svg", {
+      key: name + color, viewBox: "0 0 24 24",
+      style: { width: size || "58%", height: size || "58%" },
+      fill: "none", stroke: color, strokeWidth: 1.7, strokeLinecap: "round", strokeLinejoin: "round",
+      dangerouslySetInnerHTML: { __html: g[name] || g.material }
+    });
+  }
+
+  icon(item, color, size) {
+    if (item.img) {
+      return React.createElement("img", { src: item.img, alt: item.name,
+        style: { width: size || "80%", height: size || "80%", objectFit: "contain", filter: "drop-shadow(0 2px 4px rgba(0,0,0,.35))" } });
+    }
+    return this.glyph(item.glyph, color, size);
+  }
+
+  data() {
+    const R = { common: "#8ba0a6", uncommon: "#5fbf6a", rare: "#3f8fdd", epic: "#b06be6", legendary: "#e3b64f" };
+    const RL = { common: "Commun", uncommon: "Peu commun", rare: "Rare", epic: "Épique", legendary: "Légendaire" };
+    const TL = { equipement: "Équipement", consommables: "Consommable", ressources: "Ressource", grimoires: "Grimoire" };
+    const items = [
+      { id: 1, name: "Arc court en bois", cat: "equipement", rarity: "uncommon", qty: 1, glyph: "bow", value: 12, desc: "Un arc léger, idéal pour débuter la chasse." },
+      { id: 2, name: "Potion de vie", cat: "consommables", rarity: "common", qty: 826, img: "assets/potion-red.png", value: 5, desc: "Restaure 50 points de vie." },
+      { id: 3, name: "Potion de mana", cat: "consommables", rarity: "rare", qty: 1, img: "assets/potion-blue.png", value: 8, desc: "Restaure 40 points de mana." },
+      { id: 4, name: "Plume de corbeau", cat: "ressources", rarity: "common", qty: 28, glyph: "feather", value: 1, desc: "Composant d'alchimie courant." },
+      { id: 5, name: "Coquille d'escargot", cat: "ressources", rarity: "common", qty: 13, glyph: "snail", value: 1, desc: "Ingrédient de potion." },
+      { id: 6, name: "Gerbe de blé", cat: "ressources", rarity: "common", qty: 24, glyph: "feather", value: 1, desc: "Récolte des champs voisins." },
+      { id: 7, name: "Chapeau de champignon bleu", cat: "equipement", rarity: "epic", qty: 91, glyph: "helmet", value: 8, desc: "Chapi chapo… augmente l'intelligence de 4 points." },
+      { id: 8, name: "Fromage affiné", cat: "consommables", rarity: "common", qty: 12, glyph: "food", value: 2, desc: "Redonne un peu d'énergie." },
+      { id: 9, name: "Amulette de feu", cat: "equipement", rarity: "rare", qty: 1, glyph: "amulet", value: 45, desc: "Confère une résistance au feu de 15%." },
+      { id: 10, name: "Tunique du garde", cat: "equipement", rarity: "uncommon", qty: 1, glyph: "chest", value: 30, desc: "Armure de tissu renforcé de cuir." },
+      { id: 11, name: "Anneau d'argent", cat: "equipement", rarity: "uncommon", qty: 1, glyph: "ring", value: 22, desc: "+2 en agilité lorsqu'il est porté." },
+      { id: 12, name: "Bottes de cuir", cat: "equipement", rarity: "common", qty: 1, glyph: "boots", value: 10, desc: "Chaussures robustes de voyageur." },
+      { id: 13, name: "Pantalon de lin", cat: "equipement", rarity: "common", qty: 1, glyph: "legs", value: 9, desc: "Léger et confortable." },
+      { id: 14, name: "Grimoire de foudre", cat: "grimoires", rarity: "rare", qty: 1, img: "assets/spell2.png", value: 60, desc: "Apprend le sort Éclair." },
+      { id: 15, name: "Grimoire de soin", cat: "grimoires", rarity: "uncommon", qty: 1, img: "assets/spell3.png", value: 40, desc: "Apprend le sort Régénération." },
+      { id: 16, name: "Grimoire de flèche", cat: "grimoires", rarity: "common", qty: 1, img: "assets/spell1.png", value: 20, desc: "Apprend le sort Tir précis." },
+      { id: 17, name: "Grimoire d'arc long", cat: "grimoires", rarity: "epic", qty: 1, img: "assets/spell4.png", value: 90, desc: "Apprend une salve dévastatrice." },
+      { id: 18, name: "Minerai de fer", cat: "ressources", rarity: "common", qty: 42, glyph: "gem", value: 3, desc: "Métal brut à forger." },
+      { id: 19, name: "Bûche de chêne", cat: "ressources", rarity: "common", qty: 60, glyph: "material", value: 2, desc: "Bois de construction." },
+      { id: 20, name: "Gemme brute", cat: "ressources", rarity: "rare", qty: 3, glyph: "gem", value: 25, desc: "Pierre précieuse à tailler." },
+      { id: 21, name: "Dague rouillée", cat: "equipement", rarity: "common", qty: 1, glyph: "sword", value: 4, desc: "Une lame usée mais fonctionnelle." },
+      { id: 22, name: "Bouclier de bois", cat: "equipement", rarity: "common", qty: 1, glyph: "shield", value: 8, desc: "Protection de base contre les coups." },
+      { id: 23, name: "Gants de toile", cat: "equipement", rarity: "common", qty: 1, glyph: "gloves", value: 6, desc: "Gants souples de tous les jours." },
+      { id: 24, name: "Cape voyageuse", cat: "equipement", rarity: "uncommon", qty: 1, glyph: "cape", value: 18, desc: "Protège du froid et du vent." },
+      { id: 25, name: "Ceinture cloutée", cat: "equipement", rarity: "common", qty: 1, glyph: "belt", value: 7, desc: "Ceinture de cuir renforcée." },
+      { id: 26, name: "Potion d'endurance", cat: "consommables", rarity: "uncommon", qty: 6, glyph: "potion", value: 12, desc: "Augmente l'endurance pendant 5 min." },
+      { id: 27, name: "Pain de campagne", cat: "consommables", rarity: "common", qty: 9, glyph: "food", value: 1, desc: "Restaure lentement les points de vie." },
+      { id: 28, name: "Parchemin vierge", cat: "ressources", rarity: "common", qty: 15, glyph: "scroll", value: 2, desc: "Support d'écriture pour les scribes." }
+    ];
+    return { R, RL, TL, items };
+  }
+
+  renderVals() {
+    const { R, RL, TL, items } = this.data();
+    const tab = this.state.tab;
+    const q = (this.state.query || "").trim().toLowerCase();
+    const byId = (id) => items.find((x) => x.id === id);
+
+    const tabDefs = [
+      { id: "tous", label: "Tout", glyph: "infinity" },
+      { id: "equipement", label: "Équip.", glyph: "sword" },
+      { id: "consommables", label: "Conso.", glyph: "potion" },
+      { id: "ressources", label: "Ressources", glyph: "material" },
+      { id: "grimoires", label: "Grimoires", glyph: "book" }
+    ];
+    const tabs = tabDefs.map((t) => {
+      const active = tab === t.id;
+      const count = t.id === "tous" ? items.length : items.filter((x) => x.cat === t.id).length;
+      return {
+        label: t.label, count,
+        iconEl: this.glyph(t.glyph, active ? "#06232b" : "#cfe3e5", "22px"),
+        bg: active ? "#e3b64f" : "transparent",
+        borderColor: active ? "#e3b64f" : "transparent",
+        iconColor: active ? "#06232b" : "#cfe3e5",
+        labelColor: active ? "#06232b" : "#cfe3e5",
+        onSelect: () => this.setState({ tab: t.id })
+      };
+    });
+
+    let list = tab === "tous" ? items : items.filter((x) => x.cat === tab);
+    if (q) list = list.filter((x) => x.name.toLowerCase().includes(q));
+
+    const itemVals = list.map((it) => {
+      const sel = it.id === this.state.selectedId;
+      return {
+        qty: it.qty, showQty: it.qty > 1,
+        borderColor: sel ? "#e3b64f" : R[it.rarity],
+        selShadow: sel ? "0 0 0 3px rgba(227,182,79,.55), 0 8px 22px rgba(0,0,0,.45)" : "0 3px 8px rgba(0,0,0,.28)",
+        iconEl: this.icon(it, R[it.rarity], "72%"),
+        onSelect: () => this.setState({ selectedId: it.id })
+      };
+    });
+
+    const mkSlot = (def) => {
+      const it = def.itemId ? byId(def.itemId) : null;
+      const sel = it && it.id === this.state.selectedId;
+      const content = it
+        ? this.icon(it, R[it.rarity], "68%")
+        : this.glyph(def.empty, "rgba(159,195,201,.32)", "50%");
+      return {
+        label: def.label, content,
+        bg: it ? "rgba(243,232,204,.95)" : "rgba(255,255,255,.03)",
+        borderColor: sel ? "#e3b64f" : (it ? R[it.rarity] : "rgba(159,195,201,.28)"),
+        selShadow: sel ? "0 0 0 3px rgba(227,182,79,.5)" : "none",
+        onSelect: it ? () => this.setState({ selectedId: it.id }) : () => {}
+      };
+    };
+    const equipLeft = [
+      { label: "Tête", itemId: 7, empty: "helmet" },
+      { label: "Amulette", itemId: 9, empty: "amulet" },
+      { label: "Torse", itemId: 10, empty: "chest" },
+      { label: "Cape", itemId: null, empty: "cape" },
+      { label: "Mains", itemId: null, empty: "gloves" }
+    ].map(mkSlot);
+    const equipRight = [
+      { label: "Arme", itemId: 1, empty: "sword" },
+      { label: "Bouclier", itemId: null, empty: "shield" },
+      { label: "Anneau", itemId: 11, empty: "ring" },
+      { label: "Ceinture", itemId: null, empty: "belt" },
+      { label: "Bottes", itemId: 12, empty: "boots" }
+    ].map(mkSlot);
+
+    const stats = [
+      { label: "Constitution", value: "18", glyph: "heart", color: "#e04a39" },
+      { label: "Force", value: "22", glyph: "strength", color: "#e3b64f" },
+      { label: "Dextérité", value: "31", glyph: "speed", color: "#cbe64f" },
+      { label: "Intelligence", value: "27", glyph: "book", color: "#6fb4f0" },
+      { label: "Sagesse", value: "19", glyph: "wisdom", color: "#b06be6" },
+      { label: "Chance", value: "12", glyph: "luck", color: "#5fbf6a" }
+    ].map((s) => ({ label: s.label, value: s.value, color: s.color, iconEl: this.glyph(s.glyph, s.color, "22px") }));
+
+    const s = byId(this.state.selectedId) || items[0];
+    const primaryLabel = s.cat === "consommables" ? "Utiliser" : s.cat === "equipement" ? "Équiper" : "Vendre";
+    const sel = {
+      iconEl: this.icon(s, R[s.rarity], "78%"),
+      name: s.name,
+      rarityLabel: RL[s.rarity],
+      rarityBg: "rgba(255,255,255,.05)",
+      borderColor: R[s.rarity],
+      typeLabel: TL[s.cat],
+      desc: s.desc,
+      value: s.value + " Pièces d'or",
+      primaryLabel,
+      onPrimary: () => {},
+      onDrop: () => {}
+    };
+
+    const currencies = [
+      { icon: "assets/cur-or.png", value: "6 573", color: "#e3b64f" },
+      { icon: "assets/cur-pa.png", value: "600", color: "#f0a95c" },
+      { icon: "assets/cur-pm.png", value: "-5 277", color: "#6fb4f0" }
+    ];
+
+    return {
+      headerIcon: this.glyph("material", "#e3b64f", "24px"),
+      searchIcon: this.glyph("target", "#6f959b", "20px"),
+      showBackdrop: this.props.showBackdrop ?? true,
+      showSearch: this.props.showSearch ?? true,
+      showStats: this.props.showStats ?? true,
+      tabs, items: itemVals, equipLeft, equipRight, stats, sel, currencies,
+      query: this.state.query,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      onClose: () => {},
+      char: { name: "neraën", level: 20, cls: "Aventurière", avatar: "assets/avatar.png" }
+    };
+  }
+}
+</script>
+</body>
+</html>

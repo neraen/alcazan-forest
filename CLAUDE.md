@@ -73,6 +73,41 @@ est capturé automatiquement) :
 - `.env` du back pointe sur le port 3307 : ignoré, `DATABASE_URL` vient du docker-compose.
 - L'URL de l'API du front vient de `REACT_APP_API_URL` (docker-compose), fallback 127.0.0.1:8080.
 
+## Refonte graphique (en cours — voir `docs/REFONTE_PLAN.md`)
+
+- **Maquettes de référence** : `design/` (un bundle par écran, README + `.jsx` de
+  référence haute fidélité ; `design/react/` = bundle général + modale Profil).
+  Fidélité pixel perfect exigée. Les `.jsx` des bundles ne sont JAMAIS copiés tels
+  quels : on les recrée selon les conventions ci-dessous.
+- **Règle absolue : ne pas toucher à la logique de jeu** (state Redux, appels API,
+  gameplay). Refonte = markup + styles uniquement, en rebranchant les vraies données
+  là où les maquettes ont des valeurs en dur. Les assets du jeu sont conservés.
+- **Design tokens** : custom properties CSS dans `src/styles/_tokens.scss` (source
+  unique — aucun hex en dur ailleurs). Palette : or `#e3b64f` (hover `#f2d488`) sur
+  fonds vert sombre `#06303b → #041e26`, panneaux `rgba(8,40,50,.85)` bordés
+  `rgba(227,182,79,.3)`, texte `#eef6f6/#b7d2d6/#9fc3c9/#7fa8ae`, PV `#a91f1c→#e04a39`,
+  PM `#1d5fa8→#3f8fdd`, XP `#b8892e→#e3b64f`, PA `#f0a95c`. Rayons 6/10/12/16,
+  transitions `.15s`. Polices : **Cinzel** (titres) + **Nunito Sans** (corps),
+  chargées dans `public/index.html`.
+- **Conventions CSS** : vrais CSS Modules colocalisés (`import styles from
+  './X.module.scss'`, classes camelCase) + couche globale minimale
+  (`src/styles/app.scss` = `_tokens` + `_base` + `_legacy`). Kit UI réutilisable dans
+  `src/components/ui/` (`Panel`, `GaugeBar`, `Slot`, `GameButton`) — le réutiliser
+  avant de créer du neuf. `_legacy.scss` est transitoire : tout style legacy remplacé
+  par une phase de refonte est supprimé dans la même passe. Bootstrap interdit dans le
+  code refondu (retiré en phase finale).
+- **Hooks fonctionnels à préserver** : les classes `lifeBar`, `manaBar`, `pa`, `pm`,
+  `spell-bar`, `spell-container`, `spell-filter-<id>`, `consommable-filter-<id>`,
+  `pnj` sont utilisées par intro.js et des `querySelector` (cooldowns) — les garder
+  dans le markup même sans style.
+- **Modales de jeu** : TOUJOURS `ui/gameModal/GameModal` (comportement : superpose la
+  zone de carte via le portal `#game-modal-root` rendu par MapPage, repli plein écran
+  ailleurs, backdrop flouté + Échap) + `ui/gameModal/ModalShell` (cadre standard :
+  header icône/titre Cinzel/sous-titre/zone droite/✕, corps flexible, pied optionnel).
+  Inventaire et Profil les utilisent déjà ; les modales PNJ / quêtes / échoppes
+  (encore sur le vieux `components/modal/Modal`) devront migrer dessus lors de leur
+  phase. Ne jamais recréer d'overlay ad hoc.
+
 ## Conventions du code existant
 
 - Back : logique métier dans `src/service/` (namespace minuscule `App\service`), contrôleurs
