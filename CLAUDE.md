@@ -73,7 +73,7 @@ est capturé automatiquement) :
 - `.env` du back pointe sur le port 3307 : ignoré, `DATABASE_URL` vient du docker-compose.
 - L'URL de l'API du front vient de `REACT_APP_API_URL` (docker-compose), fallback 127.0.0.1:8080.
 
-## Refonte graphique (en cours — voir `docs/REFONTE_PLAN.md`)
+## Refonte graphique (TERMINÉE le 20/07/2026 — voir `docs/REFONTE_PLAN.md`)
 
 - **Maquettes de référence** : `design/` (un bundle par écran, README + `.jsx` de
   référence haute fidélité ; `design/react/` = bundle général + modale Profil).
@@ -91,11 +91,14 @@ est capturé automatiquement) :
   chargées dans `public/index.html`.
 - **Conventions CSS** : vrais CSS Modules colocalisés (`import styles from
   './X.module.scss'`, classes camelCase) + couche globale minimale
-  (`src/styles/app.scss` = `_tokens` + `_base` + `_legacy`). Kit UI réutilisable dans
-  `src/components/ui/` (`Panel`, `GaugeBar`, `Slot`, `GameButton`) — le réutiliser
-  avant de créer du neuf. `_legacy.scss` est transitoire : tout style legacy remplacé
-  par une phase de refonte est supprimé dans la même passe. Bootstrap interdit dans le
-  code refondu (retiré en phase finale).
+  (`src/styles/app.scss` = `_tokens` + `_base`, rien d'autre). Trois feuilles
+  globales assumées, chargées par leur consommateur : `components/map/mapGrid.scss`
+  (grille de jeu + hooks), `administration/admin.scss` (outillage interne),
+  `pages/homePage/home.scss` (parallax publique scopée `.homepage`). Kit UI
+  réutilisable dans `src/components/ui/` (`Panel`, `GaugeBar`, `Slot`,
+  `GameButton`, `SectionTitle`, `Glyph`, `GameModal`/`ModalShell`) — le
+  réutiliser avant de créer du neuf. **Bootstrap a été retiré** (plus de CDN ni
+  `react-bootstrap`) : ne jamais réintroduire de classes utilitaires Bootstrap.
 - **Hooks fonctionnels à préserver** : les classes `lifeBar`, `manaBar`, `pa`, `pm`,
   `spell-bar`, `spell-container`, `spell-filter-<id>`, `consommable-filter-<id>`,
   `pnj` sont utilisées par intro.js et des `querySelector` (cooldowns) — les garder
