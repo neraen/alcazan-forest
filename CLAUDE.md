@@ -5,6 +5,15 @@ React 18 CRA (`alcazan-front-prod/`, sous-module git), MySQL 8, orchestré par D
 **Lire `DOCUMENTATION.md` avant toute modification** : architecture, règles du jeu, modèle de
 données, endpoints, dette technique et checklist y sont détaillés.
 
+## Reprendre sur une autre machine
+
+Procédure complète en §19 de `DOCUMENTATION.md`. Les trois pièges : cloner avec
+`--recurse-submodules` (les sous-modules sont sur d'AUTRES branches — back `master`, front
+`migration-typescript`, racine `main`) ; recréer `.env.local` + `.env.test.local`
+(`JWT_PASSPHRASE`) et les clés `config/jwt/*.pem`, jamais committées ; la base est vide au
+premier démarrage → `doctrine:migrations:migrate` (la 1re migration EST le schéma complet)
+puis `./scripts/content-load.sh`. Les comptes joueurs ne sont pas partagés.
+
 ## Lancer / vérifier
 
 ```bash
@@ -40,6 +49,10 @@ est capturé automatiquement) :
   `backups/`, gitignoré).
 - La liste noire est en tête de `scripts/content-dump.sh` ; ajouter toute nouvelle table
   joueur/runtime avant de dumper, pour ne jamais fuiter de données de partie dans le seed.
+- Deux tables sont du **contenu portant aussi du runtime** : `carte_carreau` (`joueur_id`) et
+  `monstre_carreau` (`quantity`/`current_life`). Elles sont dans la liste `SANITIZED` du script :
+  structure dumpée depuis `chusei`, données depuis une copie neutralisée. Ne jamais les
+  basculer dans `EXCLUDE` (on perdrait le décor) ni les sortir de `SANITIZED`.
 
 ## Pièges connus (ne pas découvrir deux fois)
 
@@ -47,11 +60,26 @@ est capturé automatiquement) :
   la création du personnage se fait dans `src/Event/PostRegisterSubscriber.php`
   (`#[AsDoctrineListener(postPersist)]` — DoctrineBundle n'enregistre PLUS les
   `EventSubscriber` Doctrine par interface, toujours utiliser l'attribut).
-- Les PA/PM se régénèrent via le conteneur `alcazan-scheduler` (docker-compose) qui lance
-  `php bin/console app:regen-points` toutes les heures (+10 PA/+20 PM, caps 600/800).
+- Les PA/PM se régénèrent via le conteneur `alcazan-scheduler` (docker-compose) : boucle à la
+  minute qui lance `app:echanges:expirer` (filet d'expiration des échanges) et, toutes les
+  60 itérations, `app:regen-points` (+10 PA/+20 PM, caps 600/800).
 - `src/service/ChatService.php` dépend de Ratchet (absent de composer.json) : classe exclue
-  de l'autowiring dans `services.yaml`, ne pas la charger. Temps réel → proposition Mercure
-  dans DOCUMENTATION.md §9.
+  de l'autowiring dans `services.yaml`, ne pas la charger. Temps réel → Mercure : le hub
+  `alcazan-mercure` tourne dans le compose (port hôte 5001, macOS squatte 5000 avec AirPlay).
+  Abonnement front : `POST /api/mercure/token` (JWT subscriber aux topics du joueur, JAMAIS de
+  wildcard) + query param `authorization` de l'EventSource (`src/hooks/useMercure.js`).
+- **Items/or du joueur : `src/service/SacService.php` est l'UNIQUE point de mutation** (piles
+  d'inventaire + `user.money`), sans flush interne — l'appelant fournit la transaction. Il porte
+  aussi les réservations (`reservation_ressource`) : le « disponible » = possédé − réservé, et
+  vendre/consommer/équiper/payer une quête contrôle ce disponible. Ne jamais retoucher
+  `setQuantity`/`setMoney` ailleurs.
+- Échanges joueur-à-joueur (24/07/2026, doc §12) : `EchangeService` est l'UNIQUE machine à
+  états (verrou pessimiste par session, `expectedVersion` → 409 avec état frais, toute
+  modification invalide LES DEUX confirmations, expiration lazy) ;
+  `EchangeFinalisationService` fait le transfert atomique sous verrous users ordonnés (id
+  croissant). Front : `EchangeHost` rendu UNE fois dans MapPage (patron PnjInteractionHost),
+  état Redux `echange` = toujours le payload normalisé du serveur. Les tables `echange`,
+  `echange_ligne`, `reservation_ressource` sont dans la liste noire de `content-dump.sh`.
 - Repositories orphelins (entités supprimées) : `ExperienceRepository`,
   `ExperienceJoueurRepository`, `ActionParamsRepository`.
 - Le schéma BDD est baseliné par des migrations (marquées exécutées) : toute évolution passe
@@ -62,12 +90,250 @@ est capturé automatiquement) :
   (démarrage/conditions/récompenses/avancement par `position + 1`). Un seul endpoint d'action
   `POST /api/quest/action` ; les effets scriptés passent par l'enum `QuestEffect` +
   `QuestEffectRegistry` (JAMAIS d'URL en base). `action.action_type` = enum `ActionType` en dur ;
-  `BATTRE_MONSTRE`/`CHOIX`/`KILL_PVP` sont réservés (le dispatcher jette). QuestMaker sous
+  seul `KILL_PVP` reste réservé (le dispatcher jette). QuestMaker sous
   `/api/quest/editor/*` (ROLE_ADMIN), champs pilotés par `Config\QuestActionTypeConfig`.
+- **Compteurs de progression (26/07/2026, doc §18)** : `CompteurJoueurService` est l'UNIQUE
+  point de mutation de `joueur_compteur` (table de RUNTIME joueur, dans la liste noire du
+  dump). UNE table générique `(user, type, cible_id, valeur)` pour les trois compteurs de
+  `TypeCompteur` — le type dit ce qu'est la cible : `MONSTRE_TUE` → `monstre.id`
+  (`DeathService::dieMonster`), `OBJET_FABRIQUE` → `recette.id` (`CraftService::retirer`,
+  au RETRAIT pour que « lancer puis annuler » ne compte pas), `RESSOURCE_RECOLTEE` →
+  `objet.id` (`InteractionService`, cases `RECOLTER` uniquement, quantité réellement
+  ramassée). L'incrément est un `INSERT … ON DUPLICATE KEY UPDATE` en SQL natif et non un
+  read-modify-write : **c'est l'index UNIQUE (user, type, cible) qui le rend possible**, le
+  retirer ferait perdre des incréments concurrents en silence, pas seulement l'intégrité.
+- **Objectifs comptés de quête** : un compteur est CUMULATIF à vie ; ce qui rend l'objectif
+  demandable est `user_quete.compteurs_depart` (JSON `{"monstre_tue:12": 47}`), la photo des
+  compteurs prise à l'ENTRÉE dans l'étape — reposée au démarrage et à chaque changement de
+  séquence, **jamais** quand le joueur reclique sur une étape non franchie (sinon sa
+  progression repart de zéro à chaque tentative). Sans ça, « tuez 5 loups » serait déjà
+  remplie pour un vétéran. Clé absente = départ 0 = lecture cumulative (dégradation voulue).
+  `BATTRE_BOSS` reste volontairement cumulatif : changer sa sémantique casserait le contenu.
+- **Karma des choix (doc §18.3)** : `action.karma` est SIGNÉ et nullable, porté par l'ACTION
+  (donc par branche) et pas par la séquence. Appliqué APRÈS la condition et le coût — une
+  action bloquée n'engage rien — via `KarmaService`, seul point de mutation, qui borne. La
+  réponse porte `karma` seulement si la valeur a RÉELLEMENT bougé (`delta` ≠ 0). Le champ est
+  rendu en dur dans `ActionForm` (il ne dépend d'aucun type d'action), et `SequenceForm` doit
+  déclarer `karma`/`monstreId`/`recetteId` dans l'action neuve — un champ absent du payload
+  est effacé en base au premier enregistrement (piège §17.4). Le karma n'a toujours AUCUN
+  effet de jeu (lot 6 différé) : il est stocké, affiché en jauge dans le Profil, et gagné ou
+  perdu par la récolte, la fabrication et les choix de quête.
 - Front quêtes : la modale PNJ est rendue UNE fois (`PnjInteractionHost` dans MapPage), pilotée
   par le state Redux `pnjInteraction` — ne jamais remettre de modale par tuile ni de fetch au
   mount des PNJ. Les dialogues sont des paragraphes texte (pas de HTML injecté).
+- Échoppe : achat `POST /joueur/buy/shop`, vente `POST /joueur/sell/shop` (`VenteService`,
+  `{type, id, quantite}` avec l'enum `TypeItem`). Le client n'envoie JAMAIS de montant ni ne
+  décide du stock : le serveur relit le prix sur l'item (0 si non renseigné), revérifie la
+  quantité possédée dans la transaction, et fait foi sur l'or. Côté front, la carte d'article
+  est mutualisée dans `components/pnj/shopView/itemCard/ItemCard.jsx` (Acheter et Vendre) —
+  ne pas redupliquer de markup de carte.
+- Équiper/retirer : `src/service/EquipementEquipeService.php` est l'UNIQUE point d'entrée
+  (transaction unique, contrôle de possession, échange remettant l'ANCIEN objet au sac, bonus de
+  caracs symétriques). Ne jamais refaire de va-et-vient sac/équipement dans un contrôleur — c'est
+  ce qui avait dupliqué l'objet équipé et fait disparaître l'ancien (corrigé le 23/07/2026).
+  Index uniques en base sur `inventaire_equipement` et `user_equipement` en filet.
+- Donjons (lots 0-1 du 25/07/2026, doc §13) : `DonjonInstanceService` est l'UNIQUE machine à
+  états (entrée/sortie/verrou/vie du boss d'instance, expiration paresseuse) — aucun autre
+  service ni contrôleur n'écrit dans `donjon_instance*`/`donjon_verrou`. Deux invariants :
+  **(1)** en instance, `carte_carreau.joueur_id` n'est ni lu ni écrit (colonne OneToOne
+  GLOBALE) — l'occupation est reconstruite par `DonjonMapView` depuis les membres présents,
+  et la position reste `user.map_id/case_*`. **Ne JAMAIS cloner `carte_carreau` pour
+  instancier une salle.** **(2)** le verrou quotidien est lié à l'INSTANCE (`donjon_verrou`,
+  clé `jour_reset` = jour décalé de `donjon.heure_reset`, 5 h) : revenir dans la journée rend
+  la même instance, jamais une neuve. Tout ce qui se règle vit dans la table `donjon`
+  (niveau min, taille de groupe, durée, heure de reset, sortie) — rien en dur dans le code.
+  `instance` est un mot réservé du DQL : ne pas l'utiliser comme alias.
+- **Verrou consommé ≠ porte close** : `DonjonInstanceService::peutRejoindre()` est LA règle
+  (TERMINEE/ABANDONNEE restent rejoignables, seule l'expiration ferme). Elle teste aussi
+  `expireAt`, pas seulement le statut, parce que l'expiration est PARESSEUSE — une instance
+  périmée peut encore être marquée `en_cours`. `rejoindre()` s'en sert pour refuser et
+  `normalizePorte` pour descendre `verrou.rejoignable` : la modale n'affiche « Retourner dans
+  mon expédition » que si c'est vrai, sinon elle annonce le prochain reset et ne propose
+  AUCUNE entrée. Sans ça le bouton de retour répondait « revenez après 5 h », soit le message
+  d'une nouvelle expédition sur un bouton qui promettait l'inverse.
+- Groupe de donjon (lot 2) : `DonjonGroupeService` est l'UNIQUE machine à états du lobby.
+  `donjon_groupe` est une table à PART (pas un statut d'instance) parce qu'un lobby ne doit
+  consommer AUCUN verrou : les verrous sont posés d'un coup au lancement. L'entrée SOLO n'a
+  volontairement pas d'endpoint — c'est un franchissement de wrap ordinaire. Front :
+  `DonjonHost` rendu UNE fois dans MapPage (patron `EchangeHost`), état Redux `donjon.porte`,
+  `MapController` renvoie `portesDonjon` pour éviter une requête par clic sur un passage.
+- Combat de donjon (lot 3, doc §13.7) : `DonjonCombatService` est l'UNIQUE machine de combat
+  (garde-fous PA/portée, menace, tick, mécaniques) — personne d'autre n'écrit dans
+  `donjon_instance_zone`/`_monstre`/`_levier`. **Le tick est PARESSEUX** : joué au fil des
+  requêtes des joueurs (attaque du boss, `POST /api/donjon/combat`), jamais par le scheduler
+  (trop grossier à la minute). **Les phases ne sont pas une entité** : une mécanique est
+  bornée par une fenêtre de vie du boss (`vieMax`→`vieMin` en %). Les renforts vivent dans
+  `donjon_instance_monstre` et NON dans `monstre_carreau` (table du décor, donc partagée).
+  Les leviers sont des cases action `SCRIPTED_EFFECT`/`actionner_levier` — pas un type de
+  case nouveau ; `QuestProgressionService` injecte `carteCarreauId` dans les params.
+- DonjonMaker (lot 4) : `/administration/donjonmaker`, API `/api/donjon/editor/*` (ROLE_ADMIN,
+  règle placée AVANT `^/api` dans security.yaml). `DonjonEditorService` sauvegarde fiche +
+  salles + mécaniques en UNE transaction avec des **ids stables** — `mecaniques_jouees` et
+  `donjon_verrou` les référencent, tout recréer casserait les expéditions en cours. Les champs
+  du formulaire viennent de `Config\DonjonMecaniqueConfig` : ajouter une mécanique = un case
+  dans l'enum + un case dans la config, le front suit sans être touché.
+- **`donjon_salle.condition` est un MOT RÉSERVÉ MySQL** : la colonne est déclarée
+  `#[ORM\Column(name: '`condition`')]` dans `DonjonSalle`, sans quoi tout INSERT/UPDATE de
+  l'ORM part en erreur de syntaxe 1064 (les SELECT passent, un nom qualifié étant toléré) —
+  le DonjonMaker ne pouvait alors RIEN enregistrer. Piège de test associé : Doctrine n'écrit
+  que les champs devenus SALES, donc une sauvegarde qui ne change pas la condition ne prouve
+  rien ; un test doit modifier la condition (cf. `testChangerLaConditionDUneSalle...`).
+- **Consulter une carte ≠ y être** : `/api/map/cases/data` n'éjecte d'une salle de donjon sans
+  instance que si le joueur est RÉELLEMENT sur cette carte. Le MapMaker charge n'importe quelle
+  carte par cet endpoint : sans ce garde-fou, ouvrir une salle de donjon dans l'éditeur
+  téléportait l'admin à la sortie du donjon et renvoyait les cases de la carte de SORTIE sous
+  l'id demandé — collisions d'une autre carte par-dessus le décor de la salle. `/map/update`
+  ignore par ailleurs tout `carteCarreauId` étranger à la carte éditée (filet : ne jamais
+  repeindre une carte du monde ouvert en silence).
+- Front donjon (lot 5) : `DonjonCombatHost` (rendu UNE fois dans MapPage) sonde
+  `POST /api/donjon/combat` toutes les 2 s en combat. **Ce sondage n'est pas cosmétique :
+  le tick serveur est paresseux, c'est lui qui fait avancer la rencontre — le retirer fige
+  le combat.** Le compte à rebours des zones est recalculé depuis `resoudreAt` (horloge
+  serveur), jamais décompté localement. Le surlignage des zones (`case-zone-donjon` dans
+  `mapGrid.scss`) est volontairement très contrasté : testé en jeu, une teinte discrète
+  disparaît sur les sols sombres. Cibler un renfort = type `"renfort"` → endpoint dédié.
+- **Un monstre d'instance est un monstre ORDINAIRE (27/07/2026, doc §13.7)** : jamais dessiné
+  sur la carte (comme tous les monstres du jeu, peints dans l'image de fond), ciblé
+  AUTOMATIQUEMENT quand on marche sur sa case, déciblé en la quittant, et il rend XP + butin
+  (`DeathService::dieRenfort`, qui compte aussi `MONSTRE_TUE`). Le ciblage vit dans
+  `Map.majCibleMonstreInstance()` et lit `renfortId` **de la case** (donc de la carte, qui
+  descend à chaque déplacement) — PAS l'état de combat, qui ne se rafraîchit qu'au sondage.
+  Il est dans `Map` et non dans `Player` (patron `hasMonstre`) parce que `Player` est aussi
+  rendu pour les autres membres du groupe. `/api/target/renfort` renvoie les clés de
+  `/api/target/monstre` et `/api/donjon/renfort/attaquer` la forme de
+  `/api/joueur/attack/monster` : le front n'a rien à normaliser, et `Spell.handleAttack` DOIT
+  lister `"renfort"` (son absence rendait les monstres de salle inattaquables en silence).
+- **`DeathService::diePlayer` écrit en DQL, donc HORS de l'unité de travail** : il finit par
+  `entityManager->refresh($user)`, sans quoi l'entité en mémoire garde la vie négative et la
+  carte d'avant la mort — la réponse annonçait « -35/765 » et le moindre flush ultérieur
+  ressuscitait le joueur sur place (il se déplaçait au lieu d'être au cimetière). Corollaire :
+  après un `diePlayer`, ne JAMAIS tester `lifeJoueur <= 0` pour savoir s'il y a eu mort (la vie
+  est déjà refaite) — c'est ce que fait `mortJoueur` dans le retour de `doDamageOnBoss`.
+- **Le boss n'agit que dans SA salle** : `DonjonCombatService::cibleDuBoss($instance, $boss)`
+  restreint les candidats aux membres présents sur la carte du boss (sans `$boss`, menace pure).
+  Sans ce filtre il frappait — et télégraphiait ses zones sur — un joueur mort reparti en
+  salle 1. Et **une zone qui met à 0 TUE** : `jouerTick` joue `diePlayer` APRÈS son flush
+  (l'inverse réécrirait l'état d'avant la mort). Avant, la victime restait en vie négative,
+  mobile et toujours ciblée. Côté front, `DonjonCombatHost` détecte la perte d'instance
+  (`instanceId` qui passe à null) et relit `/joueur/data/minimal` : c'est le seul signal qu'a
+  le client d'une mort décidée par le tick.
+- **Un refus de passage doit se voir** : `/api/joueur/map/update_position` renvoie
+  `{"message"}` en cas de refus (condition de salle, verrou, wrap) et `{"annonce"}` quand une
+  salle vient de se peupler ; `Map.changeMap` les toaste. Ces toasts étaient commentés : un
+  clic sur la porte ne faisait RIEN de visible, ce qui se lit comme un bug de la carte.
+- **`.case` DOIT rester `position: relative`** (`mapGrid.scss`). Tout enfant en
+  `position:absolute; inset:0` (renfort de donjon, surlignage de zone) s'ancre sinon sur un
+  ancêtre lointain et déborde sur la grille entière, interceptant les clics de déplacement —
+  le clavier continuant de marcher, le symptôme trompeur est « je ne peux plus me déplacer
+  qu'au clavier ». Images de monstre : convention `/img/monstre/<skin>.png` (l'extension est
+  dans le code, pas en base).
+- Conditions de salle (25/07/2026, doc §13.11) : `DonjonSalleService` est l'UNIQUE machine à
+  états de la progression salle par salle. La population d'une salle va dans
+  `donjon_instance_monstre` (par instance), JAMAIS dans `monstre_carreau` (décor partagé).
+  `donjon_instance_salle` porte `peuplee` (une salle ne se peuple qu'une fois : sinon ferme
+  à XP) et `ouverte` (**une porte franchie le reste** : sinon un retour en arrière enferme
+  le joueur). Un levier peut commander une porte ET l'énigme du boss — ORDRE OBLIGATOIRE :
+  enregistrer, puis la porte, puis l'énigme de combat, qui CONSOMME les leviers.
+- `RecompenseService` est l'UNIQUE point de conversion « ligne `Recompense` → items + or + XP »
+  (quêtes, butin de boss, coffres) — ne jamais redistribuer de récompense ailleurs. Le coffre
+  de la salle au trésor (`QuestEffectRegistry::recompenseBoss`) exige un kill récent et n'est
+  ramassable QU'UNE FOIS par mise à mort (`UserBoss.last_loot`). `boss.actual_life` ne sert
+  plus qu'aux boss de PLEIN AIR ; en donjon la vie vit dans `donjon_instance.boss_current_life`.
+- Cases interactives (25/07/2026, doc §14) : `InteractionService` est l'UNIQUE machine à états
+  (conditions, PA, récompense, effet, métier, rechargement) — personne d'autre n'écrit dans
+  `interaction_recharge`. `Interaction` est VOLONTAIREMENT distincte d'`Action` (bouton de
+  quête) : ne pas les fusionner. La **portée du cooldown** (`JOUEUR`/`MONDE`/`INSTANCE`) est
+  la clé de voûte ; `interaction_recharge.cle` est une CHAÎNE et non des colonnes nullables,
+  parce qu'un index UNIQUE MySQL laisse passer les doublons sur NULL.
+  L'onglet **Interactions** du panel définit les interactions, l'outil « Poser une interaction »
+  du MapMaker les pose (retrait compris via l'option « ✕ Retirer »). ⚠️ Dans les services
+  d'édition, relire conditions et cases posées depuis LEUR REPOSITORY et non depuis la
+  collection de l'entité : après une sauvegarde, la collection est périmée. Le payload de
+  carte porte `interactions` (état par case) — purement informatif, le serveur revérifie ;
+  le compte à rebours se recalcule depuis `disponibleAt`, jamais décompté côté client.
+- **Métiers (artisanat lot 0, 26/07/2026, doc §16)** : `MetierService` est l'UNIQUE point de
+  mutation (apprendre / oublier / expérience) et ne flushe pas. ⚠️ **L'invariant a changé** :
+  une ligne `joueur_metier` ne veut plus dire « déjà pratiqué » mais « APPRIS », et
+  `gagnerExperience()` **refuse** de la créer (`MetierException`). Sans ce refus, le plafond
+  « 2 métiers de récolte / 3 de fabrication » (`Config\ArtisanatConfig`, `FamilleMetier`) ne
+  serait pas applicable : on plafonnerait des métiers que le joueur n'a jamais choisis.
+  L'apprentissage passe par un PNJ `type = 'metier'` → `view: 'metier'` (patron `guildeView`,
+  `MetierView` branché dans `PnjInteractionHost`) ; oublier PERD la progression.
+  Le plan complet de l'artisanat est dans `docs/ARTISANAT_PLAN.md`.
+- **Récolte éthique/intensive (lot 2, doc §16.3)** : sur les cases `interaction.recolte_choix`,
+  une SECONDE recharge partagée (`monde:epuisement`, ou `instance:<id>:epuisement` en donjon)
+  est lue EN PLUS du cooldown personnel — c'est le seul moyen qu'une récolte intensive lèse
+  autrui, la portée JOUEUR donnant par construction à chacun son propre délai. Ne jamais
+  réutiliser la clé `monde` nue : elle sert aux coffres de portée MONDE. Les curseurs sont dans
+  `Config\RecolteConfig` et descendent au front avec la carte (aucun chiffre en dur côté
+  client). Un `mode` envoyé sur une case sans choix est REFUSÉ ; une case à choix sollicitée
+  sans mode est traitée en récolte MESURÉE (défaut prudent). `decrire()` retient le blocage qui
+  se lève EN DERNIER, sinon le compte à rebours ment.
+- **Fabrication (lot 3, doc §16.4)** : `CraftService` est l'UNIQUE machine à états ; personne
+  d'autre n'écrit dans `craft_commande` (table RUNTIME, dans la liste noire du dump). **Le tick
+  est PARESSEUX** : `pretAt` est posé au lancement et l'état se déduit de l'horloge serveur —
+  jamais de commande de scheduler. « Prête » n'est donc PAS un statut. Les ingrédients sont
+  CONSOMMÉS au lancement (pas réservés), et le recyclage rend depuis
+  `craft_commande.ingredients`, un **instantané figé** — jamais depuis la recette, qui a pu
+  être éditée entre-temps. La sortie d'une recette est une `Recompense`, distribuée par
+  `RecompenseService`. Curseurs dans `Config\CraftConfig`.
+- **Page Artisanat (27/07/2026, doc §16.7)** : `/artisanat` (`pages/artisanatPage/`) porte les
+  métiers (progression des DEUX familles), l'établi et le catalogue de recettes illustré avec
+  recherche ; la modale du rail est réduite à la file de fabrication. `FileFabrication` est
+  rendu par les deux — une file, un seul markup. **Les chemins d'images vivent UNIQUEMENT
+  côté front**, dans `itemUtils.itemImage()` (`/img/objet/<image>`,
+  `/img/consommables/<icone>`, `/img/equipement/<position>/<icone>`) : le back renvoie le nom
+  de fichier BRUT + la position, jamais un chemin. `Vignette` se replie sur l'initiale quand
+  l'image manque (les icônes de métier n'existent pas encore sur le disque). Recherche et
+  filtres sont 100 % client (corpus = les recettes des métiers appris, déjà chargées) ;
+  `realisable` reste une info serveur, revérifiée au lancement.
+- **ArtisanatMaker (lot 4, doc §16.5)** : `/administration/artisanat`, API
+  `/api/artisanat/editor/*` (ROLE_ADMIN, règle placée AVANT `^/api`). Trois onglets — Métiers,
+  Ressources (= premier éditeur d'`Objet`), Recettes. `ArtisanatEditorService` : une
+  transaction, ids stables, relecture depuis LES REPOSITORIES. La liste des maîtres d'un
+  métier est RESYNCHRONISÉE (retraits compris). Suppressions refusées tant que c'est
+  référencé ; détacher le métier d'un objet le déclasse sans le supprimer.
+- **Butin conditionné par un métier (lot 5, doc §16.6)** : `monstre_objet.metier_id` +
+  `niveau_metier_min` + `experience_metier` — c'est le dépeceur. Ligne sans métier = butin
+  ordinaire pour tous. Le tanneur ne demande AUCUN code : c'est une recette.
 - Ids de contenu (spawn, classe par défaut, équipements de départ…) : `src/Config/GameContent.php`.
+- Classes d'un équipement : relation N-N (`equipement_classe`), **liste vide = toutes classes**.
+  Le payload de `/api/equipement/create` porte `classes: [ids]` et le contrôleur RESYNCHRONISE
+  la collection (retraits compris) — ne jamais revenir à un simple `addClasse()`. Ne jamais
+  joindre `equipement.classe` dans un `select` scalaire : ça duplique les lignes d'équipement
+  (utiliser `EquipementRepository::getClassesByEquipement()`). La restriction n'est appliquée
+  nulle part côté gameplay pour l'instant : elle n'est que descriptive.
+- **Formulaires d'admin : toujours `onSubmit={(event) => this.handleSubmit(event)}`** et un
+  `preventDefault()` dans le handler (doc §15.1). L'EquipementMaker passait l'event à la trappe :
+  une simple touche Entrée déclenchait le GET natif du `<form>`, la page se rechargeait pendant
+  l'upload de l'image et le `POST /equipement/create` — envoyé APRÈS la réponse de l'upload —
+  ne partait jamais. Symptôme : l'image sur le disque, `equipement.icone` vide en base.
+  `/api/equipement/create` renvoie `{"id"}` et le formulaire l'adopte : sans ça il restait en
+  mode « création » et le clic suivant dupliquait l'objet.
+- Import CSV d'équipements (25/07/2026, doc §15.2) : `POST /api/equipement/import-csv`
+  (ROLE_ADMIN) → `EquipementCsvImporter`. Positions/raretés/classes/caractéristiques sont
+  résolues **par nom contre la base** (ajouter une caractéristique la rend importable sans
+  toucher au code), le rapport est ligne par ligne et donne le chemin d'image attendu. Une
+  ligne fautive est sautée et rapportée, pas jetée — sur 100 objets, un nom mal orthographié
+  ne doit pas faire perdre les 99 autres.
+- **Images de l'admin (26/07/2026, doc §17)** : `src/service/ImageUploader.php` est l'UNIQUE
+  point d'écriture d'image de l'administration (métiers, objets, PNJ, monstres, interactions
+  via `POST /api/admin/image/upload` ; équipements via `EquipementIconeUploader`, qui n'ajoute
+  que le sous-dossier de position). Le fichier est renommé d'après le nom de l'élément édité.
+  La clé de voûte est l'enum `App\Enum\CollectionImage` : elle dit, PAR CHAMP, si la base
+  stocke le nom **avec** ou **sans** extension — quand elle ne la stocke pas, le jeu recolle
+  `.png` et l'upload **refuse donc tout sauf du PNG** (sinon on range un JPEG que rien n'ira
+  chercher). `pnj.avatar` (avec extension) et `pnj.skin` (sans) partagent le dossier `img/pnj`,
+  d'où le suffixe `-avatar`/`-skin`. Côté front, `COLLECTIONS_IMAGE` (`adminImageApi.js`) est
+  le MIROIR de l'enum, et `ImageUploadField` le champ réutilisable — ne pas refaire d'input
+  fichier ailleurs. Le back écrit dans son `public/img/<dossier>`, **bind-monté sur
+  `alcazan-front-prod/public/img/<dossier>`** (docker-compose, une ligne par collection) :
+  après un `git pull` touchant docker-compose.yaml, refaire `docker compose up -d` sinon
+  l'upload atterrira dans le conteneur back et sera invisible du front.
+- ⚠️ Une liste d'admin qui alimente un formulaire d'édition doit porter TOUS les champs du
+  formulaire : le front renvoie la fiche telle qu'il l'a reçue, donc un champ absent de la
+  liste est **effacé en base** au premier enregistrement (c'est ce que faisait
+  `ArtisanatEditorService::lister()` sur `description` et `image` d'un objet).
 - Secrets : `JWT_PASSPHRASE` vit dans `.env.local` / `.env.test.local` (non committés),
   les clés `config/jwt/*.pem` ne sont plus suivies par git.
 - `.env` du back pointe sur le port 3307 : ignoré, `DATABASE_URL` vient du docker-compose.

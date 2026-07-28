@@ -17,6 +17,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Activation du module Apache rewrite
 RUN a2enmod rewrite
 
+# Upload des icônes d'équipement depuis l'admin : les 2 Mo par défaut de PHP sont trop justes
+RUN printf "upload_max_filesize = 8M\npost_max_size = 10M\n" > /usr/local/etc/php/conf.d/uploads.ini
+
 # Modifier le DocumentRoot d'Apache pour qu'il pointe vers "public/"
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf
 

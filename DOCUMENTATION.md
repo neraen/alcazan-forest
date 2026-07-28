@@ -118,33 +118,89 @@ Incohérences à connaître :
   horodaté (régénération probablement prévue, non implémentée).
 
 ### Quêtes — REFONDU le 15/07/2026 (voir §11)
-- Modèle : `Quete` → suite ordonnée de `Sequence` (la **position est l'unique source d'ordre**,
-  fin de quête = pas de position suivante ; dialogue **inliné** : `dialogueTitre`/`dialogueContenu`),
-  chaque séquence portant ses `Action` (via `SequenceAction`). Une séquence **sans quête** =
-  dialogue autonome d'un PNJ type `action` (auberge). Contraintes uniques en base :
-  `(quete_id, position)`, `(user_id, quete_id)`, `recompense.sequence_id`.
+- Modèle : `Quete` → `Sequence` (position = ordre **linéaire par défaut** ; dialogue **inliné** :
+  `dialogueTitre`/`dialogueContenu`), chaque séquence portant ses `Action` (via `SequenceAction`).
+  Une séquence **sans quête** = dialogue autonome d'un PNJ type `action` (auberge). Contraintes
+  uniques en base : `(quete_id, position)`, `(user_id, quete_id)`, `recompense.action_id`.
+- **Branchement (quêtes à embranchement, ajouté le 21/07/2026)** : chaque `Action`/choix peut
+  rediriger la suite via `action.next_sequence_id` (saut vers une séquence précise) ou
+  `action.ends_quest` (terminer la quête) ; sinon, avancement linéaire `position + 1`. Une
+  séquence portant plusieurs actions `CHOIX` (choix narratif pur, sans condition ni coût) devient
+  un embranchement. Boucles autorisées (une branche peut viser une séquence antérieure). Une fois
+  qu'on branche, poser une « suite » explicite sur les séquences de chaque branche (la position
+  n'est plus qu'un ordre d'édition).
+- **Récompense par branche** : la récompense est portée par l'`Action` jouée (`recompense.action_id`,
+  une par choix), plus par la séquence. Donnée à la sortie du choix, quelle que soit la branche.
 - Types d'action : `App\Enum\ActionType` **stocké directement** (`action.action_type`, plus de
   table `action_type` → plus de désynchronisation possible). `SCRIPTED_EFFECT` remplace l'ancien
   `JSON` : l'effet est une case de l'enum `QuestEffect` exécutée par `QuestEffectRegistry`
   (choisir_classe, choisir_alignement, entrer_auberge, recompense_boss) — **plus d'URL en base**.
-  `BATTRE_MONSTRE`, `CHOIX`, `KILL_PVP` sont réservés : refusés bruyamment tant que non implémentés.
+  `CHOIX` est implémenté (branchement) ; `BATTRE_MONSTRE`, `KILL_PVP` restent réservés : refusés
+  bruyamment tant que non implémentés.
 - **`QuestProgressionService`** est l'unique machine à états : démarrage explicite (prérequis
   niveau/alignement/quête/objet enforced), garde-fous (action ∈ séquence, séquence courante),
-  vérification + consommation, récompense, avancement `position + 1`, complétion — le tout
-  transactionnel. Consulter un PNJ (`/api/pnj/interaction`) est une **lecture pure** ;
-  la quête ne démarre que sur `/api/quest/start`.
+  vérification + consommation, récompense (de l'action), branchement (`ends_quest` >
+  `next_sequence` > `position + 1`), complétion — le tout transactionnel. Consulter un PNJ
+  (`/api/pnj/interaction`) est une **lecture pure** ; la quête ne démarre que sur `/api/quest/start`.
 - Réponses **structurées sans HTML** : `{status: step|blocked|done|locked, quest, step:
   {sequenceId, dialogue: {title, paragraphs}, actions: [{actionId, type, label}]},
-  blockedMessages, feedback: {rewards, messages}, needRefresh}`.
+  blockedMessages, feedback: {rewards, messages}, needRefresh}` — le serveur décide de la branche,
+  le front rend simplement les boutons de l'étape renvoyée.
 - QuestMaker : endpoints admin `/api/quest/editor/*` (ROLE_ADMIN, lectures comprises),
   sauvegarde transactionnelle par correspondance d'ids (`QuestEditorService`) — **les ids ne
   churnent plus**. Les champs du formulaire sont pilotés par `Config\QuestActionTypeConfig`
   (exposée par `/editor/config`), les tables `action_field*` ont été supprimées.
+  Chaque action porte un sélecteur **« Suite de ce choix »** (`nextSequenceKey` : `''` linéaire,
+  `'__END__'` fin de quête, sinon `clientKey` d'une séquence cible) et sa propre **récompense**.
+  Les séquences neuves reçoivent un `clientKey` client (uuid) ; la sauvegarde résout les
+  branchements en **deux passes** (upsert des séquences → câblage `next_sequence` par `clientKey`),
+  ce qui autorise une cible créée plus loin dans le même payload.
+- **UX QuestMaker (maître-détail, 22/07/2026)** : l'écran d'édition est un maître-détail —
+  rail gauche = **carte de flux en lecture seule** (`QuestFlowMap`, nœuds = séquences, flèches =
+  branchements, layout par plus court chemin depuis la séquence 1, arêtes retour en pointillés,
+  nœud « 🏁 Fin ») **+** liste des séquences avec résumé des choix (« → cible »). Détail droit =
+  le formulaire de la séquence sélectionnée (`SequenceForm`, une seule montée à la fois — les
+  valeurs des séquences démontées sont conservées par react-hook-form). Cliquer un nœud de la
+  carte **ou** un item du rail sélectionne la séquence. Aucune logique de jeu touchée.
+- **Restyle admin (22/07/2026)** : le QuestMaker adopte les design tokens du jeu
+  (`_tokens.scss` : or/vert sombre, Cinzel/Nunito) au lieu de l'ancienne palette codée en dur —
+  panneaux `--panel`, cartes `--panel-inner`, bordures `--gold-soft`, bouton primaire or plein.
+  Tout est **scopé sous `.quest-page-maker-container`** (pas de fuite vers les autres makers) et
+  l'`@import` du module est fait **en fin d'`admin.scss`** pour gagner les égalités de spécificité
+  contre les styles de champ/bouton de base. Le SVG de la carte est piloté par classes CSS
+  tokenisées (fills en `var(--…)`). La **nav admin** (`administration-side-menu`) est passée de
+  colonne latérale à **barre horizontale collante** (onglet actif souligné), libérant toute la
+  largeur pour le maître-détail.
+
+### Port d'équipement — SÉCURISÉ le 23/07/2026
+Toute la mécanique équiper/retirer vit dans **`src/service/EquipementEquipeService.php`**
+(`wear` / `unwear`), les contrôleurs ne font que traduire les `\DomainException` en 400.
+Invariants tenus par le service : un objet est **soit dans le sac, soit porté** (jamais les
+deux, jamais nulle part) ; **un seul équipement par position**, l'échange remettant l'**ancien**
+objet au sac ; les bonus de `joueur_caracteristique_bonus` suivent exactement les objets portés
+(ligne créée si elle manque, plancher à 0) ; **le tout dans une seule transaction**
+(`wrapInTransaction`).
+
+> **Bug corrigé** : équiper un objet sur une position déjà occupée remettait dans le sac le
+> **nouvel** objet au lieu de l'ancien (`$data['idEquipement']` réutilisé dans la branche de
+> retour au sac). Résultat : l'objet fraîchement équipé se retrouvait en double et **l'ancien
+> disparaissait définitivement**. Deux autres crashs partaient avec : `unwear` lisait une
+> variable `$equipementEntity` non définie quand l'objet était déjà en pile dans le sac, et
+> `wear` fatalait sur un objet non possédé (aucun contrôle de possession). La suite de flush()
+> successifs, sans transaction, laissait en plus l'inventaire à moitié écrit en cas d'erreur.
+> Régression couverte par `tests/Service/EquipementEquipeServiceTest.php` (11 tests).
+
+Garde-fous en base (migration `Version20260723110706`) : index uniques
+`uniq_inventaire_equipement (inventaire_id, equipement_id)` — une seule ligne de pile par
+couple sac/objet — et `uniq_user_equipement (user_id, equipement_id)`. La règle « un seul
+équipement par position » n'est pas exprimable en index (la position vit sur `equipement`) :
+c'est le service qui la tient.
 
 ### PNJ, boutiques, social
 - PNJ typés : `shop` (via `Shop`/`ShopEquipement`/`ShopObjet`), `quest`, `action`, `guilde`.
-- Achat : `/joueur/buy/shop` (débit `prixAchat`, incrément inventaire). Vente : écran `ShopSell`
-  côté front, endpoint back introuvable.
+- Achat : `/joueur/buy/shop` (débit du prix boutique, incrément inventaire).
+  Vente : `/joueur/sell/shop` (`VenteService`, prix pris sur l'item, 0 si non renseigné) —
+  implémentée le 23/07/2026, l'onglet `ShopSell` n'est plus un placeholder.
 - Guildes : liées à un **alignement** (obligatoire), candidature grade `recrue`, chef « baron »
   (TODO notifications/limite de places). Amis (`Friend`), messagerie (`Message`), historique de
   combat (`Historique`, flag `isExternal` = événement subi).
@@ -154,6 +210,118 @@ Incohérences à connaître :
 MapMaker (collisions, wraps, PNJ, monstres), création de cartes vierges 24×16, QuestMaker
 (quêtes/séquences/dialogues/actions/récompenses), PnjMaker, MonsterMaker, ShopMaker, création
 d'équipements. **Aucun contrôle de rôle côté back** (voir §6).
+- **Makers de contenu — liste + aperçu (22/07/2026)** : PnjMaker / MonsterMaker / EquipementPage
+  partagent le composant réutilisable **`administration/components/AdminCatalog.jsx`** — rail
+  gauche = recherche + liste visuelle (vignette + nom + méta), zone principale = **carte
+  d'aperçu** (image + tags + tuiles de stats) puis le formulaire de création/édition de
+  l'élément sélectionné (id existant → édition, `0` → création). Vignettes tolérantes aux
+  images manquantes (repli ✦, reset sur changement de `src`). Résolution d'images :
+  PNJ `/img/pnj/<skin|avatar>` (+.png si pas d'extension), monstre `/img/monstre/<skin>.png`,
+  équipement `/img/equipement/<position>/<icone>`. L'édition d'un monstre est désormais possible
+  (`MonstreController::createMonster` fait un upsert par `id`, comme les PNJ). Le form équipement
+  (classe) est piloté par le catalogue via la prop `externalSelectedId`. Styles tokenisés
+  (`.admin-catalog*` dans `admin.scss`).
+- **Équipements multi-classes (23/07/2026)** : la relation `Equipement ↔ Classe` était **déjà
+  N-N** (`ManyToMany`, table `equipement_classe`) — aucune migration n'a été nécessaire, seuls
+  l'API et le formulaire la bridaient à une classe. Le maker propose désormais un **sélecteur
+  multiple en pastilles** (`.classe-picker` dans `admin.scss`) : on coche autant de classes que
+  voulu (archer + guerrier, moine + sorcier…), et la pastille **« Toutes les classes »** vide la
+  sélection. **Convention : liste vide = aucune restriction**, plutôt que « toutes les classes
+  liées une par une » — ainsi un objet toutes classes le reste quand une nouvelle classe est
+  ajoutée au jeu. Payload : `equipement.classes` = tableau d'ids (l'ancien scalaire `classe`
+  reste accepté pour un onglet d'admin resté ouvert). `EquipementController::synchroniserClasses`
+  **resynchronise la collection** (ajouts *et* retraits, dédoublonnage, ids inconnus ignorés) —
+  l'ancien code faisait un simple `addClasse()`, donc éditer un équipement empilait les classes
+  sans jamais pouvoir en enlever une.
+  > ⚠️ `getAllEquipementGroupedByPosition` ne joint **plus** `equipement.classe` : sur une
+  > relation N-N ce `leftJoin` dans un `select` scalaire **dupliquait la ligne d'équipement**
+  > autant de fois qu'il avait de classes. Les classes viennent maintenant de
+  > `getClassesByEquipement()` (une requête, indexée par id) et sont attachées par
+  > `/api/equipements/info` sous la clé `classes: [{id, nom}]`. Les champs `classeId`/`classeName`
+  > n'existent plus dans cette réponse.
+  >
+  > La restriction reste **purement descriptive** : rien côté gameplay ne l'applique
+  > (ni `EquipementEquipeService::wear`, ni l'étal, ni l'achat). Un joueur peut équiper un objet
+  > d'une autre classe — à implémenter le jour où la règle doit mordre.
+- **Upload des icônes d'équipement (23/07/2026)** : plus de copie manuelle de fichier ni de
+  saisie du nom d'icône. Le formulaire de création/édition d'équipement expose un bouton
+  « Choisir une image » ; à l'enregistrement, le front poste le fichier sur
+  **`POST /api/equipement/upload-icone`** (multipart : `icone`, `name`, `positionEquipement`,
+  `currentIcone`), puis enchaîne sur `/api/equipement/create` avec le nom de fichier renvoyé.
+  Côté back, **`src/service/EquipementIconeUploader.php`** slugifie le nom de l'objet
+  (`AsciiSlugger` + lowercase : « Bouclier du pleutre » → `bouclier-du-pleutre.png`), devine
+  l'extension **d'après le contenu réel** (`guessExtension()`, whitelist png/jpg/webp/gif, 4 Mo
+  max), range le fichier dans le dossier de la position (`bras-droit`, `tete`…, re-slugifié pour
+  bloquer toute traversée de répertoire) et suffixe `-2`, `-3`… si un homonyme existe déjà —
+  sauf quand la cible est l'icône actuelle de l'objet édité (on écrase alors volontairement).
+  Le dossier cible vient du paramètre `app.images_dir` (`services.yaml`), pointé sur
+  `public/img` du **back**, dont les sous-dossiers sont **bind-montés sur ceux de
+  `alcazan-front-prod/public/img`** dans `docker-compose.yaml` : le back écrit, le
+  front sert immédiatement. Route en ROLE_ADMIN via le motif `upload-icone` de `security.yaml`.
+  Les anciennes icônes remplacées ne sont **pas** supprimées (fichiers orphelins possibles).
+  > Depuis le 26/07/2026, toute la mécanique vit dans `src/service/ImageUploader.php`, partagée
+  > avec les autres images de l'administration (§17) ; `EquipementIconeUploader` n'est plus que
+  > l'accroche du sous-dossier de position, et reste le point d'entrée des équipements.
+- **`POST /api/equipement/create` réparé (23/07/2026)** : la route 500-ait depuis le commit
+  `3c80f09` (« Mise en place des DTO/mapRequestPayload »). `CreateEquipementDTO` était **autowiré
+  comme un service vide**, jamais hydraté depuis la requête → `Typed property […]::$equipement
+  must not be accessed before initialization`. Corrigé par `#[MapRequestPayload]` sur l'argument
+  du contrôleur + `array $equipement` dans le DTO (le contrôleur consommait déjà un tableau).
+  `DTO/Equipement/Object/{Equipement,Caracteristique}.php`, devenus inutilisés (et de forme
+  fausse : ni `icone` ni `idEquipement`), ont été **supprimés**.
+- **ShopMaker — développé de 0 (22/07/2026)** : éditeur de boutiques visuel. Une boutique = un
+  nom, des **PNJ marchands** associés (cases à cocher ; `pnj.shop` synchronisé) et **trois
+  sections** (équipements / consommables / objets), chaque ligne portant un **prix propre**
+  (`prix` nullable = prix de base de l'item). Front : `ShopMakerPage` (AdminCatalog pour la liste)
+  + `ShopEditorForm` (nom, PNJ, 3 panneaux de section avec picker d'article + input prix +
+  vignette + retrait). Back : `/api/shop/editor/{list,get,referentiels,save,delete}`
+  (`ShopEditorController` + `ShopEditorService`, ROLE_ADMIN via security.yaml). Sauvegarde =
+  reconstruction intégrale des lignes (sans churn d'id) + `em->clear()` avant relecture (le côté
+  inverse des collections n'est pas synchronisé après remove/recreate). Modèle : `prix` ajouté à
+  `ShopEquipement`/`ShopObjet`, nouvelle entité `ShopConsommable` (shop+consommable+prix, lien
+  unidirectionnel), collection `Shop.shopConsommables` ; `shop.type` passe à `'mixte'`.
+- **Rendu joueur (branché le 22/07/2026)** : `PnjService::getPnjShop` renvoie **toujours** une
+  forme valide `{items, typeShop, title}` pour tout type de boutique (y compris `mixte`) — plus
+  de tableau nu qui faisait planter `ShopBuy` (`items.map` sur `undefined`, régression corrigée).
+- **Achat — retour utilisateur (23/07/2026)** : `POST /joueur/buy/shop` renvoie désormais
+  `{money, prix, nomEquipement, message}` en 200 et **400 `{money, error}`** en cas de refus
+  (or insuffisant, objet inconnu) au lieu d'un 200 muet. Côté front, `ShopBuy` affiche un toast
+  de confirmation (« X acheté pour N pièces d'or. »), neutralise les boutons pendant
+  l'aller-retour (plus de double débit au double clic), libelle « Or insuffisant » sur les
+  articles hors budget, et **recale l'or sur la réponse du serveur** (qui fait foi).
+  `ShopView` affiche la **bourse du joueur** dans sa barre d'onglets, branchée sur
+  `joueurState.money` : elle se décrémente en direct à chaque achat.
+- **Vente — implémentée le 23/07/2026** : l'onglet Vendre montre le **sac du joueur** (les trois
+  familles : équipements, consommables, objets) au **même format de carte que l'étal**, avec
+  filtres par catégorie et pastille de quantité. Le prix affiché est le **prix de revente de
+  l'item** (`equipement.prixRevente`, `consommable.prixRevente`, `objet.prix_vente`), **0 si le
+  contenu n'en définit pas** — la carte le grise alors et le message de confirmation devient
+  « X cédé — le marchand n'en donne rien. ». Endpoint **`POST /joueur/sell/shop`**
+  (`{type, id, quantite}` où `type` = enum `TypeItem` : `equipement|consommable|objet`) → 200
+  `{money, prix, prixUnitaire, quantite, nom, message}` ou **400 `{money, error}`**. Le
+  **client n'envoie jamais de montant** : `src/service/VenteService.php` relit le prix sur
+  l'item, contrôle la possession, décrémente la pile (ou supprime la ligne quand on cède les
+  derniers exemplaires) et crédite l'or **dans une seule transaction** — un item ne peut donc
+  pas disparaître sans être payé, ni l'inverse. Un objet **équipé n'est pas vendable** (il vit
+  dans `user_equipement`, hors du sac) : il faut le retirer d'abord. Même UX que l'achat : toast
+  de confirmation, bourse mise à jour en direct depuis la réponse serveur, boutons neutralisés
+  pendant l'aller-retour, liste rafraîchie après la vente.
+  **Vente par lot** : les piles portent un sélecteur `− [n] + Tout` ; la carte affiche alors le
+  **prix total** et rappelle le prix unitaire (« 18 l'unité · 6 en stock »), le bouton devient
+  « Vendre les N ». Le **stock est relu côté serveur dans la transaction** (`Vous n'en possédez
+  que N.`) : une quantité périmée côté client ne peut pas sur-vendre, et le front resynchronise
+  son inventaire sur cette erreur. Couvert par `tests/Service/VenteServiceTest.php` (9 tests).
+- **Carte d'article partagée** : `components/pnj/shopView/itemCard/ItemCard.jsx` porte toute la
+  présentation d'un article (rareté, vignette + quantité, caracs **ou** description, prix,
+  sélecteur de quantité optionnel, bouton d'action avec états `pending`/`disabled`). Acheter et
+  Vendre s'appuient dessus — ne pas redupliquer de markup de carte dans un onglet. Le bloc
+  prix/quantité/bouton est collé en bas (`.cardMeta { margin-top: auto }`) pour que les boutons
+  d'une même rangée s'alignent quel que soit le nombre de caractéristiques.
+  La section **équipement** est affichée et le **prix par ligne est honoré** : `getEquipementsShop`
+  fait `COALESCE(se.prix, equipement.prixAchat)` (affichage) et `/joueur/buy/shop` reçoit le
+  `pnjId` pour débiter le prix boutique à l'achat (front défensif `items || []`).
+  **Reste à faire : afficher les sections consommable / objet en jeu** (le front `ShopView`/
+  `ShopBuy` ne rend que l'équipement).
 
 ---
 
@@ -205,7 +373,8 @@ d'équipements. **Aucun contrôle de rôle côté back** (voir §6).
   description + **`equipement_caracteristique`**. **`position_equipement`**, **`rarity`** ET
   **`rarete`** (doublon legacy, `rarete` orphelin).
 - **`objet`** (quête/loot), **`consommable`** (type vie|mana, points, isBuff, cooldown, prix).
-- **`shop`** (type equipement|objet|consommable) + `shop_equipement`, `shop_objet`.
+- **`shop`** (type equipement|objet|consommable|**mixte**) + `shop_equipement`, `shop_objet`,
+  **`shop_consommable`** — chaque ligne porte un `prix` nullable (null = prix de base de l'item).
 - **Quêtes** : `quete` (name, minimalLevel, alignement→, objet→, quete→ auto-référence),
   `sequence` (position, is_last, next/lastSequence→, dialogue→, pnj→, has_action), `dialogue`
   (titre, contenu), `action` (name, api_link, params, quantity, message + FK optionnelles
@@ -256,7 +425,8 @@ auth JWT obligatoire (`^/api`) sauf mention.
 | `/api/joueur/attack/joueur\|monster\|boss` | `{targetId, spellId}` → dégâts, riposte, xp, loot, mort |
 | `/api/joueur/spell/self` | Soin/buff sur soi `{spellId}` |
 | `/api/joueur/use/consommable` | `{consommableId}` (vie/mana) |
-| `/api/joueur/buy/shop` | `{item}` (⚠️ lit aussi `idEquipement` dans une branche — bug) |
+| `/api/joueur/buy/shop` | `{item, pnjId}` → `{money, prix, nomEquipement, message}` ; 400 `{money, error}` si or insuffisant |
+| `/api/joueur/sell/shop` | `{type, id, quantite}` (`TypeItem`) → `{money, prix, prixUnitaire, quantite, nom, message}` ; 400 `{money, error}` si absent du sac ou stock insuffisant |
 | `/api/user/recompense/boss` | `{bossId}` → message (⚠️ ne donne pas la récompense) |
 
 ### Quêtes & PNJ (contrat refondu le 15/07/2026)
@@ -279,13 +449,16 @@ Supprimés par la refonte : `/api/pnj` (démarrait la quête à la consultation 
 ### Inventaire & équipement
 `/api/inventaire`, `/api/inventaire/equipement/equipe`, `/api/inventaire/equipement/wear`,
 `/api/inventaire/equipement/unwear` (`{idEquipement}` ; maintiennent
-`joueur_caracteristique_bonus` par ±delta).
+`joueur_caracteristique_bonus` par ±delta). Depuis le 23/07/2026 wear/unwear délèguent tout à
+`EquipementEquipeService` et renvoient **400 `{error}`** sur refus métier (objet absent du sac,
+déjà porté, non équipé) — le front affiche le message en toast.
 
 ### Référentiels & admin (⚠️ non protégés par rôle)
 `/api/quests`, `/api/quest`, `/api/quest/infos`, `/api/quest/create`, `/api/quest/update`
 (upsert complet), `/api/map/all`, `/api/map/create`, `/api/map/update`, `/api/map/cases/infos`,
 `/api/pnj/infos`, `/api/pnj/create`, `/api/monstres`, `/api/monstre/create`, `/api/bosses`,
 `/api/consommables`, `/api/objets`, `/api/sequences`, `/api/equipement/create`,
+`/api/equipement/upload-icone` (multipart, ROLE_ADMIN — upload + renommage de l'icône),
 `/api/equipement/formelements`, `/api/equipements`, `/api/equipements/grouped`,
 `/api/equipements/info`.
 **Hors firewall API (sans auth !)** : `GET /insert/lvl`, `GET /insert/blankmap` (seeds), `GET /`.
@@ -501,29 +674,26 @@ JSON → remplacées par `{}` (nécessaire à l'alignement du schéma).
 
 ## 9. Proposition : déplacement des joueurs en temps réel (Mercure)
 
+> **Mise à jour 24/07/2026 — l'infra Mercure est EN PLACE** (livrée avec le système d'échange,
+> voir §12) : hub `alcazan-mercure` dans le docker-compose (port hôte **5001**, macOS squatte
+> 5000 avec AirPlay), env alignées (`MERCURE_URL=http://mercure/.well-known/mercure`,
+> `MERCURE_JWT_SECRET` = la clé de signature du hub), JWT d'abonnement par joueur via
+> `POST /api/mercure/token` (topics explicites, jamais de wildcard) passé en query param
+> `authorization` de l'EventSource (hook front `src/hooks/useMercure.js`). Il ne reste pour le
+> déplacement temps réel que les étapes 2 et 3 ci-dessous (publier depuis `JoueurController`,
+> s'abonner dans `Map.jsx`).
+
 Le besoin : voir les autres joueurs bouger sur la carte sans recharger. Aujourd'hui le front ne
 voit les autres joueurs qu'en rechargeant les cases (`/api/map/cases/data`).
 
 **Recommandation : Mercure** — le bundle `symfony/mercure-bundle` est déjà installé et configuré
-(`config/packages/mercure.yaml`, variables `MERCURE_*` dans `.env`) ; il ne manque **que le hub**.
+(`config/packages/mercure.yaml`, variables `MERCURE_*` dans `.env`) ; le hub tourne désormais.
 C'est la solution la plus simple ici : pas de serveur WebSocket à maintenir (contrairement à
 Ratchet, abandonné), le hub est un binaire Caddy prêt à l'emploi, et côté front c'est de
 l'`EventSource` natif (pas de lib).
 
-1. **Ajouter le hub au docker-compose** :
-   ```yaml
-   mercure:
-     image: dunglas/mercure
-     container_name: mercure-hub
-     ports: ["5000:80"]
-     environment:
-       SERVER_NAME: ':80'
-       MERCURE_PUBLISHER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
-       MERCURE_SUBSCRIBER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
-       MERCURE_EXTRA_DIRECTIVES: "cors_origins http://localhost:3000 http://localhost"
-   ```
-   (et aligner `MERCURE_URL=http://mercure/.well-known/mercure` +
-   `MERCURE_PUBLIC_URL=http://localhost:5000/.well-known/mercure` + le secret JWT dans `.env`).
+1. ~~Ajouter le hub au docker-compose~~ — **fait** (service `mercure`, clé de dev partagée
+   publisher/subscriber ; en production, générer une vraie clé hors compose).
 2. **Publier côté back** : dans `updateCasePosition` et `updateMapPosition`
    (`JoueurController`), injecter `Symfony\Component\Mercure\HubInterface` et publier un
    `Update` sur le topic `map/{mapId}` avec `{userId, pseudo, abscisse, ordonnee, skin}`.
@@ -605,8 +775,9 @@ raisonnable pour tester, pas pour durer.
   docker exec mysql mysql -uroot -ppassword -e "DROP DATABASE IF EXISTS chusei_test; CREATE DATABASE chusei_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
   docker exec -e DATABASE_URL="mysql://root:password@mysql:3306/chusei_test" symfony-backend sh -c "echo y | php bin/console doctrine:migrations:migrate --env=test"
   docker exec -i mysql mysql -uroot -ppassword chusei_test < seeds/content-seed.sql
-  docker exec mysql mysql -uroot -ppassword chusei_test -e "UPDATE carte_carreau SET joueur_id = NULL"
   ```
+  (le seed est assaini depuis le 25/07/2026 — plus besoin de vider `carte_carreau.joueur_id`
+  à la main, cf. §13.4)
 
 ### Écarts assumés (non traités, avec raison)
 - **Namespace `App\service` minuscule** : renommage massif à faible valeur, risqué sur
@@ -682,3 +853,1549 @@ react-hook-form) et bouton « Supprimer » cassé.
 - `BATTRE_MONSTRE`/`KILL_PVP` : nécessitent un tracking par joueur avant activation.
 - Un utilisateur de test `test-refonte-quete@test.alcazan.fr` (ROLE_ADMIN) existe dans la base
   de dev suite à la vérification bout en bout — à supprimer ou déclasser si gênant.
+
+---
+
+## 12. Système d'échange joueur-à-joueur temps réel — 24/07/2026
+
+Échange type Dofus entre deux joueurs adjacents : session à double confirmation, synchronisée en
+temps réel via Mercure, finalisée dans une transaction SQL verrouillée. Conception issue de
+`alcazan_systeme_echange_temps_reel.md` (adaptée : pas d'instance d'objet dans ce jeu, pas de
+Wallet, pas d'état « en combat » — une ligne d'échange est un triplet `{type, itemId, quantité}`
+et l'or vit sur `user.money`).
+
+### Socle : SacService + réservations (refactoring transverse)
+- **`src/service/SacService.php` est l'UNIQUE point de mutation des items et de l'or d'un
+  joueur** (piles `inventaire_*` + `user.money`). Aucun flush interne : chaque méthode s'appelle
+  depuis un `wrapInTransaction` chez l'appelant. Tous les anciens points de mutation ont été
+  migrés dessus : `VenteService`, `EquipementEquipeService`, `InventaireService` (réduit à un
+  adaptateur déprécié), `QuestProgressionService` (conditions, coûts et récompenses),
+  `PlayerActionController` (consommation, achat), `DeathService` (loot).
+- **Réservations** : table `reservation_ressource` (`user`, `type` = enum `TypeRessource`
+  (equipement/consommable/objet/**or**), `item_id` (0 pour l'or), `quantite`, `origine`,
+  `origine_id`). Le « disponible » = possédé − réservé est ce que contrôlent `retirerItem` /
+  `debiterOr` : un item proposé dans un échange ne peut être ni vendu, ni consommé, ni équipé,
+  ni donné à une quête ; l'or réservé n'est pas dépensable. Libération idempotente par origine.
+- Index uniques ajoutés sur `inventaire_consommable` et `inventaire_objet` (même filet que
+  `uniq_inventaire_equipement`).
+
+### Domaine et API
+- Entités `Echange` (participants, statut `StatutEchange` = en_attente/ouvert/complete/annule/
+  expire, or proposé par joueur, deux booléens de confirmation, **version** entière, expiresAt
+  glissant +5 min) et `EchangeLigne` (unique par (échange, joueur, type, item)). Les sessions
+  terminées restent en base : audit minimal.
+- `EchangeService` = l'unique machine à états (création/acceptation/refus/offre/confirmation/
+  annulation/expiration lazy). Règles : joueur courant issu de l'authentification ; **verrou
+  pessimiste sur la ligne `echange`** à chaque mutation (actions des deux joueurs sérialisées) ;
+  `expectedVersion` sinon **409 + état frais** (`EchangeConflitException`) ; toute modification
+  d'offre invalide LES DEUX confirmations et repousse l'expiration ; proximité vérifiée CÔTÉ
+  SERVEUR (`ProximiteJoueurs`, Tchebychev : rayon 1 pour proposer, 2 pour accepter/finaliser).
+- `EchangeFinalisationService` : à la double confirmation, dans LA MÊME transaction — verrous
+  `PESSIMISTIC_WRITE` sur les deux users par id croissant, revalidation complète (statut,
+  confirmations, expiration, proximité, possessions, or), libération des réservations puis
+  transferts croisés via SacService (débits avant crédits pour l'or). La moindre erreur annule
+  tout, y compris la confirmation déclenchante.
+- Endpoints (POST, convention projet) : `/api/echange/create|accept|decline|current|item/add|
+  item/remove|or|confirm|cancel` (`EchangeController`, DTO + `#[MapRequestPayload]`).
+  `item/add` porte une quantité ABSOLUE (re-proposer le même item ajuste la ligne).
+- Expiration : lazy à chaque accès + filet `app:echanges:expirer` toutes les minutes par le
+  conteneur `alcazan-scheduler`.
+
+### Temps réel (Mercure)
+- Hub `dunglas/mercure` dans le compose (port hôte 5001). `EchangePublisher` publie l'ÉTAT
+  COMPLET normalisé (`EchangeNormalizer`, format unique REST/Mercure) en updates **privés** sur
+  `echange/{id}` + `user/{id}` (invitations). Un échec de publication ne casse jamais l'action
+  (log ; le front resynchronise via `/api/echange/current`).
+- Abonnement : `POST /api/mercure/token` (`MercureJwtFactory`, HS256 signé avec la clé du hub)
+  délivre un JWT subscriber limité aux topics du joueur, passé en query param `authorization`
+  (EventSource ne porte pas de header). Jamais de wildcard dans les claims.
+
+### Front
+- Branche Redux `echange` (`{etat, invitations}`) — l'état est TOUJOURS le payload normalisé du
+  serveur ; le reducer ignore les versions plus anciennes (événements dans le désordre).
+- `components/echange/EchangeHost.jsx`, rendu UNE fois dans MapPage (patron PnjInteractionHost) :
+  resync `/echange/current` au montage et à la reconnexion SSE, abonnement `useMercure`
+  (`user/{id}` + `echange/{id}`), bannière d'invitation Accepter/Refuser, bannière « en
+  attente », et `EchangeModal` (GameModal/ModalShell) : clic sur un item du sac = +1 proposé,
+  − / ✕ sur ses lignes, or validé à Entrée/blur, une requête à la fois, 409 → état frais adopté.
+- Clic droit sur un joueur (`Player.jsx` → `PlayerContextMenu`) : « Proposer un échange »
+  (grisé si distance > 1 — confort d'affichage, le serveur revérifie).
+- Pendant qu'une modale de jeu est ouverte, les déplacements clavier sont gelés
+  (`[data-game-modal]`) : on ne peut pas « s'enfuir » avec la fenêtre ouverte ; le serveur
+  revérifie de toute façon la proximité à la finalisation.
+
+### Tests
+- `tests/Service/SacServiceTest.php` (piles, or, réservations, idempotence) ;
+  `VenteServiceTest`/`EquipementEquipeServiceTest` réécrits sur un VRAI SacService (repos
+  mockés) ; `tests/Functional/EchangeApiFunctionalTest.php` : cycle complet à deux comptes,
+  invalidation des confirmations, 409, objet réservé invendable, libération à l'annulation,
+  tiers rejeté, adjacence requise.
+
+---
+
+## 13. Donjons — conception et lot 0 (25/07/2026)
+
+### 13.1 État des lieux avant travaux
+Le « Donjon Scintillant » était du **contenu, pas un système** : aucune ligne de code ne
+connaissait la notion de donjon.
+
+- Salles = cartes 8 → 9 → 10 → 11 (boss carte 11 en 11,8), reliées par des `carte_carreau`
+  `is_wrap` ordinaires ; salle au trésor = carte 15, gardée par le `wrap` 2
+  (`map_condition = 'boss'`, `value = 1`, fenêtre de 3 h après la mise à mort).
+- « Coffres » = **une seule** case action (id 7, `SCRIPTED_EFFECT` / `recompense_boss`).
+- **Zéro monstre** sur les cartes 8–11 → aucune difficulté avant le boss.
+- `Carte.isInstance` existe, vaut 0 partout et **n'est lu nulle part**.
+
+Quatre défauts bloquants relevés le 25/07/2026 :
+1. **Boss mort en permanence** — `boss.actual_life` est une colonne GLOBALE que rien ne
+   remontait : descendue à 1/5000 le 19/07, Grimbald se one-shottait depuis.
+2. **Coffre sans butin** — `recompenseBoss()` ne faisait qu'afficher des messages
+   (ni or, ni objet, ni XP), ignorait la table de taux (70/30) et était **rejouable à
+   l'infini** tant que la fenêtre de 3 h durait.
+3. **Fuite de données de partie dans le seed** — `carte_carreau.joueur_id` et l'état de
+   `monstre_carreau` étaient versionnés dans `seeds/content-seed.sql`.
+4. Fenêtre de 3 h **codée en dur** (`10800`) dans `WrapService`.
+
+### 13.2 Décisions de conception (arbitrées avec l'auteur le 25/07/2026)
+- **Verrou quotidien** : reset à **heure fixe (5 h)**, **par joueur**, et **lié à l'instance**
+  (modèle WoW) — le verrou se pose à la première entrée ; on peut revenir dans SA propre
+  instance jusqu'au reset, mais pas en obtenir une neuve. Règle gratuitement les
+  déconnexions et les wipes, qui sont ingérables avec un 24 h glissant strict.
+- **Groupe éphémère** limité au donjon (pas de système de groupe global) : modale à
+  l'entrée → partir seul, ou avec des joueurs inscrits. Il meurt avec l'instance.
+- **Stratégie** : menace, phases, zones télégraphiées, adds, enrage et énigmes sont tous
+  attendus au lot 3.
+- **Instanciation : surcouche, jamais de clonage de `carte_carreau`.** Le décor reste
+  unique et versionné ; l'occupation et l'état des monstres viennent de tables runtime
+  quand le joueur est en instance. Cloner ~1 900 lignes de décor par groupe polluerait les
+  tables de contenu, casserait le seed et exposerait les clones au MapMaker.
+
+> ⚠️ Le verrou structurel n'est pas le compteur de 5 joueurs : c'est que **la position des
+> joueurs et l'état des monstres vivent dans les tables de contenu**
+> (`carte_carreau.joueur_id` est un **OneToOne** — une tuile = un joueur pour tout le
+> serveur) et que `boss.actual_life` est partagée. Séparer décor et état de partie est le
+> vrai chantier ; il touche le chargement de carte et le déplacement.
+
+### 13.3 Découpage
+| Lot | Contenu |
+|---|---|
+| 0 ✅ | Assainissement (ci-dessous) |
+| 1 | Tables donjon + instances solo, `DonjonInstanceService`, `DonjonMapView`, verrou |
+| 2 | Groupe éphémère de 5, modale d'entrée, sync Mercure (`donjon/{id}`) |
+| 3 | Menace, phases, zones télégraphiées, adds, enrage, énigmes, tick de boss paresseux |
+| 4 | DonjonMaker (panel admin, patron QuestMaker) |
+| 5 | Front : lobby, HUD boss, retours de mécaniques |
+
+### 13.4 Lot 0 — livré le 25/07/2026
+- **`src/service/RecompenseService.php` — nouveau** : UNIQUE point de conversion
+  « ligne `Recompense` → items + or + XP », partagé par les quêtes, le butin de boss et les
+  futurs coffres de donjon. Ne flushe pas (l'appelant fournit la transaction, même contrat
+  que `SacService`). Porte aussi `tirerDansTable()` : tirage pondéré par `taux`, total
+  ramené à 100 minimum → **une table dont les taux somment à moins de 100 comporte une part
+  de « rien »**, ce qui permet de doser la générosité sans table fictive.
+- `QuestProgressionService::giveActionReward()` délègue désormais à ce service
+  (la logique de distribution n'existe plus qu'à un seul endroit).
+- **Coffre réellement lootable** (`QuestEffectRegistry::recompenseBoss`) : tirage dans la
+  table de butin puis distribution effective. Trois garde-fous, car la case est cliquable à
+  volonté — avoir tué le boss, kill de moins de `FENETRE_SALLE_TRESOR_SECONDES`, et **un
+  seul ramassage par mise à mort** (`UserBoss::butinDisponible()` / colonne `last_loot`,
+  migration `Version20260724223740`, qui marque les kills antérieurs comme déjà ramassés
+  pour ne pas offrir de lot rétroactif).
+- **Vie du boss** (`SpellService::doDamageOnBoss`) : remise à `maxLife` à la mise à mort
+  (correctif d'attente — elle passera par instance au lot 1). Au passage : la phase du boss
+  est calculée sur la vie RESTANTE et non sur la valeur d'avant le coup, un boss terrassé ne
+  riposte plus, et `kill` est renvoyé explicitement (le `needRefresh` du contrôleur testait
+  un `isset` sur une clé jamais posée).
+- Fenêtre de la salle au trésor → `GameContent::FENETRE_SALLE_TRESOR_SECONDES`
+  (portée par le donjon lui-même quand le DonjonMaker existera).
+- **`scripts/content-dump.sh`** : `carte_carreau` et `monstre_carreau` sont désormais des
+  tables « assainies » — **structure** exportée depuis `chusei` (indispensable :
+  `CREATE TABLE ... LIKE` ne recopie PAS les clés étrangères), **données** exportées depuis
+  une copie temporaire où `joueur_id` est nul et où les populations sont remises à
+  `quantity_base` / `monstre.max_life`. Le seed ne transporte plus aucune donnée de partie
+  et ne bouge plus quand les joueurs se déplacent.
+
+### Tests
+- `QuestEffectRegistryTest` : distribution + horodatage du ramassage, refus sans kill, refus
+  du second ramassage sur le même kill, refus d'un kill trop ancien, coffre vide.
+- `QuestApiFunctionalTest` : `testLeCoffreDuBossExigeUneMiseAMortRecente` et
+  `testLeCoffreDuBossDistribueLeButinUneSeuleFoisParKill` (or réellement crédité, `last_loot`
+  horodaté, second passage refusé sans re-créditer).
+- `QuestProgressionServiceTest` est branché sur un **vrai** `RecompenseService` (repos
+  mockés) : les assertions portent sur les effets finaux en inventaire, pas sur la délégation.
+
+### 13.5 Lot 1 — instances, livré le 25/07/2026
+
+**Modèle.** Deux familles de tables, séparées par la ligne « contenu / état de partie » :
+
+| Contenu (seed) | Runtime (blacklisté du seed) |
+|---|---|
+| `donjon` — nom, niveau min, taille de groupe max, durée max, **heure de reset**, actif, carte+case de sortie | `donjon_instance` — donjon, leader, statut, **`boss_current_life`**, expiration |
+| `donjon_salle` — carte, ordre, type (`entree`/`couloir`/`boss`/`tresor`) ; **une carte n'appartient qu'à un donjon** (index unique) | `donjon_instance_membre` — instance, user, `present` |
+| | `donjon_verrou` — user, donjon, **`jour_reset`**, instance |
+
+Aucune règle n'est codée en dur côté service : tout ce qui se règle vit dans `donjon`.
+Le Donjon Scintillant est seedé (cartes 8→9→10→11→15, niveau 15, 5 joueurs, 180 min,
+reset 5 h, sortie carte 6 en 10,3).
+
+**Les deux invariants qui portent tout le système.**
+
+1. **Le décor n'est jamais dupliqué.** Une salle reste UNE carte en base ; seule
+   l'occupation est virtualisée. En instance, `carte_carreau.joueur_id` n'est ni lu ni
+   écrit — cette colonne est un **OneToOne global** (une tuile = un joueur pour tout le
+   serveur), donc structurellement incapable de porter plusieurs groupes.
+   `DonjonMapView::casesPourJoueur()` retire les joueurs joints depuis le décor puis
+   réinjecte les membres présents de l'instance, avec exactement les mêmes champs : le
+   front ne voit aucune différence. **Ne jamais cloner `carte_carreau` pour instancier.**
+2. **Le verrou est lié à l'instance**, pas au fait d'être entré. `jour_reset` est le
+   « jour de donjon » (date décalée de `heure_reset`), pas la date civile : à 5 h, une
+   session de 2 h du matin compte pour la veille. Tant que le jour n'a pas tourné, le
+   joueur retrouve SON instance — déconnexion, mort, wipe et pause sont ainsi gratuits.
+
+**Verrou consommé ≠ porte close.** `DonjonInstanceService::peutRejoindre()` est la seule
+écriture de cette règle : TERMINEE et ABANDONNEE restent rejoignables (on revient chercher
+le coffre, ou reprendre l'expédition quittée), seule l'EXPIRATION — durée max écoulée —
+ferme la porte jusqu'au reset. Le test porte AUSSI sur `expireAt` et pas seulement sur le
+statut, l'expiration étant paresseuse : une instance périmée peut encore être marquée
+`en_cours` en base. `normalizePorte` descend le résultat dans `verrou.rejoignable`, et la
+modale n'affiche « Retourner dans mon expédition » que dans ce cas ; sinon elle annonce le
+prochain reset et ne propose plus AUCUNE entrée (ni solo, ni groupe, ni « Rejoindre » —
+toutes échoueraient). Corrigé le 27/07/2026 : le bouton de retour était proposé même sur
+une expédition refermée et répondait « revenez après 5 h », le message d'une NOUVELLE
+expédition sur un bouton qui promettait le contraire.
+
+**Position.** Elle n'est PAS dupliquée dans `donjon_instance_membre` : elle reste
+`user.map_id/case_*` comme partout ailleurs. Seule l'écriture dans le décor est sautée.
+La collision entre joueurs se juge alors entre membres de l'instance
+(`DonjonMapView::positionOccupeeDansInstance`).
+
+**Fichiers.**
+- `src/service/DonjonInstanceService.php` — **LA machine à états** : entrée (verrou, niveau
+  min, taille de groupe), sortie, rattachement, vie du boss d'instance, expiration
+  **paresseuse** (patron d'`EchangeService`, pas de tâche planifiée). Aucun autre service
+  ni contrôleur ne doit écrire dans `donjon_instance*` / `donjon_verrou`.
+- `src/service/DonjonMapView.php` — LECTURE seule : la vue de carte instanciée.
+- `src/service/DonjonSortieService.php` — repose dehors un joueur dont l'instance a expiré
+  (isolé pour garder `DonjonInstanceService` libre de toute dépendance au décor).
+- `JoueurController::updateMapPosition` — franchir une porte de donjon = entrer dans une
+  instance ; un refus (`DonjonException`) se présente comme un wrap bloqué. Sortir vers le
+  monde ouvert quitte l'instance (qui reste acquise jusqu'au reset).
+- `SpellService::doDamageOnBoss` — la vie vient de l'instance quand il y en a une ;
+  `boss.actual_life` ne sert plus qu'aux boss de plein air. À 0 → instance `TERMINEE`.
+- `DeathService::diePlayer` — mourir renvoie au cimetière, donc hors de l'instance : le
+  membre est marqué absent (sinon « présent » fantôme, et instance jamais refermée).
+
+**Pièges rencontrés.**
+- `instance` est un **mot réservé du DQL** : interdit comme alias (`inst` à la place).
+- `CREATE TABLE ... LIKE` ne recopie pas les FK (cf. §13.4) — même piège, autre endroit.
+
+### Tests
+- `tests/Service/DonjonInstanceServiceTest.php` : le découpage du jour de donjon
+  (bascule pile à l'heure de reset, session nocturne rattachée à la veille, deux sessions
+  à cheval sur minuit partageant un verrou, heure configurable, prochain reset).
+- `tests/Functional/DonjonApiFunctionalTest.php` : l'entrée crée une instance **sans
+  marquer la case du décor**, le verrou rend la même instance et n'en crée pas de seconde,
+  **deux groupes occupent la même salle sans se voir**, la vie du boss est propre à chaque
+  instance (et `boss.actual_life` ne bouge plus), le niveau minimum refuse sans rien créer,
+  la sortie rend la case du monde ouvert.
+
+### 13.6 Lot 2 — groupe éphémère de 5, livré le 25/07/2026
+
+**Le lobby est une table à part, pas un statut d'instance.** `donjon_groupe` /
+`donjon_groupe_membre` (runtime, blacklistés du seed) portent le groupe formé DEVANT la
+porte. Raison d'être de cette séparation : **un lobby ne consomme aucun verrou**. Composer,
+hésiter, se disperser doit laisser la journée intacte — ce qui serait impossible si le
+groupe était une instance « pas encore lancée ». Les verrous sont posés d'un coup au
+lancement, par `DonjonInstanceService::entrer()`, pour tout le groupe.
+
+Un lobby oublié expire au bout de 15 min (expiration **paresseuse**, comme les instances).
+
+**Endpoints** (`DonjonController`, DTO + `MapRequestPayload`, erreurs métier en 400 FR) :
+`porte` (tout l'état de la modale en une requête), `groupe/creer`, `groupe/rejoindre`,
+`groupe/quitter`, `groupe/lancer`, `groupe/courant`. La porte exige la **proximité** :
+le serveur ne se fie pas au clic du front.
+
+> **L'entrée SOLO n'a volontairement pas d'endpoint** : elle reste un franchissement de
+> wrap ordinaire (`/api/joueur/map/update_position`), qui crée l'instance au passage
+> depuis le lot 1. Ne pas dupliquer cette logique dans `DonjonController`.
+
+**Placement du groupe.** `DonjonTeleportService::placerDansLaSalleDEntree()` (ex-
+`DonjonSortieService`, renommé : il fait maintenant l'entrée ET la sortie) pose chaque
+membre sur SA case. Le point d'arrivée est **déduit du contenu** — la porte de retour de la
+salle d'entrée, c'est-à-dire la case wrap qui vise `donjon.carte_sortie_id` : rien à
+configurer en plus, et un donjon redécoupé dans le MapMaker reste cohérent.
+
+**Temps réel.** `DonjonPublisher` (patron d'`EchangePublisher`) sur deux topics :
+`donjon-groupe/{id}` (composition du lobby) et `user/{id}` (dissolution et **lancement**,
+qui doit atteindre un joueur même modale fermée puisqu'il le téléporte).
+`MercureController` inclut désormais le topic du groupe dans le JWT d'abonnement.
+
+**Front.** `DonjonHost` rendu UNE fois dans MapPage (patron `EchangeHost`/
+`PnjInteractionHost`) : état de la porte, actions, abonnement Mercure.
+`DonjonEntreeModal` est purement présentationnel (`GameModal`/`ModalShell`/`GameButton`,
+zéro couleur en dur). État Redux `donjon.porte` = la case cliquée ; la grille ne fait que
+dispatch. `MapController` renvoie `portesDonjon` (carteCarreauId → donjonId) pour que
+`Map.handleClick` ouvre la modale au lieu de franchir, **sans requête par clic**.
+
+**Trois pièges corrigés en vérifiant dans le navigateur :**
+- Après une action qui TÉLÉPORTE (entrée seule, lancement), il ne faut pas relire la porte :
+  on n'est plus devant, le serveur répond « vous êtes trop loin » (`executer(..., false)`).
+- Les compagnons doivent prendre le `mapId` dans le **payload Mercure** : celui du store est
+  encore la carte du monde ouvert, et rafraîchir dessus recharge la mauvaise carte.
+- Le meneur reçoit aussi son propre `donjon.groupe.lance` sur son topic personnel → double
+  toast et double rechargement s'il n'est pas filtré sur `meneurId`.
+
+`MapController::getMapAndCasesData` renvoie maintenant `abscisseJoueur`/`ordonneeJoueur`, et
+`Map.fetchMapData` les réadopte : un `needRefresh` resynchronise donc TOUTE téléportation
+décidée par le serveur (entrée en groupe, éjection d'instance expirée, mort).
+
+### Tests
+- `tests/Functional/DonjonGroupeApiFunctionalTest.php` : un lobby ne consomme aucun verrou
+  (créer + quitter laisse la journée intacte), le lancement met tout le groupe dans UNE
+  instance avec un verrou chacun et des cases distinctes, les membres se voient entre eux,
+  seul le meneur lance, la taille max est respectée (5e refusé), **un inscrit déjà
+  verrouillé empêche le lancement sans rien créer**, le départ du meneur dissout le groupe,
+  la porte décrit le donjon et exige la proximité.
+- ⚠️ La base de test n'est pas remise à zéro entre les tests : compter les instances par
+  `donjon_instance_membre.user_id` des joueurs du test, jamais par `COUNT(*)` global.
+
+### 13.7 Lot 3 — stratégie de combat, livré le 25/07/2026
+
+**Prérequis d'abord : les garde-fous serveur.** `doDamageOnBoss` ne vérifiait ni les PA, ni
+la carte, ni la portée — on pouvait frapper à travers le décor et passer ses PA en négatif.
+Sans ces contrôles, « portée » et « déplacement » ne veulent rien dire, donc aucune mécanique
+de positionnement n'est crédible. `DonjonCombatService::verifierAttaqueBoss()` les impose ;
+un refus sort en 400 avec message FR.
+
+**Le tick est PARESSEUX.** Le combat du jeu est asynchrone (pas de tour) : sans horloge,
+« annoncer une zone qui frappe dans 10 s » n'a aucun sens. Plutôt qu'une tâche planifiée —
+le scheduler tourne à la minute, beaucoup trop grossier — le tick est joué au fil des
+requêtes des joueurs de l'instance (`jouerTick`, appelé par l'attaque du boss et par
+`POST /api/donjon/combat`), sur la base du temps réellement écoulé. Deux conséquences
+voulues : aucune dérive entre l'horloge serveur et l'affichage, et un groupe qui ne fait
+rien ne fait rien avancer — le comportement attendu d'une rencontre mise en pause.
+
+**Les phases ne sont pas une entité.** Une mécanique est bornée par une fenêtre de vie du
+boss (`vieMax` → `vieMin` en %). « Renforts à 75 %, enrage à 25 % » = deux lignes de
+`donjon_mecanique`, sans table de phases ni code dédié. Même découpage que `boss_sortilege`.
+
+| Mécanique | Effet de jeu | Paramètres |
+|---|---|---|
+| `ZONE_TELEGRAPHIEE` | rend le DÉPLACEMENT décisif : cases annoncées, qui frappent au tick suivant | `rayon`, `degats`, `delaiSecondes` |
+| `ADDS` | oblige à se répartir les cibles | `monstreId`, `quantite` |
+| `ENRAGE` | impose un DPS minimum, donne un rythme | `apresSecondes`, `multiplicateur` |
+| `ENIGME_LEVIERS` | force la répartition dans la salle : N leviers, joueurs DIFFÉRENTS, dans une fenêtre | `leviers`, `fenetreSecondes`, `degatsBoss` |
+
+**La table de menace** (`donjon_instance_membre.menace`) est le seul choix qui fait exister
+le rôle de tank : le boss frappe la plus GROSSE menace présente, pas le dernier attaquant.
+Les dégâts alimentent la menace 1:1, les soins 0,5:1 (un soigneur monte sans passer devant).
+
+**Le boss n'agit que dans SA salle** (27/07/2026). `cibleDuBoss($instance, $boss)` ne retient
+que les membres présents sur la carte du boss ; sans `$boss`, la menace pure fait foi. Sans ce
+filtre, un joueur mort et revenu en salle 1 continuait d'être frappé et de servir de centre aux
+zones télégraphiées — annoncer une zone dans une autre salle est de toute façon injouable,
+personne ne peut s'en écarter en la voyant.
+
+**Une zone qui met à 0 TUE** (27/07/2026). `jouerTick` fait passer les victimes par
+`DeathService::diePlayer` — **après son flush**, car `diePlayer` écrit en DQL puis
+resynchronise l'entité : l'ordre inverse réécrirait l'état d'avant la mort. Ce n'était traité
+nulle part : la victime restait en vie NÉGATIVE, sur la carte du donjon, libre de se déplacer
+et toujours ciblée. Même correction pour la riposte du boss (`SpellService`), qui peut tuer un
+autre joueur que l'attaquant. ⚠️ Après un `diePlayer`, la vie est déjà refaite : le contrôleur
+ne peut plus déduire la mort de `lifeJoueur <= 0`, d'où le drapeau `mortJoueur` remonté par
+`doDamageOnBoss`. Côté front, `DonjonCombatHost` détecte la perte d'instance (`instanceId` qui
+tombe à null) et relit `/joueur/data/minimal` : rien d'autre n'apprend au client une mort
+décidée par le tick d'un coéquipier.
+
+**Les renforts ont leur propre table.** `monstre_carreau` est attachée au décor : comme
+`carte_carreau.joueur_id`, elle ne peut pas porter plusieurs groupes. Les adds vivent donc
+dans `donjon_instance_monstre`, et `DonjonMapView` les réinjecte (`renfortId`) exactement
+comme les membres du groupe. Ils se combattent par `POST /api/donjon/renfort/attaquer`,
+avec les mêmes garde-fous (PA, carte, portée).
+
+**Un monstre d'instance est un monstre ORDINAIRE** (corrigé le 27/07/2026) : il n'est pas
+dessiné sur la carte, il se cible tout seul quand on marche sur sa case, il rend de
+l'expérience au coup et du butin à la mort (`DeathService::dieRenfort`, qui compte aussi
+`MONSTRE_TUE`), et `/api/donjon/renfort/attaquer` renvoie la MÊME forme de réponse que
+`/api/joueur/attack/monster`. La table diffère, le jeu non. L'ancienne version le dessinait
+en sprite cliquable (type de cible `"renfort"` absent de `Spell.handleAttack`) : on voyait
+trois monstres impossibles à cibler et impossibles à tuer, seuls du jeu à se comporter ainsi.
+
+**Les leviers réutilisent la machinerie des quêtes** : ce sont des cases action ordinaires
+(`SCRIPTED_EFFECT` / `actionner_levier`), pas un nouveau type de case. La proximité est déjà
+vérifiée par `QuestProgressionService`, qui injecte désormais `carteCarreauId` dans les
+params des effets de case — un levier a besoin de savoir LEQUEL il est.
+
+**Contenu seedé pour Grimbald** : zone (rayon 1, 180 dégâts, 12 s, cooldown 45 s), renforts
+à 75-40 %, énigme à 2 leviers (600 dégâts), enrage à 25 % après 10 min. Tout est éditable en
+base — le DonjonMaker du lot 4 n'aura qu'à écrire ces lignes.
+
+Les deux leviers sont posés sur la **salle 3** (carte 10), et pas sur la salle du boss : une
+condition `LEVIERS` s'évalue sur la salle PRÉCÉDENTE, donc les leviers qui ouvrent la porte
+du boss vivent dans la salle d'avant. Ils sont aux deux extrémités opposées des coursives —
+(0,11) et (23,12), 23 cases d'écart (corrigé le 27/07/2026 : ils étaient sur des îlots
+derrière l'eau, sans AUCUNE case atteignable adjacente, ce qui rendait le donjon
+infranchissable). ⚠️ Vérifier l'ACCESSIBILITÉ, pas seulement `is_usable` : une case foulable
+peut être enfermée dans une poche que le décor isole.
+
+⚠️ Avec `leviers: 2`, l'énigme exige deux cases DISTINCTES actionnées par deux JOUEURS
+différents : le Donjon Scintillant n'est donc pas franchissable en solo, par construction.
+Mettre `leviers: 1` (DonjonMaker) le rend jouable seul.
+
+**Tables runtime ajoutées** (blacklistées du seed) : `donjon_instance_zone`,
+`donjon_instance_monstre`, `donjon_instance_levier` ; colonnes `donjon_instance.combat_debut_at`
+/ `dernier_tick_at` / `mecaniques_jouees` (JSON portant les cooldowns) et
+`donjon_instance_membre.menace`.
+
+### Tests
+- `tests/Service/DonjonCombatServiceTest.php` (14) : garde-fous d'attaque (PA, portée,
+  mauvaise carte), table de menace (le tank garde l'aggro, un mort ou un sorti n'est plus
+  ciblé, soin < dégâts), fenêtres de phase (bornes incluses), chronomètre d'enrage.
+- `tests/Functional/DonjonCombatApiFunctionalTest.php` (12) : attaque hors de portée et sans
+  PA refusées **sans entamer le boss ni passer les PA en négatif**, la menace s'alimente et
+  engage le chrono, **le boss frappe le porteur de menace et pas l'attaquant**, la zone est
+  annoncée avant de frapper et centrée sur sa cible, **sortir de la zone évite les dégâts /
+  y rester coûte**, les renforts sont propres à l'instance (rien dans `monstre_carreau`) et
+  se combattent, un levier seul ne résout rien, deux leviers par deux joueurs blessent le
+  boss, un levier hors donjon est refusé.
+
+> ⚠️ Piège de test : Grimbald frappe pour ~440 et un personnage de base a 400 PV — il meurt
+> au premier coup, part au cimetière et QUITTE l'instance, si bien qu'il n'y a plus rien à
+> observer. Les tests de mécaniques donnent 20 000 PV au joueur ; dans la vraie partie, c'est
+> le rôle du groupe de 5.
+
+### 13.8 Lot 4 — DonjonMaker, livré le 25/07/2026
+
+Page admin `/administration/donjonmaker`, sur le patron du QuestMaker : liste + formulaire
+unique pour créer et éditer, référentiels et config chargés une seule fois.
+
+**Un donjon se sauvegarde en UN appel** (`/api/donjon/editor/save`) : fiche + plan des
+salles + mécaniques, dans une transaction. La réponse est le donjon rechargé, ids définitifs.
+
+> **Les ids sont STABLES** — les lignes envoyées avec un id sont mises à jour, celles sans id
+> créées, celles absentes supprimées. Ce n'est pas du confort : `donjon_instance.mecaniques_jouees`
+> référence des ids de mécanique, `donjon_verrou` et `donjon_instance` des ids de donjon. Une
+> sauvegarde qui effacerait tout pour recréer casserait les expéditions en cours.
+
+**Le front ne connaît aucun type de mécanique.** `Config\DonjonMecaniqueConfig` (patron de
+`QuestActionTypeConfig`) décrit pour chaque type ses champs, ses valeurs par défaut et une
+phrase d'aide qui explique l'effet EN JEU. Ajouter une mécanique = un case dans l'enum
+`MecaniqueDonjon` + un case dans la config ; le formulaire suit sans être touché. Les champs
+`type: "select"` tirent leurs options du `catalog` nommé dans les référentiels.
+
+**Le plan est une liste ordonnée** : l'ordre de la liste EST l'ordre de traversée (boutons
+↑/↓), le serveur renumérote — pas de champ « ordre » à saisir, donc pas de trous ni de
+doublons possibles. Les cartes déjà prises par un autre donjon sont grisées (index unique
+en base sur `donjon_salle.carte_id`).
+
+**Validations serveur** (le formulaire n'en porte aucune) : nom obligatoire, au moins une
+salle, pas de carte en double ni empruntée à un autre donjon, taille de groupe ≥ 1, heure de
+reset 0-23, borne basse de vie ≤ borne haute, monstre des renforts existant, paramètres
+inconnus écartés et manquants complétés par les défauts de l'enum — une mécanique
+enregistrée est toujours exécutable.
+
+**Suppression refusée** si le donjon a des expéditions (en cours ou passées) : la supprimer
+effacerait des parties. Le message invite à le désactiver (`actif = false`), ce qui bloque
+les nouvelles entrées sans interrompre les groupes à l'intérieur. L'éditeur affiche aussi un
+avertissement quand des expéditions sont en cours.
+
+`/api/donjon/editor` est ROLE_ADMIN dans `security.yaml` (lectures comprises), **placé avant**
+la règle `^/api` — et sans collision avec les routes joueur `/api/donjon/*`.
+
+### Tests
+- `tests/Functional/DonjonEditorApiFunctionalTest.php` (9) : l'éditeur est fermé aux non-admins
+  (403 même en lecture), lecture complète du plan et des mécaniques, la config décrit toutes
+  les mécaniques de l'enum (champs + aide), **une sauvegarde identique ne change aucun id**,
+  l'ordre des salles suit la liste envoyée, refus (sans rien modifier) d'un donjon sans salle,
+  d'une carte en double et d'une fenêtre de vie inversée, refus de supprimer un donjon qui a
+  des expéditions.
+
+### 13.9 Lot 5 — front du donjon, livré le 25/07/2026
+
+Avant ce lot, les mécaniques du lot 3 existaient côté serveur mais **rien ne les affichait** :
+un joueur subissait les zones sans les voir venir, ce qui rendait la mécanique la plus
+intéressante injouable. C'est ce que ce lot corrige.
+
+**Le sondage EST le moteur de la rencontre.** `DonjonCombatHost` (rendu une fois dans
+MapPage) appelle `POST /api/donjon/combat` toutes les 2 s en combat engagé, 8 s au repos.
+Ce n'est pas un rafraîchissement d'affichage : le tick serveur est **paresseux**, donc les
+zones annoncées ne frappent que lorsque quelqu'un demande l'état. **Supprimer ce sondage
+fige le combat** — c'est écrit dans le docblock du service ET dans `DonjonApi.combat()`.
+
+**Le front ne simule rien.** Le compte à rebours d'une zone est recalculé à chaque demi-
+seconde depuis `resoudreAt` (horloge SERVEUR), jamais décompté localement : un onglet en
+arrière-plan afficherait sinon un délai faux à son retour.
+
+**Ce qui est affiché** (`DonjonCombatHud`, présentation pure) : jauge de vie et phase du
+boss, badge ENRAGÉ clignotant, alerte de zone avec compte à rebours (battement accéléré
+sous 3 s), nombre de renforts, et **table de menace** — le premier de la liste porte
+l'aggro, c'est l'information qui décide du placement. Le HUD est en `pointer-events: none`
+pour ne jamais voler un clic à la grille.
+
+**Zone sur la grille** : classes `case-zone-donjon` / `-imminente` sur les cases couvertes
+(`mapGrid.scss`, feuille globale assumée). Le contraste est **volontairement fort** —
+hachures + bordure claire + battement. Constaté en jeu sur la salle 4 (dallage violet
+sombre) : un rouge à 25 % d'opacité était totalement illisible, alors que c'est le seul
+indice permettant de s'écarter à temps.
+
+**Monstres d'instance** : rien n'est dessiné sur la case (27/07/2026). Comme les monstres du
+monde ouvert — peints dans l'image de fond de la carte —, ils sont **invisibles** et se
+ciblent AUTOMATIQUEMENT quand on marche sur leur case. Le ciblage est fait par
+`Map.majCibleMonstreInstance()` (appelé après chaque fetch de carte, chaque déplacement et
+chaque changement de carte) depuis le champ `renfortId` **de la case**, et pas depuis l'état
+de combat : c'est la carte qui descend à chaque déplacement. Il est dans `Map` et non dans
+`Player` — contrairement au patron `hasMonstre` du monde ouvert — parce que `Player` est
+aussi rendu pour les autres membres du groupe, et que seule `Map` sait quelle case est la
+MIENNE. Quitter la case décible (comme un monstre du monde ouvert), la carte de cible
+(`Target`) réutilise le rendu « monstre » via `/api/target/renfort`, et `Spell.jsx` route le
+type `"renfort"` vers `/api/donjon/renfort/attaquer`.
+
+⚠️ Conséquence assumée : les adds invoqués par un boss (mécanique `ADDS`) sont invisibles
+eux aussi. Les redessiner voudrait dire distinguer « population de salle » et « add » dans
+`donjon_instance_monstre` (une colonne d'origine), pas ressusciter un sprite pour les deux.
+
+**État Redux** `donjon.combat` = toujours le payload du serveur (patron `echange`).
+
+### 13.10 Correctif — les passages internes n'étaient pas distingués (25/07/2026)
+
+**Symptôme** : depuis la salle 1, cliquer sur le passage vers la salle 2 rouvrait la modale
+d'entrée avec « Vous avez déjà ouvert le Donjon Scintillant aujourd'hui ». Impossible de
+circuler dans son propre donjon.
+
+**Cause** : `DonjonMapView::portesDeDonjon()` marquait comme porte d'entrée TOUTE case wrap
+visant une carte de donjon — y compris les passages INTERNES entre salles, et le passage de
+retour vers le monde. Le front ouvrait donc la modale au lieu de traverser.
+
+**Correctif** : une porte n'en est une que si elle mène vers un donjon **autre** que celui
+où l'on se trouve déjà (`portesDeDonjon($cases, $carteId)`). Symétriquement,
+`JoueurController::updateMapPosition` ne rappelle plus `entrer()` quand le joueur reste dans
+SON donjon : c'était une entrée complète (transaction, verrou, rattachement) à chaque porte
+franchie — et, plus grave, une instance expirée jetait alors une exception qui **bloquait le
+joueur à l'intérieur**, incapable même de rejoindre la sortie.
+
+Deux régressions ajoutées à `DonjonApiFunctionalTest` : vue du monde ouvert la porte est bien
+signalée / vue de l'intérieur `portesDonjon` est vide, et changer de salle ne recrée ni
+instance ni verrou.
+
+### 13.11 Conditions de passage entre salles (25/07/2026)
+
+Le donjon n'était qu'une enfilade de cartes qu'on traversait librement. Une salle peut
+désormais exiger quelque chose de la salle PRÉCÉDENTE.
+
+**Contenu** — `donjon_salle` gagne `condition` (enum `ConditionSalleDonjon`),
+`condition_params` (JSON), `monstre_id` et `nombre_monstres` :
+
+| Condition | Effet |
+|---|---|
+| `AUCUNE` | passage libre (défaut) |
+| `SALLE_NETTOYEE` | tous les monstres de la salle précédente doivent être tombés |
+| `LEVIERS` | N leviers de la salle précédente actionnés par des joueurs DIFFÉRENTS dans la même fenêtre |
+| `BOSS_VAINCU` | réservé à la salle au trésor |
+
+**La population des salles est PAR INSTANCE.** `monstre_carreau` est attachée au décor,
+donc partagée : deux groupes se nettoieraient mutuellement les salles (même défaut que
+`carte_carreau.joueur_id`). La population va donc dans `donjon_instance_monstre`, la table
+des renforts du lot 3, et `DonjonMapView` l'affiche déjà.
+
+**Le refus de passage se voit.** `verifierPassage()` jette une `DonjonException` que
+`/api/joueur/map/update_position` renvoie en `{"message"}`, et le front la présente en toast
+(`Map.changeMap`) — le message compte les créatures restantes (« Il en reste 3. »). Idem pour
+l'annonce de population (`{"annonce"}`) à l'arrivée dans la salle : les monstres n'étant pas
+dessinés, c'est le seul signal qu'il y a quelque chose à nettoyer ici. Ces deux toasts étaient
+commentés dans `Map.jsx` : un clic sur la porte ne produisait RIEN de visible, ce qui se lit
+comme un bug de la carte et non comme une règle du donjon.
+
+**Runtime** — `donjon_instance_salle` (blacklistée du seed) porte deux drapeaux, chacun
+pour une raison précise :
+- `peuplee` : une salle ne se peuple qu'UNE fois par expédition. Sans ça, un aller-retour
+  referait naître les monstres — ferme à XP à volonté.
+- `ouverte` : **une porte franchie le reste**. On ne refait pas l'énigme à chaque passage,
+  et surtout un joueur qui revient sur ses pas n'est jamais enfermé derrière une condition
+  qu'il ne peut plus remplir (monstres déjà tués, leviers refroidis).
+
+`DonjonSalleService` est l'UNIQUE machine à états de cette progression.
+
+**Les leviers servent DEUX maîtres.** Un même levier peut commander une porte de salle et
+l'énigme de combat du boss. L'ORDRE compte, et c'est le piège : l'énigme de combat
+**consomme** les leviers en se résolvant. Le registre enregistre donc le geste
+(`enregistrerLevier`), regarde d'ABORD la porte, puis l'énigme de combat — l'inverse
+laissait la porte fermée alors que le joueur avait bien résolu l'énigme.
+
+**Deux bugs trouvés en jouant la scène :**
+- Résoudre l'énigme AVANT d'engager le boss le tuait sur-le-champ : `bossCurrentLife` vaut
+  null tant qu'il n'a pas été touché, et on retranchait les dégâts à 0. La vie de départ
+  vient maintenant de `vieBoss()`, via `DonjonInstanceService::bossDeLInstance()` (qui
+  remplace au passage le balayage de tous les boss que faisait `DonjonController`).
+- La migration ajoutait `condition` en NOT NULL sans valeur par défaut : les salles
+  existantes recevaient `''`, que l'enum refuse — tout donjon déjà créé devenait illisible.
+  Un backfill a été ajouté à la migration.
+
+### Tests
+- `tests/Functional/DonjonSalleApiFunctionalTest.php` : une salle se peuple à l'arrivée et
+  **une seule fois** (aller-retour sans repeuplement), la condition de nettoyage bloque
+  puis libère sans déplacer le joueur en cas de refus, **une porte franchie reste ouverte**
+  même si la condition redevient fausse, et la salle d'entrée ne peut pas exiger d'avoir
+  nettoyé la précédente.
+
+---
+
+## 14. Cases interactives et métiers — 25/07/2026
+
+### 14.1 Pourquoi une entité séparée d'`Action`
+`Action` est un **bouton de séquence de quête** : elle porte `nextSequence`, `endsQuest`,
+`sequenceActions` et six relations de contenu. Y brancher ressources, coffres, cooldowns
+partagés et métiers en aurait fait une entité fourre-tout, où un caillou de forêt aurait
+traîné des colonnes de branchement de dialogue. `Interaction` est donc un système à part ;
+`Action` reste ce qu'elle est.
+
+Les 4 cases action existantes (coffre de Grimbald, 2 leviers) ont été **migrées** vers des
+interactions ; `carte_carreau.action_id` n'est plus utilisé par aucune case. L'auberge
+n'était pas une case mais un dialogue de PNJ : rien à migrer.
+
+### 14.2 Modèle
+**Contenu** (versionné) : `interaction` (nom, type, skin, coût en PA, récompense, effet
+scripté, métier + niveau requis + XP donnée, cooldown, portée, usage unique) et
+`interaction_condition` (N conditions : niveau, classe, quête terminée, possède un objet,
+alignement). `carte_carreau.interaction_id` la pose sur une case.
+
+**Runtime** (blacklisté) : `interaction_recharge`, `joueur_metier`.
+
+**La PORTÉE du cooldown est la clé de voûte** — un seul mécanisme couvre des besoins très
+différents :
+
+| Portée | Comportement | Usage |
+|---|---|---|
+| `JOUEUR` | chacun son cooldown | herbe, filon : chacun récolte de son côté |
+| `MONDE` | un seul cooldown pour tout le serveur | coffre que le premier arrivé vide pour les autres |
+| `INSTANCE` | par expédition de donjon | levier, coffre de boss |
+
+> ⚠️ `interaction_recharge.cle` est une CHAÎNE (`monde`, `user:38`, `instance:12`) et non
+> deux colonnes nullables : en MySQL, un index UNIQUE laisse passer les doublons dès qu'une
+> colonne vaut NULL — deux joueurs auraient pu créer deux recharges « monde » concurrentes
+> sur la même case. Un verrou pessimiste sur la case complète la protection.
+
+**Rien n'est redistribué dans `InteractionService`** : les items et l'or passent par
+`RecompenseService`, l'XP de métier par `MetierService`, les effets scriptés par
+`QuestEffectRegistry`. Il orchestre, il ne duplique pas.
+
+### 14.3 Métiers (minimal)
+`metier` (contenu) + `joueur_metier` (niveau, expérience). **Pas de ligne = niveau 0** :
+c'est ce qui permet d'exiger « Herboriste niveau 1 » pour la toute première cueillette sans
+créer une ligne par métier à l'inscription. `MetierService` est l'unique point de mutation ;
+il fait monter de plusieurs niveaux d'un coup si le gain le justifie. La courbe
+(`experiencePourNiveau`) est un **placeholder** assumé, comme les formules d'XP et d'honneur.
+
+Pas de craft : hors sujet ici, ce sera un chantier à part.
+
+> ⚠️ **Périmé depuis le 26/07/2026.** L'invariant « pas de ligne = niveau 0 » est devenu
+> « pas de ligne = métier NON APPRIS », et `gagnerExperience()` ne crée plus la ligne.
+> Voir **§16 Artisanat, lot 0**.
+
+### 14.4 Points d'extension prévus
+Types d'interaction et types de condition sont des enums adossés à une config serveur (même
+patron que `QuestActionTypeConfig` et `DonjonMecaniqueConfig`) : ajouter « pêcher » ou une
+condition d'alignement = un case dans l'enum + un case dans la config. Le front suit sans
+être touché.
+
+### Tests
+- `tests/Service/MetierServiceTest.php` : niveau 0 sans ligne, courbe croissante, montée de
+  plusieurs niveaux sur un gros gain, plafond `niveauMax`.
+- `tests/Functional/InteractionApiFunctionalTest.php` : butin + XP de métier + coût en PA,
+  refus sans le métier / au mauvais niveau / sans PA (**et un refus ne consomme pas de PA**),
+  **portée JOUEUR vs MONDE** (une seule recharge `monde` quel que soit le nombre de joueurs),
+  proximité requise, usage unique jamais rechargé.
+
+### Reste à faire
+- **InteractionMaker** (page admin pour définir les interactions) et **outil « Interaction »
+  du MapMaker** pour les poser : aujourd'hui, poser une case interactive passe encore par du
+  SQL. `MapController::updateMap` ne gère ni `action_id` ni `interaction_id`.
+- Affichage du cooldown restant et de l'indisponibilité côté joueur (`InteractionService::decrire`
+  existe et renvoie déjà tout, mais n'est exposé par aucun endpoint).
+
+### 14.5 InteractionMaker et outil MapMaker — 25/07/2026
+
+**Deux écrans, deux rôles.** L'onglet **Interactions** définit CE QU'EST une interaction
+(type, coût en PA, récompense, cooldown + portée, conditions, métier). L'outil **« Poser une
+interaction »** du Map Maker la POSE sur des cases. Poser une case interactive ne passe donc
+plus par du SQL.
+
+`MapController::updateMap` gère maintenant `interaction_id`, **retrait compris** :
+l'option « ✕ Retirer l'interaction de la case » arme l'outil avec un id nul. Sans ce cas
+explicite, une case interactive n'aurait jamais pu être défaite depuis l'interface.
+
+**Le front ne connaît aucun type en dur** : types, portées de recharge et conditions
+viennent de `Config\InteractionConfig` (patron de `QuestActionTypeConfig` et
+`DonjonMecaniqueConfig`). Les champs `type: "select"` tirent leurs options du `catalog`
+nommé dans les référentiels.
+
+**Ids stables** comme partout : les conditions envoyées avec un id sont mises à jour, celles
+sans id créées, celles absentes supprimées. La récompense est mise à jour en place plutôt
+que recréée.
+
+**Suppression refusée** si l'interaction est encore posée sur des cases — ça laisserait des
+cases orphelines. Le message dit quoi faire (la retirer des cartes, ou la désactiver).
+
+> ⚠️ Piège Doctrine rencontré : `pourEditeur()` lisait les conditions depuis
+> `$interaction->getConditions()`. Après une sauvegarde, cette collection avait été chargée
+> AVANT l'insertion et rendait un état périmé (zéro condition). Conditions et cases posées
+> sont désormais **relues depuis leur repository**, jamais depuis la collection de l'entité.
+
+**Correctif de robustesse au passage** : `MapService::getPositionAfterMapChange()` jetait une
+exception (500) quand toutes les cases autour d'un passage étaient occupées, laissant le
+joueur bloqué de l'autre côté. Elle se rabat maintenant sur n'importe quelle case libre de
+la carte — atterrir un peu plus loin vaut mieux que ne pas pouvoir passer.
+
+### Tests
+- `tests/Functional/InteractionEditorApiFunctionalTest.php` (8) : éditeur fermé aux
+  non-admins (403) **alors que `/api/interaction/executer` reste joueur**, la config décrit
+  types/portées/conditions, création + relecture complète, **ids de condition stables**,
+  retrait d'une condition, JSON d'effet invalide refusé, suppression refusée tant que
+  l'interaction est posée.
+
+### 14.6 Front des cases interactives — 25/07/2026
+
+`MapController::getMapAndCasesData` renvoie désormais `interactions` : l'état de chaque case
+interactive (`disponible`, `raison`, `disponibleAt`, `epuisee`, `coutPa`), calculé par
+`InteractionService::decrireCases()`.
+
+**Ce n'est qu'un confort d'affichage.** Cliquer une case indisponible reste possible ; c'est
+le serveur qui refuse, avec la vraie raison. Le front n'évalue aucune condition.
+
+`decrireCases()` calcule la clé de portée « instance » UNE fois : chaque case aurait sinon
+relancé la recherche d'instance courante (et son expiration paresseuse) à chaque chargement
+de carte.
+
+**Le compte à rebours vient de `disponibleAt`** (date serveur) et est recalculé chaque
+seconde, jamais décompté localement — même règle que les zones télégraphiées du donjon.
+
+**Une case indisponible s'efface sans disparaître** : repère gris, image désaturée, badge de
+temps restant, infobulle expliquant le blocage. La faire disparaître serait pire que de
+l'afficher : le joueur doit continuer à voir qu'il y a quelque chose ici.
+
+**`executer()` renvoie l'état frais de la case** (`etat`) : le front met à jour le repère
+sans recharger toute la carte. Un rechargement de carte reprend la main sur cet état local.
+
+---
+
+## 15. EquipementMaker : icône perdue et import CSV — 25/07/2026
+
+### 15.1 Le bug de l'icône « qui ne s'enregistre jamais »
+**Symptôme rapporté** : un équipement créé sans image restait sans image pour toujours ; on
+pouvait le rééditer et choisir un fichier, la base ne bougeait pas.
+
+**Preuve** relevée avant correction : `alcazan-front-prod/public/img/equipement/tete/`
+contenait `chapeau-du-rodeur-verdoyant.png` (368 Ko, 23/07) alors que
+`equipement.icone` de la ligne 18 était vide, et `capuche-des-sables-ocres.png` n'avait même
+aucune ligne en base. **L'upload passait, l'enregistrement non.**
+
+**Cause** : `CreateEquipementForm` câblait `onSubmit={() => this.handleSubmit()}` — sans
+l'event, donc **sans `preventDefault()`**. Seul le `onClick` du bouton annulait la soumission.
+Toute soumission implicite (Entrée dans l'un des 16 champs du formulaire) déclenchait donc le
+GET natif du `<form>` : la page se rechargeait (`localhost:3000/?name=…&icone=…`) pendant que
+`handleSubmit` attendait la réponse de l'upload, et l'appel `/api/equipement/create` — qui
+n'arrive qu'APRÈS cette réponse — ne partait jamais. Reproduit à l'identique via
+`form.requestSubmit()`, corrigé et revérifié.
+
+**Correctifs** (`CreateEquipementForm.jsx`, `EquipementController.php`, `EquipementPage.jsx`) :
+- l'event est transmis au handler ; le `onClick` redondant du bouton a été retiré.
+- `/api/equipement/create` renvoie `{"id": …}` et le formulaire **adopte cet id** : il restait
+  sinon en mode « création » après un premier enregistrement, et le clic suivant (typiquement
+  pour ajouter l'image) fabriquait un doublon au lieu de compléter l'objet. `EquipementPage`
+  suit la sélection pour que le catalogue reste aligné.
+- `createEquipement()` **flushe en fin d'action** : les `remove()` d'une caractéristique
+  remise à 0 n'étaient persistés que si une caractéristique suivante portait une valeur.
+- `setCurrentEquipement()` recharge la liste locale quand l'id demandé n'y est pas
+  (import CSV, autre onglet) au lieu de vider le formulaire en silence.
+
+### 15.2 Import CSV en masse
+`POST /api/equipement/import-csv` (ROLE_ADMIN, multipart `csv` + `mettreAJour`) →
+`src/service/EquipementCsvImporter.php`. Pensé pour créer une centaine d'objets d'un coup
+**puis** leur accrocher les images une par une dans l'EquipementMaker.
+
+- **Rapport ligne par ligne**, pas un OK/KO : sur 100 objets, l'utile est de savoir lesquels
+  ont échoué et pourquoi. Chaque ligne réussie renvoie le **chemin d'image attendu**
+  (`img/equipement/<position>/<slug>.png`), calculé avec le slug de `EquipementIconeUploader`.
+- **Référentiels résolus par nom contre la base** (positions, raretés, classes,
+  caractéristiques) : ajouter une caractéristique au jeu la rend importable sans toucher au
+  code. Colonne `classes` séparée par `|`, `/` ou `,` — **vide = toutes classes**, convention
+  du jeu. Colonne `icone` facultative ; sur une mise à jour, une cellule vide **conserve**
+  l'image en place.
+- **Pièges d'export tableur traités** : BOM UTF-8, encodage Windows-1252, séparateur deviné
+  (`;` / `,` / tabulation) sur la ligne d'en-tête, alias de colonnes, colonnes inconnues
+  rapportées et ignorées.
+- Une ligne fautive est **rapportée et sautée**, les autres passent ; l'ensemble est dans UNE
+  transaction (rollback global uniquement si la base casse ou si le fichier dépasse
+  `MAX_LIGNES` = 1000). `mettreAJour` (défaut : oui) complète un équipement homonyme, ce qui
+  rend un CSV rejouable après correction sans semer de doublons.
+- Front : `administration/components/forms/ImportEquipementCsv/`, replié par défaut au-dessus
+  du catalogue, avec génération du **modèle CSV** à partir du référentiel réel.
+
+---
+
+## 16. Artisanat — 26/07/2026
+
+Plan complet et arbitrages : **`docs/ARTISANAT_PLAN.md`** (critique du document de game
+design, découpage en 6 lots, points de vigilance). Cette section documente ce qui est livré.
+
+### 16.1 Lot 0 — socle des métiers (livré le 26/07/2026)
+
+**Le changement structurant : apprendre est un ACTE.** Jusqu'ici, une ligne `joueur_metier`
+naissait toute seule au premier gain d'expérience, et « pas de ligne » voulait dire « jamais
+pratiqué ». Le game design impose un plafond de **2 métiers de récolte et 3 de fabrication** —
+or on ne plafonne pas ce qui s'auto-crée : on aurait compté des métiers que le joueur n'a
+jamais choisis, et le premier caillou récolté par erreur aurait brûlé une de ses deux places.
+
+L'invariant devient donc **« pas de ligne = métier NON APPRIS »**, et
+`MetierService::gagnerExperience()` **lève une `MetierException`** au lieu de créer la ligne.
+Ce refus est le garde-fou qui rend le plafond réel : sans lui, une case de récolte mal
+configurée contournerait toute la règle.
+
+| Élément | Rôle |
+|---|---|
+| `Enum\FamilleMetier` (`RECOLTE`/`CRAFT`) | rend le plafond calculable — sa seule raison d'être |
+| `Config\ArtisanatConfig` | les plafonds et leurs libellés, en UN endroit |
+| `metier.famille`, `metier.niveau_max` (200) | contenu |
+| `joueur_metier.appris_at` | trace de l'acte d'apprentissage |
+| `pnj_metier` (N-N) | ce qu'un maître enseigne |
+| `Exception\MetierException` | refus destiné au joueur, sorti en 400 |
+
+**`MetierService` reste l'unique point de mutation** et ne flushe toujours pas (contrat de
+`SacService` / `RecompenseService`) : `apprendre`, `oublier`, `gagnerExperience`, `niveau`,
+`estAppris`, `placesRestantes`, `progressionDe`, `vueMaitre`.
+
+**Oublier perd la progression**, volontairement : sans oubli, une erreur de choix enfermerait
+le personnage à vie. La confirmation est côté front, la règle côté serveur.
+
+**Endpoints joueur** — `POST /api/metier/{progression,apprendre,oublier}`. Le contrôleur ouvre
+la transaction. (`POST /api/joueur/metiers` a été déplacé ici et n'existe plus ;
+`InteractionApi.metiers()` côté front est devenu `MetierApi`, il n'avait aucun appelant.)
+
+**Maître de métier** : `pnj.type = 'metier'` → `PnjInteractionService` renvoie `view: 'metier'`,
+sur le patron exact de la vue guilde (dialogue de la séquence sans quête + liste). Le front rend
+`components/pnj/metierView/MetierView` depuis `PnjInteractionHost` — **une seule modale PNJ**,
+jamais une par tuile. Après un apprentissage ou un oubli, la vue est **relue depuis le serveur**
+plutôt que recalculée : dupliquer la règle des plafonds — et son libellé — des deux côtés était
+le vrai risque, un aller-retour sur une action aussi rare ne coûte rien.
+
+**Fiche de personnage** : panneau « Métiers » (progression + places restantes). La barre d'XP
+est bornée **entre le palier du niveau courant et le suivant** ; calculée sur `0 → prochain
+palier`, elle reculerait à chaque montée de niveau. Les libellés de famille viennent du serveur
+(`famillesLabels`) : aucune famille en dur dans le front.
+
+**Contenu posé** (en SQL, en attendant l'ArtisanatMaker du lot 4) : les 11 métiers du game
+design et « Eolan, maître des métiers » sur la carte 2 en (11,9), qui les enseigne tous.
+
+#### Pièges rencontrés
+- **`ALTER TABLE ... ADD col DATETIME NOT NULL` échoue en mode strict** dès que la table a des
+  lignes (MySQL n'a rien à y écrire). La base locale était vide, `chusei_test` non : la
+  migration a cassé là. Corrigé en ajoutant la colonne **avec un défaut** (qui remplit les
+  lignes existantes) puis en retirant ce défaut. Même traitement pour `metier.famille`.
+- Le littéral `'0000-00-00 00:00:00'` dans un `WHERE` est **refusé** en mode strict.
+- Le panneau Métiers a fait déborder la colonne gauche du profil : `.equipCard` était en
+  `flex: 1`, donc **rétrécissable sous la hauteur de son contenu**, qui se peignait alors
+  par-dessus le panneau suivant. `flex: 1 0 auto` + défilement de la colonne.
+- Le cadre de modale est en `overflow: hidden` : une vue de maître enseignant onze métiers se
+  faisait couper net. Le défilement est sur le **corps entier** de la vue, pas par famille —
+  deux ascenseurs imbriqués se disputent la molette.
+
+### Tests
+- `tests/Service/MetierServiceTest.php` (13) : niveau 0 sans apprentissage, refus du 3ᵉ métier
+  de récolte, **indépendance des familles**, places restantes, refus d'expérience sur un métier
+  non appris, courbe croissante, montée multi-niveaux, plafond `niveauMax`, progression
+  atteignable jusqu'au niveau 200.
+- `tests/Functional/MetierApiFunctionalTest.php` (10) : apprentissage, double apprentissage
+  refusé, **plafond de famille qui n'écrit rien**, familles séparées, oubli qui libère une place
+  et perd la progression, oubli d'un métier non appris, vue du maître avec ses raisons de refus,
+  métier inexistant, authentification exigée.
+- Suite complète : **220 tests verts**.
+
+### 16.2 Lot 1 — ressources et karma (livré le 26/07/2026)
+
+**Une ressource est un `objet` marqué, pas une entité.** `objet.metier_id` (nullable) +
+`objet.niveau_ressource` suffisent : une ressource se ramasse, s'empile, s'échange et se vend
+exactement comme un objet. Une entité `Ressource` parallèle aurait obligé à réoutiller
+l'inventaire, l'échange, la boutique, le butin et les récompenses — pour aucun gain.
+`Objet::estRessource()` n'est rien d'autre que « a un métier ».
+
+**Karma** : `user.karma` (int borné ±1000), muté **uniquement** par `KarmaService`, qui ne
+flushe pas (contrat de `SacService` / `RecompenseService` / `MetierService`). Les bornes et les
+paliers vivent dans `Config\ArtisanatConfig` ; le libellé est calculé **côté serveur** et
+descendu dans le payload joueur, pour que les seuils n'existent qu'à un seul endroit.
+
+| Palier | Bande |
+|---|---|
+| Pillard | −1000 → −601 |
+| Rapace | −600 → −201 |
+| **Mesuré** | **−200 → 199** (bande neutre, centrée sur 0) |
+| Prévoyant | 200 → 599 |
+| Gardien | 600 → 1000 |
+
+`ajuster()` renvoie le **delta réellement appliqué** : il vaut 0 quand la borne était déjà
+atteinte, ce qui évite d'annoncer au joueur un gain qui n'a pas eu lieu. Le compteur est borné
+volontairement : sans plafond, un joueur irréprochable pendant un mois se mettrait à l'abri
+définitif de toute conséquence, et le curseur cesserait d'être un choix pour devenir un acquis.
+
+> ⚠️ **Le karma n'a AUCUN effet de jeu à ce stade** — arbitrage explicite du 26/07/2026
+> (`docs/ARTISANAT_PLAN.md` §2) : il est stocké et affiché, rien de plus. **Conséquence à
+> connaître** : tant que le lot 6 n'existe pas, la récolte intensive du lot 2 sera strictement
+> plus rentable que la récolte éthique, et le dilemme restera décoratif. `KarmaService` existe
+> dès maintenant pour que ce lot 6 n'ait qu'à brancher des effets sur un point de mutation déjà
+> unique, sans refactoring.
+
+**Distinct d'`honneur` et d'`alignement`**, volontairement : `honneur` est la conduite en PvP,
+`alignement` le camp choisi, `karma` la manière de prendre au monde. Les fusionner ferait qu'un
+pillard de gisements perdrait sa réputation de duelliste.
+
+**Front** : le karma apparaît dans la carte d'identité du profil (« Pillard (−720) »), sous
+l'alignement, en pleine page comme en modale — les deux passent par `/joueur/data/minimal`.
+
+**Contenu posé** (SQL, en attendant l'ArtisanatMaker) : une ressource par métier de récolte,
+plus un minerai d'argent au niveau 20 pour que `niveau_ressource` ne reste pas théorique. Les
+objets existants ne sont pas touchés : ils servent déjà de butin et d'articles de boutique.
+
+### Tests
+- `tests/Service/KarmaServiceTest.php` (10) : neutre à la création, ajustement dans les deux
+  sens, bornes haute et basse, **delta nul à la borne**, absence de flush, paliers et leurs
+  seuils, bande neutre centrée sur 0, valeur hors bornes toujours qualifiable.
+- Suite complète : **230 tests verts**.
+
+### 16.3 Lot 2 — récolte éthique vs intensive (livré le 26/07/2026)
+
+**Le problème à résoudre.** Le game design demande qu'une récolte non éthique ait « un impact
+négatif sur les autres joueurs ». C'était **mécaniquement impossible** en l'état : la portée
+`JOUEUR` donne à chacun son propre cooldown, donc par construction ce que fait A ne peut pas
+atteindre B. Il fallait un second verrou, partagé.
+
+**La solution : une SECONDE recharge sur la même case.** `interaction_recharge` accueille
+désormais, sur les seules cases qui proposent le choix, une ligne d'**épuisement** lue *en
+plus* du cooldown personnel. Clé `monde:epuisement` — jamais `monde` nue, qui sert déjà aux
+interactions de portée MONDE (coffres) — ou `instance:<id>:epuisement` en donjon, pour que
+deux expéditions ne se saignent pas mutuellement leurs filons.
+
+| | Butin | Cooldown personnel | Épuisement partagé | Karma |
+|---|---|---|---|---|
+| Récolte mesurée | ×1 | ×0,5 | aucun | +1 |
+| Récolte intensive | ×3 | ×2 | 3 × le délai de la case | −2 |
+
+Tout vient de `Config\RecolteConfig` et **descend au front avec la carte** : aucun chiffre
+n'est écrit en dur côté client, sans quoi retoucher l'équilibrage mentirait à l'écran.
+
+**`interaction.recolte_choix`** (défaut `false`) dit si une case propose le choix. Un `mode`
+envoyé sur une case qui ne le propose pas est **refusé** : le client exprime une intention, il
+ne décide de rien. À l'inverse, une case à choix sollicitée **sans** mode (vieux client, appel
+direct) est traitée en récolte **mesurée** — dans le doute, on ne suppose jamais que le joueur
+voulait raser le gisement.
+
+**Deux blocages, un seul affichage.** `decrire()` retient celui qui se lève **en dernier** :
+prendre le premier venu annoncerait un compte à rebours plus court que la réalité. Le payload
+distingue `gisementEpuise` du simple cooldown, parce que « j'ai récolté trop tôt » et
+« quelqu'un est passé avant moi et a tout pris » n'appellent ni le même repère ni la même
+réaction — le second est en rouge tireté, le premier en gris.
+
+**`RecompenseService::distribuer()` prend un `$multiplicateur`** (défaut 1) qui démultiplie ce
+qui se compte — quantités d'items et or — mais **ni l'expérience de personnage ni les
+équipements** : on ne gagne pas trois niveaux ni trois épées parce qu'on a raclé un buisson.
+Le service reste ainsi l'unique point de distribution, sans que l'appelant empile des appels.
+
+**L'XP de métier ne dépend PAS du mode** : elle vient du geste, pas du butin. La faire suivre
+le rendement ferait de l'intensif un choix doublement gagnant, alors qu'il est censé être un
+arbitrage.
+
+> ⚠️ **L'arbitrage n'en est pas encore un.** Le karma restant sans effet (§16.2), l'intensif
+> donne 3× le butin pour le même coût en PA — et les PA sont la vraie ressource rare du jeu.
+> **Tant que le lot 6 n'existe pas, l'intensif est strictement dominant** pour un joueur qui
+> optimise. Le seul contre-poids actuel est social : un gisement saigné l'est pour tout le
+> monde, y compris pour celui qui l'a saigné.
+
+**Front** : le clic sur un gisement disponible ouvre `ChoixRecolte` (`GameModal` +
+`ModalShell`). Une vraie modale plutôt qu'un menu ancré sur la case — un enfant en
+`position:absolute` dans une `.case` déborde sur la grille et intercepte les clics de
+déplacement (piège documenté de `mapGrid.scss`). Sur une case indisponible, rien ne s'ouvre :
+la requête part et c'est le serveur qui donne la vraie raison.
+
+**InteractionMaker** : case à cocher « Propose le choix de récolte », avec le rappel des
+curseurs — affichés, pas réglables : ils sont globaux, pas par case.
+
+**Contenu** : les deux gisements existants (Champignon bleu, Filon de cuivre) proposent
+désormais le choix, le filon rend du **Minerai de fer** au lieu d'une « Coquille bleu » qui
+n'avait rien à faire dans une mine, et un « Chêne du sentier » a été ajouté pour le bûcheron.
+Les trois sont posés à portée du point d'apparition (carte 2).
+
+### Tests
+- `tests/Functional/InteractionApiFunctionalTest.php` (+7, 15 au total) : **l'intensif d'un
+  joueur épuise le gisement pour un AUTRE**, l'éthique n'épuise rien, rendement ×3, cooldowns
+  personnels 0,5× et 2×, karma opposé selon le mode, mode refusé sur une case sans choix,
+  et **sans mode = récolte mesurée** (non-régression).
+- Suite complète : **237 tests verts**.
+
+### 16.4 Lot 3 — recettes et atelier (livré le 26/07/2026)
+
+**Modèle.** Contenu : `recette` (nom, métier, niveau requis, difficulté, temps, récompense,
+XP) + `recette_ingredient` (trois relations nullables, même forme que `Recompense` — la base
+garantit ainsi que l'ingrédient existe). Runtime : `craft_commande`, **ajoutée à la liste
+noire de `content-dump.sh`** — sans quoi les fabrications en cours partiraient dans le seed.
+
+**La sortie d'une recette est une `Recompense`**, et c'est délibéré : `RecompenseService` est
+l'unique point de conversion « ligne de récompense → items + or + XP » du projet. Écrire une
+distribution propre au craft aurait dupliqué exactement ce que l'invariant interdit.
+
+**`CraftService` est l'UNIQUE machine à états.** Quatre principes :
+
+1. **Résolution PARESSEUSE.** Rien ne « termine » une commande : `pretAt` est posé au
+   lancement, et l'état se déduit de l'horloge serveur au retour du joueur. Aucune tâche
+   périodique — le scheduler tourne à la minute et travaillerait pour des joueurs
+   déconnectés, ce qu'on évite déjà pour le tick de donjon. **« Prête » n'est donc PAS un
+   statut** : `StatutCraft` ne connaît que EN_COURS / RETIREE / ANNULEE.
+2. **Les ingrédients sont CONSOMMÉS au lancement**, pas réservés. Une réservation les
+   laisserait dans le sac pendant la cuisson, donc échangeables ou vendables selon les
+   chemins. Le débit passe par `SacService`, qui contrôle le DISPONIBLE — une ressource
+   engagée dans un échange n'est pas craftable.
+3. **Le recyclage rend depuis un INSTANTANÉ** figé au lancement (`craft_commande.ingredients`),
+   jamais depuis la recette : celle-ci peut être éditée pendant la cuisson, et rendre autre
+   chose que ce qui a été pris serait une porte ouverte à la duplication d'items.
+4. **Rien n'est distribué ici** : sortie par `RecompenseService`, rendus par `SacService`, XP
+   par `MetierService`, karma par `KarmaService`.
+
+| | Temps | Ingrédients rendus | Karma |
+|---|---|---|---|
+| Fabrication soignée | ×1 | 30 % | +1 |
+| Fabrication expéditive | ×0,25 | aucun | −1 |
+
+> ⚠️ **Le recyclage est arrondi à l'INFÉRIEUR** — on ne rend jamais plus que le taux annoncé.
+> Conséquence pour l'auteur de contenu : à 30 %, il faut **au moins 4 exemplaires** d'un
+> ingrédient pour qu'il en revienne un seul. Sur une recette à 2 et 1 ingrédients, la
+> fabrication soignée ne rend RIEN et n'est donc que plus lente. Écrire les recettes avec des
+> quantités significatives, ou le mode soigné n'aura aucun intérêt.
+
+**Garde-fous.** Verrou pessimiste sur le joueur au lancement (deux requêtes simultanées
+passeraient sinon toutes deux sous le plafond et débiteraient deux fois), verrou sur la
+commande au retrait (idempotence stricte : un double retrait ne distribue pas deux fois),
+plafond de `CraftConfig::COMMANDES_SIMULTANEES_MAX` = 3 fabrications de front — sans lui, la
+résolution paresseuse laisserait empiler mille commandes et revenir tout ramasser, ce qui
+annulerait le temps de production comme contrainte.
+
+**Annulation** : autorisée avant `pretAt` seulement, et rend les ingrédients **à 100 %**.
+Après, refusée : l'objet est fait. Autoriser l'annulation tardive donnerait le choix, à la
+fin, entre l'objet et ses matériaux — ce qui reviendrait à n'engager jamais rien.
+
+**Métier oublié pendant la cuisson** : le joueur ramasse son objet — il l'a payé — mais ne
+gagne pas d'XP dans un métier qu'il n'exerce plus. Lui faire perdre l'objet serait
+disproportionné.
+
+**Front** : modale **Atelier** dans le rail de gauche (`GameModal` + `ModalShell`), file
+d'attente et recettes en un seul appel. Le compte à rebours est recalculé chaque seconde
+depuis `pretAt` (date serveur), jamais décompté localement. Les ingrédients manquants sont en
+rouge — c'est la seule information qui décide si le bouton part. Les chiffres des modes
+viennent de `CraftConfig`, aucun n'est écrit côté client.
+
+> ⚠️ **Remplacé le 27/07/2026 (§16.7)** : la modale a été réduite à la seule file de
+> fabrication (« Établi »), le catalogue de recettes et la progression des métiers vivent
+> désormais sur la page `/artisanat`.
+
+**Contenu** : trois recettes de départ (potion d'alchimiste, cuir de tanneur, arc de forgeron
+au niveau 10 pour éprouver le refus par niveau), plus l'objet « Cuir travaillé » qui est
+lui-même une ressource de tanneur — la chaîne dépeceur → tanneur du document de design.
+
+### Tests
+- `tests/Functional/CraftApiFunctionalTest.php` (15) : cycle complet, retrait avant terme
+  refusé, **double retrait refusé**, **le recyclage rend l'instantané et non la recette
+  réécrite entre-temps**, mode expéditif sans rendu, temps ×1 / ×0,25, ingrédients manquants
+  nommés dans le refus, **ressource réservée par un échange non craftable**, niveau et métier
+  insuffisants, plafond de 3 commandes, annulation qui rend tout, annulation tardive refusée,
+  atelier limité aux métiers appris, commande d'autrui introuvable.
+- Suite complète : **252 tests verts**.
+
+### 16.5 Lot 4 — ArtisanatMaker (livré le 26/07/2026)
+
+**Un seul écran, trois onglets** — `/administration/artisanat`. Métiers, ressources et
+recettes se répondent (une recette exige un métier, une ressource appartient à un métier) :
+les séparer obligerait à naviguer entre trois pages pour écrire une seule chaîne de
+production.
+
+| Onglet | Ce qu'il édite |
+|---|---|
+| Métiers | fiche, famille, niveau max, **PNJ maîtres** qui l'enseignent |
+| Ressources | les `objet`, avec leur métier et leur niveau — **premier éditeur d'`Objet` du projet**, la création d'objets passait jusqu'ici par du SQL |
+| Recettes | fiche, sortie, ingrédients |
+
+API sous `/api/artisanat/editor/*`, règle `ROLE_ADMIN` placée **avant** `^/api` dans
+`security.yaml` — `/api/craft/*` et `/api/metier/*` restent des routes joueur.
+
+**`ArtisanatEditorService`** suit le patron des trois éditeurs existants : une transaction,
+des **ids stables** (envoyé avec un id = mise à jour, sans id = création, absent =
+suppression). `craft_commande` référence les recettes : tout recréer casserait les
+fabrications en cours.
+
+> ⚠️ Piège Doctrine déjà payé au §14.5 et respecté ici : ingrédients et recettes sont relus
+> depuis **leur repository**, jamais depuis la collection de l'entité — après une sauvegarde,
+> celle-ci a été chargée AVANT l'insertion et rend un état périmé (zéro ingrédient).
+
+**La liste des maîtres est RESYNCHRONISÉE**, retraits compris : décocher un PNJ le détache
+réellement. Même règle que les classes d'un équipement (§ « pièges connus »), pour la même
+raison — un simple `add` rendrait le retrait impossible depuis l'interface.
+
+**Suppressions refusées tant que c'est référencé**, avec un message qui dit quoi faire :
+une recette qu'un joueur a lancée (« désactivez-la plutôt »), un métier encore porté par des
+recettes, des ressources ou des cases de récolte. Détacher le métier d'un objet le déclasse
+en objet ordinaire **sans le supprimer** — c'est le seul moyen de défaire un rattachement.
+
+**L'XP de métier est SUGGÉRÉE, pas imposée** (`niveau × 2,5 × difficulté`, plancher 5), avec
+un bouton « appliquer ». Enfermer l'équilibrage dans une formule obligerait à redéployer pour
+retoucher un chiffre.
+
+**Le front ne connaît rien en dur** : familles, plafonds et modes de fabrication viennent de
+`/config` (patron de `InteractionConfig`). Le sélecteur de métier d'une recette ne propose que
+la famille `craft`. Tous les formulaires ont `onSubmit={(event) => handleSubmit(event)}` +
+`preventDefault()` — sans quoi une touche Entrée recharge la page et la sauvegarde ne part
+jamais (§15.1).
+
+### Tests
+- `tests/Functional/ArtisanatEditorApiFunctionalTest.php` (11) : éditeur fermé aux non-admins
+  **lectures comprises** alors que `/api/craft/atelier` reste joueur, config décrivant
+  familles/plafonds/modes, création + relecture d'un métier, famille inconnue refusée,
+  **ids d'ingrédients stables**, ingrédient retiré supprimé, ingrédient sans item refusé,
+  suppression d'une recette avec commandes refusée, suppression d'un métier employé refusée,
+  détachement d'une ressource qui la rend ordinaire sans la supprimer.
+- Suite complète : **263 tests verts**.
+
+### 16.6 Lot 5 — dépeceur et assainissement de DeathService (livré le 26/07/2026)
+
+**Le butin peut exiger un métier.** `monstre_objet` gagne `metier_id` (nullable),
+`niveau_metier_min` et `experience_metier`. Une ligne liée à un métier n'est tirée que pour
+un joueur qui l'exerce au niveau requis, et lui crédite de l'expérience. **Les lignes sans
+métier tombent pour tout le monde**, exactement comme avant : c'est le cas de toutes les
+lignes existantes.
+
+C'est tout ce qu'il fallait pour le dépeceur. Le tanneur, lui, ne demande **aucun code** :
+c'est une recette du lot 3 qui consomme les peaux — la chaîne dépeceur → tanneur du document
+de design est du pur contenu.
+
+**Assainissement de `DeathService::dieMonster()`** (dette relevée dans le plan) :
+
+- l'ancien code **flushait dans la boucle de butin**, à chaque objet tiré, sans transaction :
+  un échec sur la ligne suivante laissait un butin à moitié distribué. Tout se joue désormais
+  dans **une transaction, avec un seul flush** ;
+- la branche « drop d'équipement » était un `else` contenant uniquement du code commenté :
+  l'objet était **annoncé au joueur dans `droppedItems` sans jamais lui être donné**. La ligne
+  est maintenant ignorée franchement, en attendant que `SacService` la porte.
+
+### Tests
+- `tests/Service/DeathServiceButinTest.php` (6) : butin sans métier pour tous (non-régression),
+  **butin de métier refusé sans le métier**, obtenu avec + XP créditée, niveau insuffisant,
+  cohabitation des deux familles de lignes sur un même monstre, ligne d'équipement ignorée
+  **et non annoncée**.
+- Suite complète : **269 tests verts**.
+
+> 🔎 Relevé en passant, hors périmètre : `Entity\Monstre` initialise et expose une collection
+> `$quantite` **non déclarée** (propriété dynamique, dépréciée en PHP 8.2), tandis que sa vraie
+> collection mappée `$case` n'est jamais initialisée. Rien de cassé en jeu, mais ça bloquera
+> une montée de version de PHP.
+
+### 16.7 Page Artisanat — 27/07/2026
+
+L'artisanat tenait entièrement dans une modale : une liste dense de recettes, sans image, sans
+recherche, et la progression des métiers reléguée à un bloc du Profil. Trois choses y sont
+devenues fausses à mesure que le contenu grossissait — on ne voit pas ce qu'on fabrique, on ne
+retrouve pas une recette, et le métier qu'on fait monter n'est visible nulle part à côté de ce
+qu'il permet.
+
+**Découpage retenu : deux écrans, une seule liste de commandes.**
+
+- **Page `/artisanat`** (`pages/artisanatPage/`) — l'écran complet : rail des métiers à gauche
+  (récolte ET fabrication, barre d'XP, places restantes), établi et catalogue à droite.
+- **Modale « Établi »** (`components/modals/atelierModal/`) — réduite au **suivi des
+  commandes**, pour ne pas quitter la carte, avec un lien vers la page.
+- `components/artisanat/fileFabrication/FileFabrication.jsx` est rendu par les deux : une file
+  de fabrication, un seul markup. Dupliquer la liste aurait garanti la divergence.
+
+**Ce que le serveur a dû apprendre à dire.** `CraftService::decrireItem()` renvoie désormais,
+pour le produit comme pour chaque ingrédient, `type` / `itemId` / `nom` / `description` /
+`image` / `position`. Le nom de fichier est **brut** : les conventions de dossier
+(`/img/objet/<image>`, `/img/consommables/<icone>`, `/img/equipement/<position>/<icone>`)
+restent côté front, dans `itemUtils.itemImage()` — seul endroit du projet qui les connaisse,
+et que les normaliseurs d'inventaire utilisent aussi. Les recopier dans le back en aurait fait
+une seconde source de vérité, celle qui divergerait le jour où un dossier change. La position
+d'équipement voyage parce que le front ne peut pas la deviner.
+
+`decrireCommande()` renvoie en plus `lanceeAt` : sans l'origine, le front ne connaît pas la
+durée totale (le mode l'a multipliée) et ne peut pas tracer d'avancement. `progressionDe()`
+renvoie la `description` du métier — une fiche de métier sans description n'a rien à dire.
+
+**Recherche et filtres, côté client seulement.** Le catalogue est petit par construction (les
+recettes des métiers appris) : filtrer sur le serveur coûterait un aller-retour par frappe. La
+recherche est insensible aux accents et porte sur le nom, la description, le métier, le produit
+**et les ingrédients** — « que puis-je faire avec du cuir ? » est la question la plus fréquente.
+S'y ajoutent des puces par métier (cliquer une carte de métier filtre aussi) et une bascule
+« réalisables seulement ».
+
+**Ce qui n'a pas changé, et ne doit pas.** Le catalogue ne montre que les recettes des métiers
+APPRIS — c'est le filtrage de `CraftService::atelier()`, pas une décision d'affichage. Les
+cartes grisées et l'empêchement affiché sous le bouton sont un confort de lecture : `realisable`
+vient du serveur, qui revérifie métier, niveau et matériaux **disponibles** au lancement. Les
+durées se recalculent depuis les dates serveur (`components/artisanat/craftUtils.js`), jamais
+en décomptant des secondes.
+
+> ⚠️ Les icônes de métier n'existent pas encore sur le disque (`public/img/metier` est vide) et
+> un objet peut n'avoir aucune image : `components/artisanat/vignette/Vignette.jsx` se replie
+> sur l'initiale. Sans ce repli, la carte affiche l'icône « image cassée » du navigateur et la
+> grille se déforme. Le repli se réarme à chaque changement de source.
+
+### Tests
+- `CraftApiFunctionalTest::testLAtelierDecritLImageDuProduitEtDesIngredients` : identité
+  visuelle du produit et des ingrédients, `position` nulle pour un objet, `lanceeAt` présente.
+- Suite complète : **296 tests verts**.
+
+---
+
+## 17. Upload d'images pour toute l'administration — 26/07/2026
+
+Depuis le 23/07/2026, seul l'EquipementMaker savait recevoir une image (§15). Partout ailleurs
+— métiers, objets/ressources, PNJ, monstres, cases interactives — le formulaire n'offrait qu'un
+champ texte doublé d'une consigne (« Fichier dans `public/img/metier`, sans extension ») : il
+fallait déposer le fichier à la main dans le bon dossier, deviner la convention de nommage, et
+recopier le nom sans se tromper. C'est désormais un bouton **« Choisir une image »** dans les
+cinq makers, avec aperçu.
+
+### 17.1 Le vrai problème : deux conventions de nommage cohabitent
+
+Ce n'est pas un simple « déplacer un fichier ». Selon le champ, la base stocke le nom **avec**
+ou **sans** extension, parce que le front recolle `.png` dans un cas et pas dans l'autre :
+
+| Champ | URL construite par le jeu | Stocké en base |
+|---|---|---|
+| `objet.image` | `/img/objet/<image>` | `bois.png` |
+| `pnj.avatar` | `img/pnj/<avatar>` | `maitreGuildeAvatar.png` |
+| `pnj.skin` | `/img/pnj/<skin>.png` | `dezelleSkin` |
+| `monstre.skin` | `/img/monstre/<skin>.png` | `loup` |
+| `interaction.skin` | `/img/interaction/<skin>.png` | `champignon_bleu` |
+| `metier.icone` | (pas encore affichée) | sans extension |
+
+D'où l'enum **`App\Enum\CollectionImage`** : une collection = un dossier + une règle
+d'extension (+ un suffixe pour les PNJ, voir plus bas). Conséquence directe et **volontaire** :
+une collection qui ne stocke pas l'extension **n'accepte que des PNG**, sinon on rangerait un
+JPEG impeccable que le jeu n'irait jamais chercher (il demanderait `<nom>.png`).
+
+Avatar et sprite d'un PNJ partagent le dossier `img/pnj` : sans suffixe, le second upload d'un
+même PNJ se ferait renommer `dezelle-2` par l'anti-collision. `CollectionImage::suffixe()`
+produit donc `dezelle-avatar.png` / `dezelle-skin.png`, ce qui est déjà la convention manuelle
+du dossier (`maitreEolanAvatar.png`, `maitreEolanSkin.png`).
+
+### 17.2 Back
+
+- **`src/service/ImageUploader.php`** — UNIQUE point d'écriture d'image de l'admin. Slug du nom
+  (`AsciiSlugger` + lowercase), extension **devinée du contenu réel** (`guessExtension()`,
+  whitelist png/jpg/webp/gif, 4 Mo), dossier re-slugifié (anti-traversée), suffixe `-2`, `-3`…
+  sur homonyme sauf quand la cible est l'image actuelle de l'élément édité. Renvoie **la valeur
+  à stocker** (avec ou sans extension selon la collection) ; `url()` donne celle à afficher.
+- **`EquipementIconeUploader`** ne fait plus qu'accrocher le sous-dossier de position et délègue
+  tout le reste. Son API publique est inchangée (l'import CSV s'appuie sur `slugify()`).
+- **`POST /api/admin/image/upload`** (multipart : `image`, `collection`, `nom`,
+  `valeurActuelle`) → `{fichier, url}`. Les équipements gardent leur route dédiée : eux seuls
+  ont un sous-dossier résolu depuis la base.
+- `security.yaml` : règle `^/api/admin/` en ROLE_ADMIN, placée **avant** `^/api`.
+- `services.yaml` : `app.equipement_images_dir` devient `app.images_dir`
+  (`%kernel.project_dir%/public/img`), lié par `string $imagesDir`.
+- `docker-compose.yaml` : un bind-mount par dossier (`metier`, `objet`, `pnj`, `monstre`,
+  `interaction`, en plus d'`equipement`) de `alcazan-front-prod/public/img/*` vers le back.
+  **Ajouter une collection implique d'ajouter la ligne**, sinon l'image atterrit dans le
+  conteneur et reste invisible du front.
+
+### 17.3 Front
+
+- `administration/services/adminImageApi.js` : `COLLECTIONS_IMAGE` (**miroir de l'enum back**),
+  `urlImage()`, `formatsAcceptes()` (l'`accept` du picker se restreint au PNG quand il le faut).
+- `administration/components/forms/imageUpload/ImageUploadField.jsx` : aperçu + bouton + champ
+  texte conservé (seul moyen de réutiliser une image déjà présente, ou d'en retirer une).
+  L'envoi part **dès la sélection du fichier**, pas au submit comme dans l'EquipementMaker :
+  le nom de fichier est calculé par le serveur, l'aperçu montre donc la vraie image telle que
+  le jeu la servira, et les formulaires hôtes n'ont pas à intercaler un `await` dans leur
+  sauvegarde. Contrepartie assumée : une image envoyée puis un formulaire abandonné laisse un
+  fichier orphelin (comme pour les équipements).
+- Câblé dans `MetierForm`, `RessourceForm`, `CreatePnjForm` (deux champs), `CreateMonsterForm`,
+  `InteractionForm`. Styles génériques `.image-upload*` dans `admin.scss`.
+- L'aperçu **recolle l'extension quand la valeur n'en porte pas**, quelle que soit la
+  collection : les valeurs saisies avant l'upload sont hétérogènes. Un fichier absent affiche
+  un `⚠` (avec le chemin attendu en `title`) plutôt qu'une icône d'image cassée.
+
+### 17.4 Bug corrigé au passage — l'ArtisanatMaker effaçait image et description
+
+`ArtisanatEditorService::lister()` **est** la source du formulaire Ressource : le front reprend
+la fiche listée et la renvoie à `sauvegarderRessource`. Or la liste ne portait ni `description`
+ni `image` → rouvrir puis enregistrer un objet existant écrasait les deux en base. Les deux
+champs sont ajoutés au payload. La leçon vaut pour tous les éditeurs : **tout champ omis d'une
+liste qui alimente un formulaire est un champ effacé au premier enregistrement.**
+
+### Tests
+
+- `tests/Service/ImageUploaderTest.php` (10 tests) : les deux conventions de stockage, le
+  suffixe avatar/skin, l'anti-collision, le ré-upload qui écrase, le refus du JPEG sur une
+  collection sans extension, le nom vide, un nom traversant (`../../etc/passwd` → `etc-passwd`).
+- Vérifié en jeu (compte admin local) : upload réel depuis le formulaire PNJ, fichier écrit
+  dans `alcazan-front-prod/public/img/pnj` et servi par le front dans la foulée ; les cinq
+  formulaires affichent l'aperçu des images existantes.
+
+---
+
+## Reste à faire — artisanat
+
+Le **lot 6** du plan (`docs/ARTISANAT_PLAN.md`) n'est pas fait, et c'est un choix explicite :
+- donner des **effets au karma** (`TypeConditionInteraction::KARMA_MIN/MAX`, modificateur de
+  prix marchand) — tant qu'il n'en a pas, la récolte intensive et la fabrication expéditive
+  sont strictement dominantes pour un joueur qui optimise ;
+- **paliers de bonus passifs** de métier (`metier_palier` + enum whitelistée `BonusMetier` +
+  registre, sur le patron de `QuestEffect`) ;
+- impact environnemental des zones.
+
+Points de contenu à reprendre, sans code :
+- les recettes livrées ont des quantités d'ingrédients trop faibles pour que le recyclage à
+  30 % rende quoi que ce soit (arrondi à l'inférieur, cf. §16.4) ;
+- aucune icône de métier n'existe dans `public/img/metier` (le dossier et l'upload existent
+  depuis le 26/07/2026, §17 — il ne manque que les images) ; depuis la page Artisanat
+  (§16.7), `metier.icone` est affichée et se replie sur l'initiale du métier tant qu'aucun
+  fichier n'est déposé ;
+- les recettes n'ont pas d'image propre : la carte du catalogue montre celle de l'objet
+  **produit**. Une recette dont la récompense n'est pas renseignée n'a donc pas de photo.
+
+---
+
+## 18. Karma des choix de quête et objectifs comptés — 26/07/2026
+
+Trois demandes en une, et elles se répondent : donner un poids moral aux **choix** de
+quête, mesurer des objectifs **de métier** (fabriquer, récolter) et faire enfin marcher
+`BATTRE_MONSTRE`, réservé depuis l'origine faute d'un compteur de mises à mort. Le seul
+point commun des trois derniers est qu'ils demandent tous de savoir **combien de fois** un
+joueur a fait quelque chose — c'est ce constat qui a dicté le modèle.
+
+### 18.1 Une table de compteurs, pas trois
+
+`joueur_compteur` (entité `CompteurJoueur`) est générique : `(user, type, cible_id, valeur)`
+avec un index UNIQUE sur le triplet. `TypeCompteur` dit ce qu'on compte **et donc** ce
+qu'est la cible :
+
+| Type | Cible | Incrémenté par |
+|---|---|---|
+| `MONSTRE_TUE` | `monstre.id` | `DeathService::dieMonster()` |
+| `OBJET_FABRIQUE` | `recette.id` | `CraftService::retirer()` |
+| `RESSOURCE_RECOLTEE` | `objet.id` | `InteractionService::executer()`, cases `RECOLTER` seulement |
+
+Pourquoi **une** table plutôt qu'un `user_monstre` sur le patron de `user_boss` : les trois
+compteurs se lisent et s'écrivent exactement pareil, et le prochain (« visiter 5 donjons »)
+n'aura besoin d'aucune migration. La cible est un **entier nu, sans clé étrangère** : le
+type dit déjà vers quelle table elle pointe, et une FK par type ramènerait les colonnes
+nullables qu'on évite déjà ailleurs (`interaction_recharge.cle`). Contrepartie assumée :
+supprimer un monstre laisse des lignes orphelines, jamais relues puisque plus aucune action
+de quête ne peut le cibler.
+
+`CompteurJoueurService` est l'**UNIQUE point de mutation** et ne flushe pas — même contrat
+que `SacService`, `RecompenseService`, `MetierService` et `KarmaService`.
+
+L'incrément passe par un `INSERT … ON DUPLICATE KEY UPDATE valeur = valeur + :pas` en SQL
+natif (`CompteurJoueurRepository::incrementer()`) et **pas** par un read-modify-write sur
+l'entité. Un compteur est exactement le cas où lire-additionner-écrire perd des
+incréments : deux monstres tués dans la même seconde par deux requêtes concurrentes
+liraient la même valeur de départ et n'en compteraient qu'un. C'est l'index unique qui rend
+l'upsert possible — le retirer casserait silencieusement le comptage, pas seulement
+l'intégrité.
+
+Trois précisions de branchement :
+- la mise à mort est comptée **dans `DeathService`**, pas dans le contrôleur : c'est là que
+  « le monstre meurt » est vrai, donc tout futur chemin de mise à mort suivra sans qu'on y
+  pense ;
+- la fabrication est comptée **au retrait**, pas au lancement : sinon « lancer puis
+  annuler » ferait progresser une quête d'artisan gratuitement ;
+- la récolte est comptée **sur les seules interactions de type `RECOLTER`**, à la quantité
+  réellement tombée dans le sac (déjà multipliée par le mode : l'intensif compte triple,
+  comme il rapporte triple). Un coffre livre lui aussi des objets, mais l'ouvrir n'est pas
+  récolter. `RecompenseService::distribuer()` renvoie désormais l'`id` de chaque item
+  distribué, pour que l'appelant sache ce qu'il a donné sans redériver la quantité.
+
+### 18.2 Le compteur est cumulatif, l'objectif ne l'est pas
+
+Un compteur est un fait de partie : cumulatif à vie, jamais remis à zéro. Lu tel quel, il
+rendrait toute quête de chasse absurde — « tuez 5 loups » serait déjà remplie pour qui en a
+tué cinquante avant même d'avoir entendu la demande, exactement le défaut que traîne
+`BATTRE_BOSS` (laissé tel quel : changer sa sémantique casserait le contenu existant).
+
+D'où `user_quete.compteurs_depart`, un JSON `{"monstre_tue:12": 47}` : l'état des compteurs
+visés **à l'entrée dans l'étape**. La condition lit `valeur − départ`. L'instantané est
+reposé au démarrage de la quête et **à chaque changement de séquence**, et à ce
+moment-là seulement : le reposer à chaque tentative remettrait la progression à zéro dès
+que le joueur reclique sur un bouton pas encore satisfait. Clé absente (étape entamée avant
+la migration, action rebranchée depuis) = départ 0, donc lecture cumulative : une
+dégradation lisible, jamais un blocage.
+
+Le joueur voit son avancement sans cliquer : chaque bouton d'objectif compté porte
+`progress: {current, target, unit}` dans le payload d'étape, et le message de blocage par
+défaut donne le chiffre (« 2 / 3 vaincu(s) ») au lieu de « Condition non remplie ».
+L'unité vient du serveur (`TypeCompteur::unite()`) — le front ne connaît aucun type de
+compteur en dur.
+
+### 18.3 Karma porté par l'action
+
+`action.karma` est un entier **signé et nullable** : un choix peut coûter de la réputation,
+et 0/null veut dire « ce choix n'engage rien ». Il est porté par l'**action** et non par la
+séquence, parce que c'est le choix du joueur qui a un poids moral, pas le fait d'avoir lu
+un dialogue : deux boutons d'une même séquence — « je tiens parole » / « je garde l'or » —
+sont exactement le dispositif que cette colonne sert à rendre possible.
+
+L'ajustement est appliqué par `QuestProgressionService` **après** que la condition est
+remplie et le coût payé : une action bloquée n'engage ni ressource ni réputation, le joueur
+n'a pas fait le choix, il a essayé de le faire. Il passe par `KarmaService`, seul point de
+mutation, qui borne la valeur — le contenu ne peut donc pas fabriquer un saint définitif.
+La réponse porte `karma: {karma, palier, delta}`, **null quand rien n'a bougé** (borne déjà
+atteinte) : annoncer « karma +5 » à un joueur au maximum serait un mensonge que le `delta`
+de `KarmaService` permet précisément d'éviter.
+
+Une `Action` posée sur une case de carte est la même entité qu'un bouton de quête :
+`executeMapAction()` applique donc le karma lui aussi, sans quoi la même fiche se
+comporterait différemment selon l'endroit où elle est branchée.
+
+Le karma reste **sans effet de jeu** (arbitrage du 26/07/2026, `ARTISANAT_PLAN.md` §2,
+lot 6 différé) : il est stocké, affiché, et maintenant gagné ou perdu par trois chemins
+— récolte, fabrication, choix de quête.
+
+### 18.4 QuestMaker et front
+
+- Trois types d'action sortent de la réserve : `BATTRE_MONSTRE` (cible `monstres`),
+  `FABRIQUER_OBJET` (cible `recettes`) et `RECOLTER_RESSOURCE` (cible `ressources` = les
+  objets rattachés à un métier, lot 1 de l'artisanat). Seul `KILL_PVP` reste réservé.
+  Les champs viennent de `QuestActionTypeConfig`, les catalogues de
+  `QuestEditorService::getReferentiels()` — le front n'a rien en dur.
+- Les trois exigent **cible ET quantité** à la sauvegarde : sans quantité, la condition
+  serait « au moins un » sans que l'auteur l'ait demandé.
+- Le champ **Karma** est rendu en dur dans `ActionForm`, comme le libellé et le
+  branchement, et pas via la config du type : il ne dépend d'aucun type d'action — c'est
+  même sur un `CHOIX` narratif qu'il a le plus de sens.
+- ⚠️ Piège déjà connu (§17.4) : `SequenceForm` doit déclarer `karma`, `monstreId` et
+  `recetteId` dans l'action neuve, sinon le champ est absent du payload et **effacé en
+  base** au premier enregistrement.
+
+Côté jeu, la fiche de personnage affiche une **jauge** de karma (`GaugeBar variant="karma"`)
+et non plus une ligne de texte : l'échelle est signée et bornée, et ce qui compte pour le
+joueur est de voir de quel côté de la neutralité il se trouve et quelle marge il lui reste
+— un « Mesuré (-40) » ne dit ni l'un ni l'autre. C'est la seule jauge **bipolaire** du jeu :
+son dégradé est découpé par `clip-path` et non par la largeur, pour que la teinte se lise
+sur la piste entière (sinon un pillard et un gardien finiraient sur la même couleur de bout
+de barre), et un repère marque le zéro. Les bornes et le libellé de palier viennent du
+serveur : les seuils n'existent qu'à un seul endroit (`ArtisanatConfig`).
+
+### 18.5 Bug corrigé au passage — créer une quête renvoyait une coquille vide
+
+`QuestEditorService::saveQuest()` relisait la quête via `getQuestForEditor()` juste après
+la transaction, mais depuis les entités en mémoire. Pour une quête **neuve**, les
+séquences et actions venaient d'être persistées sans jamais être ajoutées aux collections
+inverses : la relecture renvoyait `sequences: []`. Le front fait `reset(saved)` — il
+vidait donc à l'écran le travail qu'il venait d'enregistrer, et le clic suivant
+re-sauvegardait une quête sans séquence.
+
+C'est exactement le piège déjà noté au §14.5 (« relire depuis LEUR REPOSITORY, pas depuis
+la collection de l'entité »). Corrigé par un `entityManager->clear()` entre la transaction
+et la relecture : tout est rechargé depuis la base. Le bug ne se voyait pas jusqu'ici
+parce que tous les tests éditeur partaient d'une quête **existante**, dont les collections
+étaient chargées depuis la base.
+
+### Tests
+
+- `QuestProgressionServiceTest` : un objectif de chasse ne compte que depuis le début de
+  l'étape malgré 50 kills antérieurs, blocage chiffré puis déblocage, départ absent lu en
+  cumulé, instantané reposé à l'avancement, un choix qui coûte du karma, une action bloquée
+  qui n'engage pas le karma.
+- `CompteurJoueurServiceTest` : pas nul/négatif ignoré, progression bornée à zéro.
+- `QuestApiFunctionalTest` : quête de chasse écrite par l'éditeur puis jouée (les kills
+  antérieurs ne comptent pas, blocage chiffré, karma appliqué), mise à mort réelle qui
+  incrémente le compteur, upsert qui ne crée qu'une ligne.
+- `InteractionApiFunctionalTest` : la récolte alimente `joueur_compteur` à la quantité
+  ramassée (intensif compris) ; ouvrir un coffre rendant le MÊME objet ne compte pas.
+
+### Reste à faire
+
+- `KILL_PVP` reste le dernier type réservé (il demande un compteur de kills joueur, dont la
+  cible n'est pas un id de contenu mais une classe/un alignement — à arbitrer).
+- Les compteurs ne sont exposés nulle part au joueur en dehors des quêtes ; un onglet
+  « faits d'armes » serait quasi gratuit à partir de `valeursParCible()`.
+
+## 19. Reprendre le projet sur une autre machine — 27/07/2026
+
+Tout ce qui est nécessaire est dans git **sauf trois choses, volontairement absentes** : les
+clés JWT, les fichiers d'environnement locaux, et les données de partie. Voici la procédure
+complète, dans l'ordre.
+
+```bash
+# 1. Cloner AVEC les sous-modules (back et front en sont)
+git clone --recurse-submodules git@github.com:neraen/alcazan-forest.git
+cd alcazan-forest
+# si le clone a été fait sans l'option :  git submodule update --init --recursive
+```
+
+**2. Secrets et environnement du back** (jamais committés — cf. `.gitignore`) :
+
+```bash
+cd alcazan-back-prod
+printf "JWT_PASSPHRASE=<phrase-de-passe-au-choix>\n" > .env.local
+printf "JWT_PASSPHRASE=<la-MÊME-phrase>\n"            > .env.test.local
+```
+
+Puis les clés `config/jwt/*.pem`, deux possibilités :
+- **les recopier** depuis l'ancienne machine (hors git : clé USB, gestionnaire de mots de
+  passe) — les JWT déjà émis restent alors valides ;
+- **les régénérer** avec la passphrase ci-dessus : `docker exec symfony-backend php bin/console
+  lexik:jwt:generate-keypair` (à faire après l'étape 4). Les jetons existants deviennent
+  invalides — sans conséquence, les joueurs se reconnectent.
+
+`.env` du back n'est pas committé non plus, et n'est **pas nécessaire** : `DATABASE_URL` et
+`REACT_APP_API_URL` viennent du docker-compose, `.env.test` (committé) suffit aux tests.
+
+**3. Dépendances** — `vendor/` et `node_modules/` vivent sur l'hôte, pas dans les images :
+
+```bash
+cd alcazan-back-prod  && composer install
+cd ../alcazan-front-prod && npm install
+```
+
+**4. Conteneurs**
+
+```bash
+docker stop symfony_db symfony_adminer 2>/dev/null   # autre projet, squattent 3306/8080
+docker compose up -d --build
+```
+
+**5. Base de données.** Le volume Docker est local à la machine : la base `chusei` est donc
+VIDE au premier démarrage. Deux étapes, dans cet ordre :
+
+```bash
+# 5a. le schéma : la première migration est le schéma complet (64 tables), les suivantes
+#     l'ont fait évoluer — sur une base neuve on les joue toutes.
+docker exec symfony-backend php bin/console doctrine:database:create --if-not-exists
+docker exec symfony-backend php bin/console doctrine:migrations:migrate --no-interaction
+
+# 5b. le contenu du jeu (cartes, classes, sorts, quêtes, PNJ, boss, donjons, recettes…)
+./scripts/content-load.sh
+```
+
+⚠️ **Les comptes joueurs ne sont PAS dans git** (le seed exclut `user`, `inventaire*`,
+`user_quete`, `donjon_*` de runtime…). Sur la nouvelle machine il n'y a donc aucun personnage :
+en créer un par l'inscription, ou reporter un `mysqldump` de `backups/` (gitignoré) si l'on veut
+retrouver ses personnages.
+
+**6. Vérifier**
+
+```bash
+docker exec mysql mysql -uroot -ppassword chusei -e "SELECT COUNT(*) FROM carte;"
+docker exec symfony-backend php bin/console doctrine:schema:validate   # doit être VERT
+docker exec symfony-backend php vendor/bin/phpunit                     # base isolée chusei_test
+```
+
+Le front écoute sur http://localhost:3000, l'API sur http://localhost:8080/api/, nginx sur :80,
+le hub Mercure sur :5001 (macOS squatte 5000 avec AirPlay).
+
+**Les trois dépôts et leurs branches** — les sous-modules ne sont PAS sur la même branche que
+le dépôt parent, c'est le piège classique quand on reprend le projet :
+
+| Dépôt | Branche | Contenu |
+|---|---|---|
+| `alcazan-forest` (racine) | `main` | docker-compose, scripts, seeds, docs, pointeurs de sous-modules |
+| `alcazan-forest-back-prod` | `master` | API Symfony, migrations, tests |
+| `alcazan-forest-front-prod` | `migration-typescript` | client React, images du jeu (`public/img/`) |
+
+Après un `git pull` dans la racine, faire `git submodule update --recursive` : le parent ne
+référence que des **commits** de sous-modules, pas leurs branches.

@@ -11,10 +11,41 @@ services:
     volumes:
       - ./alcazan-back-prod:/var/www/html
       - /var/www/html/var/cache
+      # Les images uploadées depuis l'admin sont écrites par le back mais servies par le
+      # front : on pointe les deux sur le même dossier de l'hôte (versionné côté front).
+      # Un dossier par collection de `App\Enum\CollectionImage` — en ajouter une implique
+      # d'ajouter la ligne ici, sinon l'image atterrit dans le conteneur et reste invisible.
+      - ./alcazan-front-prod/public/img/equipement:/var/www/html/public/img/equipement
+      - ./alcazan-front-prod/public/img/metier:/var/www/html/public/img/metier
+      - ./alcazan-front-prod/public/img/objet:/var/www/html/public/img/objet
+      - ./alcazan-front-prod/public/img/pnj:/var/www/html/public/img/pnj
+      - ./alcazan-front-prod/public/img/monstre:/var/www/html/public/img/monstre
+      - ./alcazan-front-prod/public/img/interaction:/var/www/html/public/img/interaction
     environment:
       DATABASE_URL: mysql://root:password@mysql:3306/chusei
+      # Publication vers le hub par le réseau interne ; URL publique pour les EventSource du navigateur.
+      MERCURE_URL: http://mercure/.well-known/mercure
+      # 5001 côté hôte : macOS squatte 5000 (AirPlay Receiver).
+      MERCURE_PUBLIC_URL: http://localhost:5001/.well-known/mercure
+      MERCURE_JWT_SECRET: '!ChangeThisMercureHubJWTSecretKey!'
     depends_on:
       - mysql
+      - mercure
+
+  # Hub Mercure : temps réel (échanges joueur-à-joueur ; extensible carte/notifications).
+  # Clé de DEV uniquement — en production, générer une vraie clé et la sortir du compose.
+  mercure:
+    image: dunglas/mercure
+    container_name: alcazan-mercure
+    ports:
+      - "5001:80"
+    environment:
+      SERVER_NAME: ':80'
+      MERCURE_PUBLISHER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
+      MERCURE_SUBSCRIBER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://localhost:3000 http://localhost
+    restart: unless-stopped
 
   frontend:
     build:
@@ -29,7 +60,8 @@ services:
       - NODE_ENV=development
       - REACT_APP_API_URL=http://127.0.0.1:8080/api/
 
-  # Régénération horaire des PA/PM (voir src/Command/RegenPointsCommand.php)
+  # Régénération horaire des PA/PM (RegenPointsCommand) + expiration des échanges
+  # toutes les minutes (ExpirerEchangesCommand, filet de l'expiration lazy).
   scheduler:
     build:
       context: .
@@ -41,7 +73,7 @@ services:
       - /var/www/html/var/cache
     environment:
       DATABASE_URL: mysql://root:password@mysql:3306/chusei
-    command: bash -c "sleep 30; while true; do php bin/console app:regen-points || true; sleep 3600; done"
+    command: bash -c "sleep 30; MINUTES=0; while true; do php bin/console app:echanges:expirer || true; if [ $$((MINUTES % 60)) = 0 ]; then php bin/console app:regen-points || true; fi; MINUTES=$$((MINUTES + 1)); sleep 60; done"
     depends_on:
       - mysql
     restart: unless-stopped
