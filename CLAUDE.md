@@ -80,6 +80,149 @@ est capturé automatiquement) :
   croissant). Front : `EchangeHost` rendu UNE fois dans MapPage (patron PnjInteractionHost),
   état Redux `echange` = toujours le payload normalisé du serveur. Les tables `echange`,
   `echange_ligne`, `reservation_ressource` sont dans la liste noire de `content-dump.sh`.
+- **Hôtel des ventes (30/07/2026, doc §20)** : marché ASYNCHRONE ; `HotelVenteService` est
+  l'UNIQUE machine à états de `hotel_vente` (liste noire du dump). **Le séquestre n'est PAS une
+  réservation** : l'objet déposé SORT du sac (`retirerItem`) et n'existe plus que dans l'annonce
+  — `reservation_ressource` ne sert qu'à l'échange (5 min), une annonce vit 48 h, et le joueur
+  verrait un objet inutilisable dans son sac. Modèle économique = **frais de dépôt** prélevés à
+  la mise en vente et JAMAIS remboursés (puits monétaire) ; le vendeur touche donc 100 % du prix
+  à la vente. Le lot est INDIVISIBLE. Pas de colonne `version` (une annonce n'est pas co-éditée)
+  : verrou pessimiste + test du statut → 409 `hotel_vente_indisponible` avec l'annonce fraîche,
+  et `prixAttendu` n'est qu'une garde d'écran périmé. ⚠️ `app:hdv:expirer` n'est PAS un filet
+  comme `app:echanges:expirer` : c'est le SEUL chemin par lequel un invendu revient dans un sac
+  (le paresseux ne couvre que les annonces consultées) — la désactiver confisque des objets.
+  Recherche : `item_id` n'a pas de FK, le terme est résolu en ids par
+  `SacService::rechercherItemsParNom` puis les annonces filtrées — ne jamais figer le nom sur
+  l'annonce. Front : modale ouverte depuis `SideMenu` par `useModal()` (patron `AtelierModal`),
+  AUCUNE slice Redux, `ItemCard` de l'échoppe réutilisée via une prop `subline`.
+- **Journal d'événements (01/08/2026, doc §21, plan `docs/STATISTIQUES_PLAN.md`)** :
+  `JournalService` est l'UNIQUE point d'écriture de `evenement_jeu` (liste noire du dump). Il
+  écrit en **INSERT natif hors unité de travail — mais sur la MÊME connexion, donc DANS la
+  transaction de l'appelant**, et avale ses exceptions vers Monolog. Les deux moitiés de
+  l'invariant : *ne jamais faire échouer une action, ne jamais mentir sur une action qui n'a
+  pas eu lieu* — d'où le rollback qui efface le log (souhaitable) et l'échec d'écriture qui ne
+  remonte pas. Ne JAMAIS bufferiser pour écrire après le commit : ça journaliserait des faits
+  annulés. **UN type = UN FAIT** : pas de `OR_GAGNE`/`ITEM_OBTENU` génériques (un achat HDV
+  ferait 4 lignes déliées), et `MORT_JOUEUR` couvre toutes les morts (`acteur` = tueur,
+  `cible_user` = mort). Le journal s'écrit chez les APPELANTS, jamais dans `SacService` qui n'a
+  aucune notion de cause. `cible_user_id` est une COLONNE et pas du JSON (sinon la fiche joueur
+  devient un scan complet). Le nom des items est FIGÉ dans `contexte.items` via
+  `figerItems()` : `echange_ligne.item_id`/`hotel_vente.item_id` n'ont pas de FK, aucune
+  jointure ne les retrouvera. La catégorie n'est PAS en base (dérivée de `TypeEvenement`), et
+  le front ne connaît aucun type en dur (`/api/admin/stats/referentiels`). ⚠️ La colonne
+  s'appelle `montant_or` : **`or` est un mot réservé MySQL**. Rétention 90 j via
+  `app:journal:purger` dans le scheduler — elle ne devra jamais descendre sous la future
+  fenêtre anti-farm du PvP, qui lira le journal.
+- **Cumuls de partie (01/08/2026, doc §21.7)** : `CumulJoueurService` est l'UNIQUE point de
+  mutation de `joueur_cumul` (liste noire du dump), ne flushe pas, et **ignore tout pas ≤ 0** —
+  un cumul ne redescend jamais (`giveExpMalusAfterDeath` passe du NÉGATIF par le point de
+  passage de l'XP : un malus de mort n'est pas de l'XP dé-gagnée). Table SŒUR de
+  `joueur_compteur`, pas concurrente : l'une répond « combien PAR CIBLE », l'autre « combien au
+  TOTAL » — et le total ne pouvait PAS tenir dans un compteur, puisque
+  `CompteurJoueurService::incrementer` refuse `$cibleId <= 0` (pas de « cible 0 » disponible).
+  Ça règle au passage la cible de `KILL_PVP` restée ouverte en §18 : il n'y a pas de cible.
+  C'est l'index UNIQUE `(user_id, cle)` qui rend l'upsert possible. **`user.money` et
+  `user.honneur` NE SONT PAS des cumuls** mais des états courants — les recopier créerait une
+  seconde vérité sur l'or. `MONSTRES_TUES`/`BOSS_VAINCUS` sont des dénormalisations assumées,
+  légitimes UNIQUEMENT parce que `app:cumuls:reparer` les reconstruit depuis `joueur_compteur`
+  et `user_boss` (qui reste la source, `ActionType::BATTRE_BOSS` en dépend). L'XP backfillée
+  est une BORNE INFÉRIEURE (elle ignore l'XP reperdue à chaque mort), assumée : partir de 0
+  classerait un niveau 49 derrière un débutant. `POST /api/joueur/stats` est un endpoint DÉDIÉ
+  — jamais enrichir `/joueur/data/minimal`, chemin chaud rappelé à chaque déplacement.
+- **Classements publics (01/08/2026, doc §21.8)** : `ClassementService` est le point d'entrée
+  UNIQUE (`categories`/`top`/`rangDe`) — et c'est ce qui rend le calcul À LA VOLÉE réversible :
+  matérialiser un jour = une table + une commande + le corps de deux méthodes, zéro impact
+  front. `CategorieClassement` est SÉPARÉE de `TypeCumul` : deux catégories sont des états
+  (`user.money`, `user.honneur`) et tous les cumuls ne méritent pas un podium. Le **rang est
+  calculé serveur** (les ex æquo le partagent, `index + 1` ne saurait pas le dire) et
+  `hors_classement` est en TÊTE des index `(hors_classement, money|honneur)` : la requête
+  filtre avant de trier. Pas de pagination — le rang personnel est servi à part.
+  ⚠️ **Un champ de DTO typé enum répond 500 et non 422 sur une valeur inconnue**
+  (`BackedEnumNormalizer` lève une exception que `#[MapRequestPayload]` ne convertit pas) :
+  prendre une chaîne et résoudre par `tryFrom()`. Le travers est GÉNÉRAL — `/api/hotel/catalogue`
+  a le même. ⚠️ **La base de test n'est pas réinitialisée entre exécutions** : ne jamais
+  asserter une position absolue dans un classement (deux ex æquo laissés par une exécution
+  précédente cassent le test sans que rien ne soit cassé) — asserter une concordance.
+- **Tableau de bord admin (01/08/2026, doc §21.9)** : `TableauDeBordService` compose les
+  agrégats et applique la SEULE règle de domaine de l'écran — `TypeEvenement::fluxMonetaire()`
+  classe chaque type en `creation`/`destruction`/`transfert`. **Le SQL sait sommer
+  `montant_or`, il ne sait pas qu'un marchand est extérieur à l'économie** : sans cette
+  classification, les transferts entre joueurs s'ajouteraient à la création et feraient
+  conclure à une inflation inexistante. ⚠️ **`HDV_DEPOT` : l'or détruit ce sont les FRAIS
+  (`contexte.fraisDepot`), jamais `montant_or`** qui porte le prix demandé — d'où
+  `sommeFraisDepot()`. Un solde positif est une ALERTE (l'or s'accumule), pas une bonne
+  nouvelle. `/administration/joueurs` et `/administration/statistiques` existent enfin ;
+  `AdminCatalog` a gagné `allowNew={false}` pour les écrans d'observation. ⚠️ Un SVG en
+  `preserveAspectRatio="none"` avec `height: auto` suit le ratio du `viewBox` (une courbe
+  100×48 dans 500 px faisait 240 px de haut) : poser la hauteur en ligne.
+- **Guildes (01/08/2026, doc §21.10)** : `GuildeService` est l'UNIQUE machine à états de
+  `guilde`/`joueur_guilde` et OUVRE ses transactions (règle « ne flushe pas » = services de
+  VALEUR, pas machines à états). **`joueur_guilde` est la SEULE vérité** : `user.guilde_id` est
+  supprimée — elle n'avait aucun écrivain alors que tout l'affichage la lisait, d'où le bug
+  « rejoindre une guilde ne fait rien ». **Un joueur = AU PLUS une ligne** (index UNIQUE), donc
+  candidat OU membre, jamais dans deux guildes. Les permissions vivent dans `GradeGuilde` et
+  nulle part ailleurs : `exclure` exige un grade STRICTEMENT supérieur (sinon deux officiers
+  s'excluent à la course), et la transmission de baronnie est une opération À PART de la
+  promotion (deux lignes ; jamais deux barons ni zéro). `placeMax` est testé à l'ACCEPTATION,
+  pas à la candidature. Un baron ne quitte pas s'il reste des membres ; seul, il emporte la
+  guilde. Chaque transition renvoie l'ÉTAT FRAIS complet (patron `EchangeService`). ⚠️ `guilde`
+  est passée dans `EXCLUDE` du dump : sinon les guildes des joueurs partiraient dans git.
+- **PvP (01/08/2026, doc §21.11)** : `PvpService` est l'UNIQUE point d'entrée du duel (il ouvre
+  sa transaction) et `HonneurService` l'UNIQUE point de mutation de l'honneur (ne flushe pas,
+  borne). **`SpellService` n'est pas assaini, il est CANTONNÉ** au calcul de dégâts — le
+  mélange calcul + règles est ce qui avait laissé passer les trous. Corrigés ici : le PvP **ne
+  décomptait JAMAIS les PA** (contrairement à `doDamageOnBoss`), aucun contrôle de carte,
+  portée, `summoningSickness` ni feu ami, et la formule d'honneur avait des TROUS (écart de
+  niveaux entre 30 et 50, ou égal à 9/18/30 → +50, le maximum, pour avoir tué très en dessous
+  de soi). *Une chaîne de branches sur des entiers aura toujours des trous* → droite bornée
+  dans `PvpConfig`. `user.honneur` est passée NOT NULL. `diePlayer(User, ?CauseMort = null)` :
+  paramètre OPTIONNEL, donc les appels qui ignorent la cause compilent et journalisent
+  « inconnue » ; `JOUEURS_TUES` n'est compté que si la mort a un tueur.
+  ⚠️ **Anti-farm : MESURER TÔT, APPLIQUER TARD.** Il lit `evenement_jeu` (seul endroit où le
+  journal est une entrée de GAMEPLAY, d'où `RETENTION_JOURS` ≫ `FENETRE_ANTI_FARM_HEURES`).
+  Mesuré après `diePlayer`, il voit le kill courant et déclare farm dès la 1re victoire ;
+  appliqué avant, le `refresh()` de `diePlayer` efface l'honneur de la victime. D'où le
+  paramètre `bool $farm` passé par l'appelant — `appliquerVictoire` ne doit JAMAIS refaire
+  le test. Le cooldown des sorts reste hors périmètre (trou GÉNÉRAL aux trois endpoints).
+- ⚠️ **Les trois endpoints d'attaque partagent UN CONTRAT DE RÉPONSE** (doc §21.13 bis) :
+  `Spell.jsx` consomme `/joueur/attack/{joueur,monster,boss}` de la même façon et lit
+  `damage, experience, newExperience, level, lifeJoueur, damageReturns, droppedItems,
+  killMessage, message, pa, needRefresh`. **Une clé manquante ne dégrade pas l'affichage,
+  elle casse l'écran** : le front fait `droppedItems[0]`, le `TypeError` empêche
+  `updateJoueurState`, et le ciblage + les survols meurent jusqu'au F5. `killMessage` est ce
+  qui fait DÉCIBLER après une mise à mort. Changer la forme d'une de ces réponses est un
+  changement de CONTRAT, pas un nettoyage — et les tests d'effets en base ne l'attrapent pas
+  (ajouter un test de forme). Corollaire : toute branche d'attaque doit avoir son `try/catch`
+  + toast, les refus serveur étant des 400 ; la garde de distance CÔTÉ CLIENT les rend rares,
+  donc invisibles à l'essai rapide.
+- **Journal du joueur (01/08/2026, doc §21.12)** : `HistoriqueService` a changé de métier — il
+  n'ÉCRIT plus dans `historique`, il LIT `evenement_jeu`. **Plus rien n'écrit dans
+  `historique`** (les deux derniers appels, morts monstre/boss, sont supprimés : `MORT_JOUEUR`
+  les couvre), donc l'union des deux sources ne peut pas produire de doublon. Les lignes
+  héritées sortent en catégorie **« Archives »** — jamais re-typées : ce sont des phrases
+  interpolées, les analyser par regex produirait de la FAUSSE donnée structurée. ⚠️ Une partie
+  d'entre elles est **doublement encodée** (« infligÃ© ») : réparé à l'AFFICHAGE, avec un test
+  qui n'accepte la conversion que si le résultat est de l'UTF-8 valide — une ligne saine
+  reste donc intacte.
+- ⚠️ **Migrer `chusei_test` EN MÊME TEMPS que la base de dev, jamais après coup** : MySQL ne
+  sait pas annuler du DDL, donc une migration qui échoue à mi-parcours laisse un schéma
+  partiel (colonnes posées, contraintes absentes) qu'il faut réparer à la main. Au passage,
+  `chusei_test` a 34 FK de MOINS que `chusei` (117 vs 151, dette préexistante) :
+  `schema:validate` y est rouge, les tests n'éprouvent donc pas l'intégrité référentielle.
+- ⚠️ **Insérer une dépendance au MILIEU d'un constructeur casse les tests à mocks positionnels**
+  (`DeathServiceButinTest`, `SpellServiceTest`, `VenteServiceTest`, `HotelVenteServiceTest`,
+  `QuestProgressionServiceTest`). Le symptôme est un `TypeError` sur un argument sans rapport
+  avec ce qu'on vient de changer.
+- **Migrer la base de test demande la `DATABASE_URL` explicite** : `--env=test` ne suffit pas
+  (docker-compose l'emporte) et la commande migre la base de DEV en annonçant « already at the
+  latest version ». Utiliser
+  `docker exec -e DATABASE_URL="mysql://root:password@mysql:3306/chusei_test" symfony-backend php bin/console doctrine:migrations:migrate`.
+- **Ne jamais dimensionner une modale de jeu en `vw`** (doc §20.4) : l'overlay de `GameModal` est
+  ancré sur `.main` de MapPage (~880 px), pas sur la fenêtre — utiliser `width: 100%` +
+  `max-width`. Et `.main` est en **`overflow: clip`, pas `hidden`** : `hidden` crée un conteneur
+  de défilement, et comme la SpellBar est plus large que la zone, le navigateur scrollait `main`
+  au premier clic dans une modale, décalant TOUT le contenu (dont `#game-modal-root`) et
+  rognant la modale sur son bord gauche. Ne pas revenir à `hidden`.
 - Repositories orphelins (entités supprimées) : `ExperienceRepository`,
   `ExperienceJoueurRepository`, `ActionParamsRepository`.
 - Le schéma BDD est baseliné par des migrations (marquées exécutées) : toute évolution passe
@@ -287,6 +430,17 @@ est capturé automatiquement) :
   l'image manque (les icônes de métier n'existent pas encore sur le disque). Recherche et
   filtres sont 100 % client (corpus = les recettes des métiers appris, déjà chargées) ;
   `realisable` reste une info serveur, revérifiée au lancement.
+- **Fiche d'un métier du rail (28/07/2026, doc §16.8)** : cliquer une carte ouvre ce que le
+  métier a à montrer, et c'est la FAMILLE qui décide — récolte → ses ressources
+  (`objet.metier` + `objet.niveau_ressource`, joints par `MetierService::progressionDe($user,
+  avecRessources: true)`, option activée par `/api/metier/progression` SEUL : `CraftService`
+  appelle la même méthode pour les seuls niveaux) ; fabrication → ses recettes, ou « Aucune
+  recette disponible pour ce métier ». Les deux occupent la MÊME colonne, d'où un seul état
+  (`selection`). Toute carte est cliquable même sans rien à montrer (un clic muet se lit comme
+  un bug), et les paliers hors de portée restent affichés, grisés : c'est ce qui dit au joueur
+  ce que son prochain niveau ouvrira. Ne jamais confondre les trois vides du catalogue (aucun
+  métier de fabrication / métier sans recette / recherche infructueuse) — d'où
+  `recettesDuMetier` à côté de `recettesFiltrees`.
 - **ArtisanatMaker (lot 4, doc §16.5)** : `/administration/artisanat`, API
   `/api/artisanat/editor/*` (ROLE_ADMIN, règle placée AVANT `^/api`). Trois onglets — Métiers,
   Ressources (= premier éditeur d'`Objet`), Recettes. `ArtisanatEditorService` : une
