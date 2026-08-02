@@ -3352,6 +3352,92 @@ réapparaître) affiche son toast en laissant l'écran intact.
 sont donc rares en jeu normal — ce qui explique qu'ils soient passés inaperçus, et pourquoi
 le `catch` reste indispensable pour les cas de désynchronisation.
 
+### 21.13 ter Feu ami, présence, et la seconde moitié du blocage (02/08/2026)
+
+Trois demandes de suite, plus un défaut trouvé en les vérifiant.
+
+#### Le feu ami est autorisé — et il se paie
+
+| Question | Choix | Pourquoi |
+|---|---|---|
+| Frapper un allié | **Permis** (`PvpConfig::FEU_AMI_AUTORISE = true`) | Interdire rendait la trahison *impossible* plutôt que *coûteuse*. Ce n'est pas la même chose : un allié frappé est une décision de jeu, elle mérite un prix, pas un mur. |
+| Le prix | **Honneur ET karma**, sur l'attaquant seul | Les deux valeurs ne mesurent pas la même chose — l'honneur est la conduite en duel, le karma le rapport au monde. Trahir salit les deux, et les faire tomber ensemble donne enfin une conséquence de jeu à `user.alignement` hors des guildes. |
+| La victime | **Ne perd rien** | Se faire poignarder par son camp n'est pas un échec au combat. C'est aussi ce qui empêche la trahison de devenir une arme : sinon deux complices feraient tomber l'honneur d'un rival qui n'a rien fait. |
+| La mise à mort | **Ni honneur ni XP**, et une pénalité aggravée | `attaquer()` court-circuite `appliquerVictoire` : il n'y a pas de victoire à célébrer. La pénalité (−60) dépasse le plus gros gain possible face à un ennemi (+50) — tuer un allié ne doit jamais pouvoir se rentabiliser, même en alternant les cibles. |
+| La trace | `contexte.feuAmi` sur `MORT_JOUEUR` | La pénalité se dissout dans `user.honneur` sans dire d'où elle vient ; le journal est la seule mémoire durable d'une trahison. |
+
+Curseurs dans `PvpConfig` (`FEU_AMI_HONNEUR_PAR_COUP`, `FEU_AMI_KARMA_PAR_COUP`,
+`FEU_AMI_HONNEUR_MISE_A_MORT`, `FEU_AMI_KARMA_MISE_A_MORT`). La garde de refus reste dans
+`verifierAttaque()`, pilotée par la constante : un futur arbitrage peut réinterdire sans
+rouvrir le fichier. **Un alignement NULL n'allie personne** — sans ce test, tous les joueurs
+sans camp seraient alliés entre eux par accident.
+
+#### La pastille de présence
+
+`user.derniere_activite`, écrite par `ActiviteSubscriber` (`kernel.controller`).
+
+> **`last_connexion` ne pouvait PAS servir.** Elle est la dernière *ouverture de session* :
+> un joueur en partie depuis six heures a une `last_connexion` vieille de six heures. Elle
+> répond à « qui a joué cette semaine » (tableau de bord, §21.9) et ne peut pas répondre à
+> « qui est là maintenant ». Deux questions, deux colonnes.
+
+- **`kernel.controller`, pas `kernel.request`** : le pare-feu s'authentifie *pendant*
+  `kernel.request` ; un écouteur posé là verrait un jeton vide selon la priorité, et la
+  présence dépendrait d'un chiffre d'ordonnancement.
+- **UPDATE natif, hors unité de travail** : même raison que `ConnexionSubscriber` — flusher
+  `User` à chaque requête réécrirait vie, PA et position avec l'état du chargement du jeton.
+  C'est la résurrection que documente `DeathService::diePlayer`.
+- **Deux curseurs distincts** (`PresenceConfig`) : `RAFRAICHISSEMENT_SECONDES` borne le COÛT
+  (une écriture par joueur et par minute au pire, alors qu'un pas envoie plusieurs requêtes),
+  `FENETRE_EN_LIGNE_MINUTES` borne le SENS. Le second doit rester nettement supérieur au
+  premier, sinon un joueur présent clignoterait entre les deux états.
+- **`enLigne` est tranché en SQL** (`CASE WHEN` dans `getAllCasesOfMap` et
+  `getMembresSurCarte`) : le client ne connaît ni la fenêtre ni l'horloge serveur. Il arrive
+  en 1/0 — d'où le `Number(...) === 1` côté front, `"0"` étant *truthy* en JS.
+- **Aucun index** : la colonne n'apparaît qu'en projection, jamais en `WHERE` ni `ORDER BY`.
+- `enLigne` est ajouté à `DonjonMapView::CHAMPS_JOUEUR`, sinon il fuiterait d'une case vidée.
+
+#### Deux défauts trouvés en vérifiant
+
+**1. L'icône d'alignement ne manquait pas côté serveur — elle était jetée côté client.**
+`Map.getJoueur()` renvoie `this.props.user` en entier pour SOI, mais reconstruit un objet
+partiel pour les AUTRES, où `nomAlignement` était renommé en `alignement` (que `Player` ne
+lit pas) et `iconeAlignement` absent. D'où un symptôme trompeur : l'icône marchait sur son
+propre personnage et nulle part ailleurs.
+
+> **Cette projection est le CONTRAT de `Player` pour autrui.** Tout champ oublié n'existe
+> plus que pour soi-même — et se lit comme une donnée manquante côté back.
+
+S'y ajoutait un reliquat de la refonte : `.icone-alignement` en `position: absolute; top: 26px`
+dans une étiquette de 45 px en `overflow: hidden` (nécessaire au rayon de bordure), donc rognée.
+Les deux sont corrigés — l'icône et la pastille sont maintenant **dans le flux** d'une ligne flex.
+
+**2. La seconde moitié du blocage de §21.13 bis.** Une attaque PvP sans gain d'XP renvoyait
+`level: null` et `newExperience: null`. Or `UsernameBlock` s'affiche sous condition de
+`joueurState.level` : la fiche du joueur était remplacée par un **chargement perpétuel**
+jusqu'au F5, et la barre d'XP se vidait. Le `TypeError` sur `droppedItems` corrigé en
+§21.13 bis n'était donc pas seul en cause.
+
+> **« Aucune XP gagnée » n'est pas « aucun niveau ».** Le contrat partagé veut une VALEUR,
+> pas un trou.
+
+`LevelingService::etatDe()` renvoie l'état de progression sans rien muter, dans la forme
+exacte de `giveExperienceToAPlayer` ; `attaquer()` et `soigner()` l'utilisent quand il n'y a
+pas de gain. Deux assertions ajoutées au test de contrat (`level` et `newExperience` non nuls)
+plus `testUnSoinSansGainRenseigneQuandMemeLeNiveau`.
+
+#### Tests et vérification
+
+`PvpApiFunctionalTest` : `testFrapperUnAllieEstPermisMaisCouteHonneurEtKarma`,
+`testAcheverUnAllieNeRapporteNiHonneurNiExperience` (le zéro est le point du test),
+`testUnSoinSansGainRenseigneQuandMemeLeNiveau`. `PresenceApiFunctionalTest` : cinq tests
+(écriture, borne de rafraîchissement, en ligne / hors ligne / activité inconnue sur la carte).
+**Suite complète : 439 tests verts.**
+
+Vérifié en jeu : coup sur un allié → « *DuoA1411 est de votre camp : honneur −2, karma −1* »,
+PA décomptés, fiche du joueur intacte, icône d'alignement visible et pastille verte pour les
+joueurs actifs, grise au-delà de cinq minutes.
+
 ### 21.14 Bilan du chantier
 
 Sept lots livrés. Ce qui existe maintenant et n'existait pas :

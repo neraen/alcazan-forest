@@ -195,6 +195,33 @@ est capturé automatiquement) :
   (ajouter un test de forme). Corollaire : toute branche d'attaque doit avoir son `try/catch`
   + toast, les refus serveur étant des 400 ; la garde de distance CÔTÉ CLIENT les rend rares,
   donc invisibles à l'essai rapide.
+- **Feu ami + présence (02/08/2026, doc §21.13 ter)** : frapper un allié est PERMIS et se paie
+  — honneur ET karma, sur l'ATTAQUANT seul (interdire rendait la trahison impossible plutôt
+  que coûteuse). La victime ne perd rien : sinon deux complices feraient tomber l'honneur d'un
+  rival qui n'a rien fait. Une mise à mort d'allié court-circuite `appliquerVictoire` (ni
+  honneur ni XP) et coûte plus (−60) que le plus gros gain possible face à un ennemi (+50) :
+  trahir ne doit jamais se rentabiliser. Un **alignement NULL n'allie personne**. Curseurs dans
+  `PvpConfig`, trace dans `contexte.feuAmi` de `MORT_JOUEUR`.
+  **Présence** : `user.derniere_activite`, écrite par `ActiviteSubscriber` sur
+  **`kernel.controller`** (à `kernel.request` le pare-feu n'a pas fini d'authentifier) en SQL
+  natif hors UoW (un flush de `User` ressusciterait un mort, cf. `diePlayer`).
+  ⚠️ **`last_connexion` ne pouvait pas servir** : c'est la dernière OUVERTURE DE SESSION, pas
+  la présence. `PresenceConfig` porte deux curseurs qui ne mesurent pas la même chose —
+  `RAFRAICHISSEMENT_SECONDES` (coût, ≤ 1 écriture/min/joueur) et `FENETRE_EN_LIGNE_MINUTES`
+  (sens) ; le second doit rester ≫ le premier sinon la pastille clignote. `enLigne` est tranché
+  en SQL (`CASE WHEN`) et arrive en 1/0 → `Number(x) === 1` côté front, `"0"` étant truthy.
+- ⚠️ **`Map.getJoueur()` renvoie `this.props.user` ENTIER pour soi, mais un objet RECONSTRUIT
+  pour les autres** : cette projection est le contrat de `Player` pour autrui, et tout champ
+  oublié n'existe alors que sur son propre personnage — ce qui se lit comme une donnée
+  manquante côté back. C'est ce qui avait fait disparaître l'icône d'alignement d'autrui
+  (`nomAlignement` renommé en `alignement`, `iconeAlignement` absent). Second facteur, réglé
+  aussi : `.icone-alignement` en `position:absolute; top:26px` dans une étiquette de 45 px en
+  `overflow:hidden` était rognée — icône et pastille sont désormais DANS LE FLUX d'une ligne flex.
+- ⚠️ **« Aucune XP gagnée » n'est pas « aucun niveau »** (seconde moitié du blocage §21.13 bis) :
+  une attaque PvP sans gain renvoyait `level: null`, et `UsernameBlock` s'affichant sous
+  condition de `joueurState.level`, la fiche du joueur devenait un chargement perpétuel jusqu'au
+  F5. `LevelingService::etatDe()` rend l'état courant sans muter, dans la forme exacte de
+  `giveExperienceToAPlayer` — l'utiliser partout où il n'y a pas de gain.
 - **Journal du joueur (01/08/2026, doc §21.12)** : `HistoriqueService` a changé de métier — il
   n'ÉCRIT plus dans `historique`, il LIT `evenement_jeu`. **Plus rien n'écrit dans
   `historique`** (les deux derniers appels, morts monstre/boss, sont supprimés : `MORT_JOUEUR`
