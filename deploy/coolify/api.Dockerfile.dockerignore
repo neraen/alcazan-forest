@@ -16,3 +16,4 @@ alcazan-back-prod/config/jwt/**
 !deploy/
 !deploy/coolify/
 !deploy/coolify/scheduler.sh
+!deploy/coolify/composer.lock
