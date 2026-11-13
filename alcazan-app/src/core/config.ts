@@ -1,0 +1,37 @@
+import Constants from 'expo-constants';
+
+/**
+ * Où vit le serveur de jeu.
+ *
+ * ⚠️ `localhost` ne veut pas dire la même chose selon l'appareil : le simulateur iOS
+ * atteint la machine hôte sur `localhost`, un téléphone physique non. On déduit donc
+ * l'adresse par défaut de l'URL du serveur Metro (`hostUri`, du genre
+ * `192.168.1.20:8081`) : elle pointe forcément vers la machine de développement, qu'on
+ * soit en simulateur ou sur un vrai appareil du même réseau.
+ *
+ * Surcharge explicite possible par `EXPO_PUBLIC_API_URL` / `EXPO_PUBLIC_MEDIA_URL`
+ * (fichier `.env` ou variables d'environnement) — c'est ce qu'il faudra utiliser pour
+ * viser un serveur distant.
+ */
+function hoteDeDeveloppement(): string {
+  const hostUri = Constants.expoConfig?.hostUri ?? '';
+  const hote = hostUri.split(':')[0];
+  return hote || 'localhost';
+}
+
+const HOTE = hoteDeDeveloppement();
+
+/** Base de l'API Symfony — garde le `/` final, comme `config.js` côté web. */
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? `http://${HOTE}:8080/api/`;
+
+/**
+ * Base des images servies en statique (`/img/...`). Ce sont les fichiers de
+ * `alcazan-front-prod/public/img`, donc le serveur du front — jamais l'API.
+ */
+export const MEDIA_URL = process.env.EXPO_PUBLIC_MEDIA_URL ?? `http://${HOTE}:3000`;
+
+/** Hub Mercure (temps réel). Port hôte 5001 : macOS squatte 5000 avec AirPlay. */
+export const MERCURE_URL = process.env.EXPO_PUBLIC_MERCURE_URL ?? `http://${HOTE}:5001/.well-known/mercure`;
+
+export const LOGIN_API = API_URL + 'login_check';
+export const USER_API = API_URL + 'users';

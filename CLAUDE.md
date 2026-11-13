@@ -520,6 +520,31 @@ est capturé automatiquement) :
 - `.env` du back pointe sur le port 3307 : ignoré, `DATABASE_URL` vient du docker-compose.
 - L'URL de l'API du front vient de `REACT_APP_API_URL` (docker-compose), fallback 127.0.0.1:8080.
 
+## Application mobile (React Native / Expo — en cours, plan `docs/MOBILE_PLAN.md`)
+
+`alcazan-app/` est une app **Expo SDK 53 / expo-router**, verrouillée en **paysage**, qui
+parle au MÊME back. Elle ne partage PAS de code avec `alcazan-front-prod` (sous-module sur
+une autre branche) : `alcazan-app/src/core/` est un **port fidèle** de `src/services` +
+`src/store` — mêmes noms, mêmes payloads, même forme d'état Redux (`state.data.joueurState`
+…), pour qu'un correctif se transpose d'un dépôt à l'autre sans relecture. Lots 0 à 8
+livrés (connexion, carte, HUD, combat, PNJ/quêtes, échoppe, inventaire, profil, sorts) ;
+guilde, HDV, artisanat, donjons, classement, journal, échanges à venir ; l'administration
+ne sera jamais portée.
+
+- Les **fonds de carte sont EMBARQUÉS** (`assets/images/maps/`, table statique
+  `src/core/mapBackgrounds.ts`) : Metro ne sait pas faire de `require()` dynamique. Tout le
+  reste des images vient du réseau (`MEDIA_URL` = le serveur du front), les noms de
+  fichiers étant en base. Une carte créée APRÈS une release n'est donc pas embarquée.
+- `API_URL`/`MEDIA_URL` se déduisent de l'hôte Metro (`Constants.expoConfig.hostUri`) :
+  `localhost` ne veut pas dire la même chose sur un simulateur et sur un vrai téléphone.
+  Surcharge par `EXPO_PUBLIC_API_URL` / `EXPO_PUBLIC_MEDIA_URL`.
+- Le **JWT expire en 1 h et il n'y a pas de refresh token** : l'intercepteur 401 vide la
+  session, la garde d'auth de `app/_layout.tsx` renvoie à la connexion. Ne pas inventer de
+  renouvellement.
+- Lancer : `cd alcazan-app && npx expo start --ios`. Les pièges de vérification (clavier
+  AZERTY du simulateur, `.expo/types` appartenant à root, orientation ignorée par Expo Go)
+  sont en fin de `docs/MOBILE_PLAN.md`.
+
 ## Refonte graphique (TERMINÉE le 20/07/2026 — voir `docs/REFONTE_PLAN.md`)
 
 - **Maquettes de référence** : `design/` (un bundle par écran, README + `.jsx` de
