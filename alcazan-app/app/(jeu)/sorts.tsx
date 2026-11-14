@@ -116,12 +116,13 @@ export default function SortsScreen() {
     <ModalShell
       iconSrc={mediaUrl('/img/menu/livre.png')}
       title="Sortilèges"
-      subtitle={`${grimoire.length} sort${grimoire.length > 1 ? 's' : ''} connus`}
+      subtitle={`${grimoire.length} sort${grimoire.length > 1 ? 's connus' : ' connu'}`}
       onClose={() => router.back()}
       footer={
         <View style={styles.barre}>
           {emplacements.map((sort, i) => (
-            <Pressable key={i} onPress={() => assigner(i + 1)}>
+            // 26 pt de côté : `hitSlop` porte la cible à ~42 pt sans agrandir la rangée.
+            <Pressable key={i} onPress={() => assigner(i + 1)} hitSlop={8}>
               <Slot src={sort ? iconeSort(sort.icone) : undefined} size="mini">
                 <Text style={styles.numero}>{i + 1}</Text>
               </Slot>
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
   },
   indice: { fontFamily: fonts.body, fontSize: 11, color: colors.textDim2 },
   vide: { fontFamily: fonts.body, fontSize: 12, color: colors.textFaint },
-  barre: { flexDirection: 'row', gap: spacing.sm, justifyContent: 'center' },
+  barre: { flexDirection: 'row', gap: spacing.lg, justifyContent: 'center' },
   numero: {
     position: 'absolute',
     bottom: 1,

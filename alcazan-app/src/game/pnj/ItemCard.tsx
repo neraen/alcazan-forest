@@ -5,9 +5,11 @@ import GameButton from '@/src/ui/GameButton';
 import { colors, couleurRarete, fonts, radius, spacing } from '@/src/ui/tokens';
 
 /**
- * Carte d'article MUTUALISÉE entre l'étal du marchand, la revente et l'hôtel des ventes —
- * même règle que sur le web (`pnj/shopView/itemCard/ItemCard.jsx`) : ne pas redupliquer
- * de markup de carte ailleurs.
+ * Carte d'article MUTUALISÉE entre l'étal du marchand et la revente — même règle que sur
+ * le web (`pnj/shopView/itemCard/ItemCard.jsx`) : ne pas redupliquer de markup de carte
+ * ailleurs. Seul écart assumé avec le web : l'hôtel des ventes ne s'en sert PAS (il liste
+ * des lots en LIGNES, `game/hotel/LigneLot`) — une grille de cartes n'y montrait que
+ * quatre annonces à la fois sur 400 pt de haut.
  */
 export default function ItemCard({
   name,

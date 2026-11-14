@@ -46,7 +46,8 @@
     "react-redux": "^9.3.1",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
-    "expo-screen-orientation": "~8.1.7"
+    "expo-screen-orientation": "~8.1.7",
+    "expo-updates": "~0.28.18"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

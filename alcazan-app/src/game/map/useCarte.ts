@@ -35,6 +35,13 @@ type EtatCarte = {
   chargee: boolean;
 };
 
+/**
+ * Issue d'une tentative de déplacement : un pas fait, une carte changée, ou rien (case
+ * inaccessible, refus du serveur, déplacement déjà en cours). La croix directionnelle
+ * s'en sert pour savoir si elle peut enchaîner le pas suivant.
+ */
+export type IssuePas = 'pas' | 'carte' | 'rien';
+
 const ETAT_VIDE: EtatCarte = {
   cases: [],
   nom: '',
@@ -86,25 +93,55 @@ export function useCarte(user: JoueurMinimal | null) {
     [],
   );
 
+  /** Cible lue par référence : la règle ci-dessous compare, elle ne doit pas recréer
+      tous les rappels de la carte à chaque changement de cible. */
+  const cibleRef = useRef(target);
+  cibleRef.current = target;
+
   /**
-   * Un monstre d'instance se cible AUTOMATIQUEMENT parce qu'on est sur sa case, et jamais
-   * autrement : il n'est pas dessiné (comme tous les monstres du jeu, peints dans l'image
-   * de fond). On lit `renfortId` DE LA CASE — donc de la carte, qui redescend à chaque
-   * déplacement — et surtout pas l'état de combat, qui ne se rafraîchit qu'au sondage.
+   * Un monstre se cible AUTOMATIQUEMENT parce qu'on est sur sa case, et jamais autrement :
+   * il n'est pas dessiné (peint dans l'image de fond). Deux sortes, lues toutes deux SUR
+   * LA CASE — donc sur la carte, qui redescend à chaque déplacement — et surtout pas dans
+   * l'état de combat, qui ne se rafraîchit qu'au sondage :
+   *  - `renfortId`  → monstre d'instance (`Map.majCibleMonstreInstance` du web) ;
+   *  - `hasMonstre` → monstre du monde ouvert. Le web fait ce ciblage au MONTAGE du
+   *    composant `Player` (prop `hasMonstre`), composant qui n'a pas d'équivalent ici :
+   *    sans cette branche, marcher sur un monstre ne ciblait rien.
+   *
+   * `arrivee` reproduit ce « au montage » : le monstre du monde ouvert n'est ciblé que
+   * lorsqu'on ARRIVE sur sa case, pas à chaque rechargement de la carte. Après une mise à
+   * mort le web ne recible pas (il faut revenir sur la case) ; un rechargement qui
+   * reciblerait changerait la règle du jeu, pas seulement son affichage.
    */
-  const majCibleMonstreInstance = useCallback(
-    (cases: CaseCarte[], abscisse: number, ordonnee: number) => {
+  const majCibleMonstre = useCallback(
+    (cases: CaseCarte[], abscisse: number, ordonnee: number, arrivee: boolean) => {
       const maCase = (cases || []).find(
         (c) => c.abscisse === abscisse && c.ordonnee === ordonnee,
       );
-      const renfortId = maCase?.renfortId ?? null;
-      if (renfortId) {
-        dispatch(updatePlayerTarget({ targetId: renfortId, type: 'renfort' }));
-      } else if (target.type === 'renfort') {
+      const courante = cibleRef.current;
+      const voulue = maCase?.renfortId
+        ? { targetId: maCase.renfortId, type: 'renfort' as const }
+        : arrivee && maCase?.hasMonstre
+          ? { targetId: maCase.hasMonstre, type: 'monstre' as const }
+          : null;
+
+      if (voulue) {
+        // Déjà la bonne cible (pas refusé, on n'a pas bougé) : ne rien toucher, sinon la
+        // fiche perdrait son nom sans que rien ne la fasse relire.
+        if (courante.type === voulue.type && courante.targetId === voulue.targetId) return;
+        dispatch(removePlayerTarget());
+        dispatch(updatePlayerTarget(voulue));
+        return;
+      }
+
+      // Un monstre ne reste ciblé que tant qu'on est sur sa case : la quitter décible,
+      // monde ouvert comme instance. Un renfort disparaît aussi quand il meurt (la case
+      // perd son `renfortId`), d'où le test hors arrivée.
+      if (courante.type === 'renfort' || (arrivee && courante.type === 'monstre')) {
         dispatch(removePlayerTarget());
       }
     },
-    [dispatch, target.type],
+    [dispatch],
   );
 
   const chargerCarte = useCallback(async () => {
@@ -121,6 +158,14 @@ export function useCarte(user: JoueurMinimal | null) {
       const abscisse = data.abscisseJoueur ?? etatRef.current.abscisseJoueur;
       const ordonnee = data.ordonneeJoueur ?? etatRef.current.ordonneeJoueur;
       const cases = data.cases ?? [];
+      // Premier chargement, ou position réadoptée ailleurs (téléportation serveur) : on
+      // ARRIVE sur la case. Un simple rechargement sur place n'est pas une arrivée.
+      const avant = etatRef.current;
+      const arrivee =
+        !avant.chargee ||
+        avant.mapId !== (data.mapId ?? mapId) ||
+        avant.abscisseJoueur !== abscisse ||
+        avant.ordonneeJoueur !== ordonnee;
 
       setEtat({
         cases,
@@ -136,7 +181,7 @@ export function useCarte(user: JoueurMinimal | null) {
         chargee: true,
       });
       dispatch(updatePositionJoueur({ abscisse, ordonnee }));
-      majCibleMonstreInstance(cases, abscisse, ordonnee);
+      majCibleMonstre(cases, abscisse, ordonnee, arrivee);
     } catch (erreur) {
       // Sans ce catch, un échec laisse l'écran sur son chargement indéfiniment : le
       // joueur ne peut même pas savoir que c'est le réseau qui a lâché.
@@ -144,7 +189,7 @@ export function useCarte(user: JoueurMinimal | null) {
     } finally {
       setChargement(false);
     }
-  }, [user, joueurState.mapId, dispatch, toast, calculerAccessibles, majCibleMonstreInstance]);
+  }, [user, joueurState.mapId, dispatch, toast, calculerAccessibles, majCibleMonstre]);
 
   // Premier chargement.
   useEffect(() => {
@@ -162,15 +207,28 @@ export function useCarte(user: JoueurMinimal | null) {
     refreshPrecedent.current = joueurState.needRefresh;
   }, [joueurState.needRefresh, chargerCarte, dispatch]);
 
-  const seDeplacer = useCallback(
-    async (abscisse: number, ordonnee: number) => {
-      const courant = etatRef.current;
-      const data = await usersApi.updatePosition(courant.mapId, abscisse, ordonnee);
+  /**
+   * Un seul aller-retour de déplacement à la fois. Deux taps rapprochés partaient en
+   * parallèle : la seconde réponse pouvait arriver AVANT la première et rendre au joueur
+   * une position périmée (le personnage « revenait en arrière » d'une case).
+   */
+  const enMouvement = useRef(false);
 
-      // Un monstre ne reste ciblé que tant qu'on est sur sa case : quitter la case
-      // décible, monde ouvert comme instance.
-      if (target.type === 'monstre' || target.type === 'renfort') {
-        dispatch(removePlayerTarget());
+  const seDeplacer = useCallback(
+    async (abscisse: number, ordonnee: number): Promise<boolean> => {
+      if (enMouvement.current) return false;
+      enMouvement.current = true;
+      const courant = etatRef.current;
+      let data;
+      try {
+        data = await usersApi.updatePosition(courant.mapId, abscisse, ordonnee);
+      } catch (erreur) {
+        // Sans ce catch, un refus (plus de PM, case prise entre-temps) ou une coupure
+        // réseau était un rejet non géré : le tap ne faisait RIEN de visible.
+        toast.error(messageErreur(erreur, 'Déplacement impossible.'));
+        return false;
+      } finally {
+        enMouvement.current = false;
       }
 
       const cases = data.cases ?? courant.cases;
@@ -184,58 +242,79 @@ export function useCarte(user: JoueurMinimal | null) {
       }));
       dispatch(updatePositionJoueur({ abscisse: data.abscisseJoueur, ordonnee: data.ordonneeJoueur }));
       dispatch(updateJoueurState({ lifeJoueur: data.life, manaJoueur: data.mana, pm: data.pm }));
-      majCibleMonstreInstance(cases, data.abscisseJoueur, data.ordonneeJoueur);
+      // Décible le monstre quitté ET cible celui sur lequel on arrive, d'un seul geste.
+      majCibleMonstre(cases, data.abscisseJoueur, data.ordonneeJoueur, true);
+      return true;
     },
-    [dispatch, target.type, calculerAccessibles, majCibleMonstreInstance],
+    [dispatch, toast, calculerAccessibles, majCibleMonstre],
   );
 
   const changerDeCarte = useCallback(
-    async (targetMapId: number | null, targetWrap: number | null, wrapId: number) => {
-      const position = await usersApi.changeMap(targetMapId, targetWrap, wrapId);
+    async (
+      targetMapId: number | null,
+      targetWrap: number | null,
+      wrapId: number,
+    ): Promise<boolean> => {
+      if (enMouvement.current) return false;
+      enMouvement.current = true;
+      try {
+        const position = await usersApi.changeMap(targetMapId, targetWrap, wrapId);
 
-      if (position.message !== undefined && position.mapId === undefined) {
-        // Passage REFUSÉ par le serveur (condition de salle, condition de wrap, verrou
-        // quotidien…). Sans ce message, le tap sur la porte ne fait RIEN de visible, ce
-        // qui se lit comme un bug de la carte.
-        toast.error(position.message);
-        return;
+        if (position.message !== undefined && position.mapId === undefined) {
+          // Passage REFUSÉ par le serveur (condition de salle, condition de wrap, verrou
+          // quotidien…). Sans ce message, le tap sur la porte ne fait RIEN de visible,
+          // ce qui se lit comme un bug de la carte.
+          toast.error(position.message);
+          return false;
+        }
+
+        const data = await mapApi.find(position.mapId!);
+        const cases = data.cases ?? [];
+        const abscisse = position.abscisse!;
+        const ordonnee = position.ordonnee!;
+
+        setEtat({
+          cases,
+          nom: data.mapInfo?.nom ?? '',
+          isInstance: !!data.mapInfo?.isInstance,
+          mapId: data.mapId,
+          portesDonjon: data.portesDonjon ?? {},
+          interactions: data.interactions ?? {},
+          modesRecolte: data.modesRecolte ?? [],
+          abscisseJoueur: abscisse,
+          ordonneeJoueur: ordonnee,
+          casesAccessibles: calculerAccessibles(cases, abscisse, ordonnee),
+          chargee: true,
+        });
+
+        dispatch(updateJoueurState({ mapId: data.mapId }));
+        dispatch(updatePositionJoueur({ abscisse, ordonnee }));
+        dispatch(removePlayerTarget());
+
+        // Population d'une salle apparue à l'arrivée du groupe : les monstres n'étant
+        // pas dessinés, cette annonce est le SEUL signal qu'il y a quelque chose à
+        // nettoyer.
+        if (position.annonce) toast.warning(position.annonce);
+
+        majCibleMonstre(cases, abscisse, ordonnee, true);
+        return true;
+      } catch (erreur) {
+        // Même raison que pour un pas : un échec muet se lit comme une porte cassée.
+        toast.error(messageErreur(erreur, 'Ce passage est infranchissable pour le moment.'));
+        return false;
+      } finally {
+        enMouvement.current = false;
       }
-
-      const data = await mapApi.find(position.mapId!);
-      const cases = data.cases ?? [];
-      const abscisse = position.abscisse!;
-      const ordonnee = position.ordonnee!;
-
-      setEtat({
-        cases,
-        nom: data.mapInfo?.nom ?? '',
-        isInstance: !!data.mapInfo?.isInstance,
-        mapId: data.mapId,
-        portesDonjon: data.portesDonjon ?? {},
-        interactions: data.interactions ?? {},
-        modesRecolte: data.modesRecolte ?? [],
-        abscisseJoueur: abscisse,
-        ordonneeJoueur: ordonnee,
-        casesAccessibles: calculerAccessibles(cases, abscisse, ordonnee),
-        chargee: true,
-      });
-
-      dispatch(updateJoueurState({ mapId: data.mapId }));
-      dispatch(updatePositionJoueur({ abscisse, ordonnee }));
-      dispatch(removePlayerTarget());
-
-      // Population d'une salle apparue à l'arrivée du groupe : les monstres n'étant pas
-      // dessinés, cette annonce est le SEUL signal qu'il y a quelque chose à nettoyer.
-      if (position.annonce) toast.warning(position.annonce);
-
-      majCibleMonstreInstance(cases, abscisse, ordonnee);
     },
-    [dispatch, toast, calculerAccessibles, majCibleMonstreInstance],
+    [dispatch, toast, calculerAccessibles, majCibleMonstre],
   );
 
-  /** Tap sur une case — port de `handleClick`, mêmes règles, même ordre. */
+  /**
+   * Tap sur une case — port de `handleClick`, mêmes règles, même ordre. L'issue rendue ne
+   * sert qu'à la croix directionnelle ; un tap sur la carte l'ignore.
+   */
   const taperCase = useCallback(
-    (caseTapee: CaseCarte) => {
+    async (caseTapee: CaseCarte): Promise<IssuePas> => {
       const courant = etatRef.current;
 
       if (caseTapee.isWrap) {
@@ -256,19 +335,43 @@ export function useCarte(user: JoueurMinimal | null) {
                 targetWrap: caseTapee.targetWrap,
               }),
             );
-            return;
+            return 'rien';
           }
-          changerDeCarte(caseTapee.targetMapId, caseTapee.targetWrap, caseTapee.carteCarreauId);
+          const change = await changerDeCarte(
+            caseTapee.targetMapId,
+            caseTapee.targetWrap,
+            caseTapee.carteCarreauId,
+          );
+          return change ? 'carte' : 'rien';
         }
-        return;
+        return 'rien';
       }
 
       if (courant.casesAccessibles.includes(caseTapee.carteCarreauId)) {
-        seDeplacer(caseTapee.abscisse, caseTapee.ordonnee);
+        return (await seDeplacer(caseTapee.abscisse, caseTapee.ordonnee)) ? 'pas' : 'rien';
       }
+      return 'rien';
     },
     [dispatch, changerDeCarte, seDeplacer],
   );
 
-  return { etat, chargement, taperCase, chargerCarte, seDeplacer, changerDeCarte };
+  /**
+   * Un pas dans une direction (croix directionnelle) = un TAP sur la case voisine, rien
+   * de plus : mêmes cases accessibles, mêmes portes, même arbitrage du serveur. Aucune
+   * règle de déplacement ne vit ici, pour que le pouce et le doigt ne puissent jamais
+   * diverger.
+   */
+  const pasVers = useCallback(
+    async (dx: number, dy: number): Promise<IssuePas> => {
+      const courant = etatRef.current;
+      const voisine = courant.cases.find(
+        (c) =>
+          c.abscisse === courant.abscisseJoueur + dx && c.ordonnee === courant.ordonneeJoueur + dy,
+      );
+      return voisine ? taperCase(voisine) : 'rien';
+    },
+    [taperCase],
+  );
+
+  return { etat, chargement, taperCase, pasVers, chargerCarte, seDeplacer, changerDeCarte };
 }

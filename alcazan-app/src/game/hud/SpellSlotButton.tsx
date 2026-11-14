@@ -88,7 +88,15 @@ export default function SpellSlotButton({
   };
 
   const lancerSortSurSoi = async () => {
-    const resultat = await usersApi.applySpellAutoFocused(spell.id);
+    let resultat;
+    try {
+      resultat = await usersApi.applySpellAutoFocused(spell.id);
+    } catch (erreur) {
+      // Les trois branches d'attaque avaient leur catch, pas celle-ci : un soin refusé
+      // (mana, PA) partait en rejet non géré, sans un mot pour le joueur.
+      toast.error(messageErreur(erreur, 'Impossible de lancer ce sort.'));
+      return;
+    }
     dispatch(
       updateJoueurState({
         message: resultat.message ?? '',

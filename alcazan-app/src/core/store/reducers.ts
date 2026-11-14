@@ -87,14 +87,23 @@ export function playerStatsReducer(state: AppState = etatInitial, action: AnyAct
     case actions.UPDATE_POSITION_JOUEUR:
       return { ...state, data: { ...state.data, positionJoueur: action.coordonnees } };
 
-    case actions.UPDATE_JOUEUR_STATE:
+    case actions.UPDATE_JOUEUR_STATE: {
+      // SEUL écart avec le réducteur du web : une clé `undefined` est ignorée au lieu
+      // d'écraser l'état. Les réponses d'attaque n'ont pas toutes les mêmes clés (un
+      // duel ne renvoie pas forcément `pa`, un soin pas forcément `life`) et le spread
+      // nu posait alors `undefined` dans le store — le HUD affichait « undefined PA »
+      // jusqu'au rechargement suivant. `null` reste une valeur et passe.
+      const defini = Object.fromEntries(
+        Object.entries(action.joueurState ?? {}).filter(([, valeur]) => valeur !== undefined),
+      );
       return {
         ...state,
         data: {
           ...state.data,
-          joueurState: { ...state.data.joueurState, ...action.joueurState },
+          joueurState: { ...state.data.joueurState, ...defini },
         },
       };
+    }
 
     case actions.OPEN_PNJ_INTERACTION:
       return { ...state, data: { ...state.data, pnjInteraction: action.pnjInteraction } };

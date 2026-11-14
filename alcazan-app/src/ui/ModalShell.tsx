@@ -33,10 +33,17 @@ export default function ModalShell({
   children?: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
+  // En PAYSAGE l'encoche est sur un petit côté : sans ces marges elle recouvrait la
+  // première colonne de l'inventaire, le portrait du profil, les icônes des listes.
+  const lateral = { paddingLeft: insets.left, paddingRight: insets.right };
+  const lateralBande = {
+    paddingLeft: Math.max(insets.left, spacing.lg),
+    paddingRight: Math.max(insets.right, spacing.lg),
+  };
 
   return (
     <LinearGradient colors={['#0a2c36', '#06232b']} style={styles.shell}>
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, spacing.md) }]}>
+      <View style={[styles.header, lateralBande, { paddingTop: Math.max(insets.top, spacing.md) }]}>
         {!!iconSrc && (
           <View style={styles.iconBox}>
             <Image
@@ -64,10 +71,15 @@ export default function ModalShell({
         )}
       </View>
 
-      <View style={styles.body}>{children}</View>
+      <View style={[styles.body, lateral]}>{children}</View>
 
       {!!footer && (
-        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
+        <View
+          style={[
+            styles.footer,
+            lateralBande,
+            { paddingBottom: Math.max(insets.bottom, spacing.md) },
+          ]}>
           {footer}
         </View>
       )}
@@ -81,7 +93,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    paddingHorizontal: spacing.lg,
     paddingBottom: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(227, 182, 79, 0.35)',
@@ -119,7 +130,6 @@ const styles = StyleSheet.create({
   closeLabel: { color: colors.gold, fontSize: 15, lineHeight: 18 },
   body: { flex: 1 },
   footer: {
-    paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: 'rgba(227, 182, 79, 0.35)',

@@ -21,7 +21,13 @@ export default function SectionTitle({
   return (
     <View style={[styles.row, style]}>
       <View style={[styles.bar, { height: h }]} />
-      <Text style={[styles.title, { fontSize: f }]} numberOfLines={1}>
+      {/* Un titre trop long RÉTRÉCIT avant de se tronquer : « Caractéristiq… » à côté
+          de sa pastille de points se lisait comme une faute. */}
+      <Text
+        style={[styles.title, { fontSize: f }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}>
         {children}
       </Text>
       {!!right && <View style={styles.right}>{right}</View>}

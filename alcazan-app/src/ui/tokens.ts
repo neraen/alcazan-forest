@@ -35,6 +35,30 @@ export const colors = {
   badgeBg: '#0a3540',
   ink: '#05242c',
 
+  /* --- HUD flottant de la carte (mobile uniquement) ---
+     Plus transparent qu'un panneau : il SURVOLE le décor, il ne doit pas le boucher. */
+  hudBg: 'rgba(4, 22, 28, 0.74)',
+  hudBgStrong: 'rgba(4, 22, 28, 0.9)',
+  hudBorder: 'rgba(227, 182, 79, 0.26)',
+  hudTrack: 'rgba(0, 0, 0, 0.45)',
+  scrim: 'rgba(4, 20, 26, 0.72)',
+  toastBg: 'rgba(4, 26, 33, 0.94)',
+  /* Croix directionnelle : presque du verre au repos, elle ne se densifie que sous le
+     pouce. */
+  padBg: 'rgba(4, 22, 28, 0.34)',
+  padBgActif: 'rgba(4, 22, 28, 0.58)',
+  padBorder: 'rgba(227, 182, 79, 0.3)',
+  padGlyph: 'rgba(238, 246, 246, 0.7)',
+  padThumb: 'rgba(227, 182, 79, 0.28)',
+
+  /* --- Marqueurs posés sur la carte --- */
+  mapDot: 'rgba(255, 255, 255, 0.62)',
+  mapDotBorder: 'rgba(4, 26, 33, 0.45)',
+  mapLabelBg: 'rgba(4, 22, 28, 0.72)',
+  mapLabelCible: 'rgba(169, 31, 28, 0.92)',
+  ringMoi: 'rgba(227, 182, 79, 0.5)',
+  ringCible: 'rgba(224, 74, 57, 0.5)',
+
   /* --- Textes --- */
   text: '#eef6f6',
   textDim: '#b7d2d6',
@@ -91,6 +115,16 @@ export const colors = {
   dangerBorder: 'rgba(224, 74, 57, 0.5)',
   dangerBgHover: 'rgba(224, 74, 57, 0.18)',
   dangerText: '#e78a7d',
+
+  /* --- Succès / état positif --- */
+  success: '#6ed69a',
+  successBorder: 'rgba(110, 214, 154, 0.5)',
+  successBg: 'rgba(110, 214, 154, 0.12)',
+  warningBorder: 'rgba(240, 169, 92, 0.6)',
+
+  /* --- Podium des classements --- */
+  podiumArgent: '#c9d6d8',
+  podiumBronze: '#c98a52',
 
   /* --- Caractéristiques --- */
   statConstitution: '#e04a39',

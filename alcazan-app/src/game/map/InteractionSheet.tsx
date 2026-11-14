@@ -1,4 +1,5 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import type { EtatInteraction, ModeRecolte } from '@/src/core/types';
 import Panel from '@/src/ui/Panel';
@@ -11,6 +12,11 @@ import { colors, fonts, radius, spacing } from '@/src/ui/tokens';
  * Les chiffres (quantité, cooldown, épuisement, karma) viennent de `modesRecolte`, que la
  * carte descend depuis `Config\RecolteConfig` : AUCUN n'est en dur côté client. C'est ce
  * qui permet d'ajuster l'équilibrage sans toucher à l'app.
+ *
+ * ⚠️ Voile en `absoluteFill` et NON `<Modal>` de React Native : sur iOS une `Modal` ne
+ * connaît que le portrait tant qu'on ne lui passe pas `supportedOrientations`, et l'app
+ * est verrouillée en paysage — le panneau sortait couché. L'écran de carte le rend en
+ * dernier, il recouvre donc bien le HUD (même patron que `MenuDrawer`).
  */
 export default function InteractionSheet({
   nom,
@@ -26,13 +32,19 @@ export default function InteractionSheet({
   onFermer: () => void;
 }) {
   return (
-    <Modal transparent animationType="fade" onRequestClose={onFermer}>
+    <Animated.View
+      entering={FadeIn.duration(140)}
+      exiting={FadeOut.duration(140)}
+      style={StyleSheet.absoluteFill}>
       <Pressable style={styles.backdrop} onPress={onFermer}>
         <Pressable onPress={() => {}}>
           <Panel style={styles.carte}>
             <SectionTitle size="sm">{etat?.nom || nom}</SectionTitle>
             {!!etat?.coutPa && <Text style={styles.cout}>{etat.coutPa} PA</Text>}
 
+            {/* Côte à côte : empilés, deux modes + titre + annulation dépassaient les
+                ~400 pt de haut d'un téléphone en paysage. */}
+            <View style={styles.modes}>
             {modes.map((mode) => (
               <Pressable
                 key={mode.value}
@@ -55,6 +67,7 @@ export default function InteractionSheet({
                 </View>
               </Pressable>
             ))}
+            </View>
 
             <Pressable onPress={onFermer} style={styles.annuler}>
               <Text style={styles.annulerLabel}>Annuler</Text>
@@ -62,7 +75,7 @@ export default function InteractionSheet({
           </Panel>
         </Pressable>
       </Pressable>
-    </Modal>
+    </Animated.View>
   );
 }
 
@@ -72,11 +85,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.xl,
-    backgroundColor: 'rgba(4, 20, 26, 0.86)',
+    backgroundColor: colors.scrim,
   },
-  carte: { width: '100%', maxWidth: 420, gap: spacing.md },
+  carte: { width: 560, maxWidth: '100%', gap: spacing.md },
+  modes: { flexDirection: 'row', gap: spacing.md },
   cout: { fontFamily: fonts.body, fontSize: 12, color: colors.paLabel },
   mode: {
+    flex: 1,
     gap: spacing.xs,
     padding: spacing.md,
     borderRadius: radius.card,

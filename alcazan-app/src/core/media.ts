@@ -51,6 +51,33 @@ export const imageObjet = (image?: string | null) => (image ? mediaUrl(`/img/obj
 export const iconeEquipement = (icone?: string | null, position?: string | null) =>
   icone ? mediaUrl(`/img/equipement/${position ?? ''}/${icone}`.replace('//', '/')) : '';
 
+/**
+ * Image d'un item décrit par `{type, image, position}` — la forme que renvoient l'hôtel
+ * des ventes et l'artisanat (nom de fichier BRUT + position, jamais un chemin). Port de
+ * `itemUtils.itemImage()` : les conventions de dossier ne vivent qu'ici.
+ */
+export function imageItem(item?: {
+  type?: string | null;
+  image?: string | null;
+  position?: string | null;
+} | null): string {
+  if (!item?.image) return '';
+  switch (item.type) {
+    case 'equipement':
+      return item.position ? iconeEquipement(item.image, item.position) : '';
+    case 'consommable':
+      return iconeConsommable(item.image);
+    case 'objet':
+      return imageObjet(item.image);
+    default:
+      return '';
+  }
+}
+
+/** `metier.icone` — SANS extension. Le fichier peut manquer : prévoir un repli. */
+export const iconeMetier = (icone?: string | null) =>
+  icone ? mediaUrl(`/img/metier/${icone}.png`) : '';
+
 /** `alignement.icone` — AVEC extension. */
 export const iconeAlignement = (icone?: string | null) =>
   icone ? mediaUrl(`/img/alignement/${icone}`) : '';

@@ -47,6 +47,7 @@ export default function ProfilScreen() {
   const [stats, setStats] = useState<any>(null);
   const [chargement, setChargement] = useState(true);
   const [envoi, setEnvoi] = useState(false);
+  const [largeurKarma, setLargeurKarma] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -124,7 +125,7 @@ export default function ProfilScreen() {
     <ModalShell
       iconSrc={mediaUrl('/img/icons/people.png')}
       title={user.pseudo}
-      subtitle={`${user.nomClasse} · niveau ${user.niveau}`}
+      subtitle={`${user.nomClasse.charAt(0).toUpperCase()}${user.nomClasse.slice(1)} · niveau ${user.niveau}`}
       onClose={() => router.back()}>
       <ScrollView contentContainerStyle={styles.corps}>
         <View style={styles.colonnes}>
@@ -166,7 +167,9 @@ export default function ProfilScreen() {
             />
 
             {!!karma && (
-              <View style={styles.karma}>
+              <View
+                style={styles.karma}
+                onLayout={(e) => setLargeurKarma(e.nativeEvent.layout.width)}>
                 <GaugeBar
                   variant="karma"
                   label="Karma"
@@ -174,7 +177,9 @@ export default function ProfilScreen() {
                   max={karma.max - karma.min}
                   right={<Text style={styles.karmaPalier}>{karma.palier}</Text>}
                   marker={50}
-                  trackWidth={240}
+                  // Largeur MESURÉE : le dégradé bipolaire doit couvrir la piste réelle,
+                  // qui dépend de la largeur de l'écran.
+                  trackWidth={largeurKarma || undefined}
                 />
               </View>
             )}
@@ -227,7 +232,7 @@ export default function ProfilScreen() {
               onPress={valider}
               disabled={!enAttente || restant < 0}
               loading={envoi}>
-              Valider la répartition
+              Valider
             </GameButton>
           </Panel>
 
@@ -252,9 +257,12 @@ export default function ProfilScreen() {
 
 const styles = StyleSheet.create({
   centre: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  corps: { padding: spacing.md },
-  colonnes: { flexDirection: 'row', gap: spacing.md },
-  colonne: { flex: 1, gap: spacing.sm, minWidth: 260 },
+  corps: { padding: spacing.sm },
+  colonnes: { flexDirection: 'row', gap: spacing.sm },
+  // `minWidth: 0` et surtout PAS un plancher en points : trois colonnes de 260 pt
+  // demandaient 830 pt, plus que la largeur utile d'un iPhone une fois l'encoche retirée
+  // — la troisième sortait de l'écran.
+  colonne: { flex: 1, gap: spacing.sm, minWidth: 0 },
   identite: { flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
   avatar: {
     width: 56,
@@ -290,7 +298,7 @@ const styles = StyleSheet.create({
   restantActif: { color: colors.level, borderColor: colors.level },
   ligneCarac: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   nomCarac: { flex: 1, fontFamily: fonts.bodyBold, fontSize: 12 },
-  valeurCarac: { fontFamily: fonts.body, fontSize: 12, color: colors.text, minWidth: 64 },
+  valeurCarac: { fontFamily: fonts.body, fontSize: 12, color: colors.text, minWidth: 40 },
   enAttente: { color: colors.level },
   bonus: { color: colors.bonus },
   stepper: {
@@ -307,11 +315,20 @@ const styles = StyleSheet.create({
   ligneStat: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: spacing.sm,
     paddingVertical: 3,
     borderBottomWidth: 1,
     borderBottomColor: colors.rowBg,
   },
-  statLabel: { fontFamily: fonts.body, fontSize: 12, color: colors.textDim },
-  statValeur: { fontFamily: fonts.bodyBold, fontSize: 12, color: colors.gold },
+  // Les deux côtés peuvent rétrécir et passer à la ligne : « Expérience totale gagnée »
+  // face à « 4123 point(s) d'expérience » sortait du panneau par la droite.
+  statLabel: { flexShrink: 1, fontFamily: fonts.body, fontSize: 12, color: colors.textDim },
+  statValeur: {
+    flexShrink: 1,
+    textAlign: 'right',
+    fontFamily: fonts.bodyBold,
+    fontSize: 12,
+    color: colors.gold,
+  },
   vide: { fontFamily: fonts.body, fontSize: 12, color: colors.textFaint },
 });

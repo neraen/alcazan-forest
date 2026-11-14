@@ -89,6 +89,9 @@ export default function InscriptionScreen() {
           <Panel style={styles.card}>
             <Text style={styles.title}>Inscription</Text>
 
+            {/* Deux colonnes : cinq champs empilés demandaient 520 pt de haut sur un
+                écran paysage qui en offre 400. */}
+            <View style={styles.rangee}>
             {champ('pseudo', 'Pseudo', pseudo, setPseudo)}
 
             <View style={styles.field}>
@@ -106,12 +109,18 @@ export default function InscriptionScreen() {
                 ))}
               </View>
             </View>
+            </View>
 
-            {champ('email', 'Adresse email', email, setEmail, { email: true })}
-            {champ('password', 'Mot de passe', password, setPassword, { secret: true })}
-            {champ('passwordConfirm', 'Confirmation', passwordConfirm, setPasswordConfirm, {
-              secret: true,
-            })}
+            <View style={styles.rangee}>
+              {champ('email', 'Adresse email', email, setEmail, { email: true })}
+            </View>
+
+            <View style={styles.rangee}>
+              {champ('password', 'Mot de passe', password, setPassword, { secret: true })}
+              {champ('passwordConfirm', 'Confirmation', passwordConfirm, setPasswordConfirm, {
+                secret: true,
+              })}
+            </View>
 
             <GameButton
               variant="solid"
@@ -134,8 +143,9 @@ export default function InscriptionScreen() {
 const styles = StyleSheet.create({
   page: { flex: 1 },
   flex: { flex: 1 },
-  scroll: { flexGrow: 1, justifyContent: 'center', padding: spacing.xl },
-  card: { width: '100%', maxWidth: 420, alignSelf: 'center', gap: spacing.lg },
+  scroll: { flexGrow: 1, justifyContent: 'center', padding: spacing.md },
+  card: { width: '100%', maxWidth: 600, alignSelf: 'center', gap: spacing.md },
+  rangee: { flexDirection: 'row', gap: spacing.md },
   title: {
     fontFamily: fonts.title,
     fontSize: 20,
@@ -144,7 +154,10 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     textAlign: 'center',
   },
-  field: { gap: spacing.xs + 2 },
+  // `flex: 1` : les champs d'une RANGÉE se partagent sa largeur. ⚠️ Un champ doit donc
+  // toujours vivre dans une `rangee`, même seul : posé directement dans la colonne (à
+  // hauteur libre), `flex: 1` lui donnerait une base de 0 et il s'écraserait.
+  field: { flex: 1, gap: spacing.xs + 2 },
   label: {
     fontFamily: fonts.bodyBold,
     fontSize: 11,
@@ -153,7 +166,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   input: {
-    minHeight: 46,
+    minHeight: 42,
     paddingHorizontal: spacing.md,
     borderRadius: radius.slot,
     borderWidth: 1,

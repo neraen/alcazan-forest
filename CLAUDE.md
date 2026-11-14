@@ -527,9 +527,10 @@ parle au MÊME back. Elle ne partage PAS de code avec `alcazan-front-prod` (sous
 une autre branche) : `alcazan-app/src/core/` est un **port fidèle** de `src/services` +
 `src/store` — mêmes noms, mêmes payloads, même forme d'état Redux (`state.data.joueurState`
 …), pour qu'un correctif se transpose d'un dépôt à l'autre sans relecture. Lots 0 à 8
-livrés (connexion, carte, HUD, combat, PNJ/quêtes, échoppe, inventaire, profil, sorts) ;
-guilde, HDV, artisanat, donjons, classement, journal, échanges à venir ; l'administration
-ne sera jamais portée.
+livrés (connexion, carte, HUD, combat, PNJ/quêtes, échoppe, inventaire, profil, sorts),
+plus les écrans du menu le 14/11/2026 (classement, journal, guilde, hôtel des ventes,
+artisanat, établi) ; restent les **échanges joueur-à-joueur** et les **donjons** ;
+l'administration ne sera jamais portée.
 
 - Les **fonds de carte sont EMBARQUÉS** (`assets/images/maps/`, table statique
   `src/core/mapBackgrounds.ts`) : Metro ne sait pas faire de `require()` dynamique. Tout le
@@ -541,6 +542,43 @@ ne sera jamais portée.
 - Le **JWT expire en 1 h et il n'y a pas de refresh token** : l'intercepteur 401 vide la
   session, la garde d'auth de `app/_layout.tsx` renvoie à la connexion. Ne pas inventer de
   renouvellement.
+- **HUD de la carte (refonte du 13/11/2026, `docs/MOBILE_PLAN.md` §3)** : des éléments de
+  COIN, plus de colonne — cartouche joueur en haut à gauche (un appui ouvre le Profil),
+  zone OU cible au centre, or/PA/PM + ☰ à droite, barre d'action en bas à droite qui ne
+  dessine que les emplacements REMPLIS, croix directionnelle en bas à gauche. Ne pas
+  rajouter de panneau permanent : en paysage l'écran fait ~400 pt de haut. Sur la carte, quatre signes seulement (point = case où
+  marcher, pastille or = PNJ/interaction, anneau or = moi, étiquette rouge = cible).
+- ⚠️ **En paysage l'encoche est sur un petit côté** : lire `insets.left`/`right`, pas
+  seulement `top`/`bottom` (`ModalShell` et le menu passaient dessous). Et pas de
+  `<Modal>` RN (portrait seul sur iOS) : un voile `absoluteFill` rendu par l'écran.
+- `MapCanvas` : zoom de départ 0,85, zoom minimal = la carte couvre l'écran, vue bornée
+  au bord du monde SAUF si ça cacherait le personnage sous le HUD (prop `marges`).
+  `useCarte` ne laisse partir qu'UN déplacement à la fois (`enMouvement`) et toaste les
+  refus — un tap muet se lit comme un bug.
+- **Écrans du menu (14/11/2026, `docs/MOBILE_PLAN.md` §5 bis)** : dessinés POUR le
+  paysage, pas transcrits du web — rail à gauche (~220 pt) + contenu à droite, le détail
+  dans la colonne d'à côté plutôt que des micro-boutons par ligne, `Onglets`/`Chip` de
+  36 pt minimum, champs de saisie EN HAUT (le clavier couvre la moitié basse), et
+  `confirmer()` (`Alert` native) devant tout ce qui coûte ou ne s'annule pas. Le serveur
+  fait foi (`realisable`, `prete`, `peutGerer`, `estMien`, `rang`, `curseurs`) : aucun
+  chiffre de règle en dur, aucune durée décomptée localement (`core/domain/temps`).
+  Écart assumé : l'hôtel des ventes liste des LIGNES (`game/hotel/LigneLot`), pas la
+  carte d'échoppe.
+- ⚠️ **Sur iOS un toast rendu à la racine passe SOUS les routes `presentation: 'modal'`**
+  (contrôleur natif présenté par-dessus tout React) : `ToastProvider` rend son hôte dans
+  un `FullWindowOverlay`, monté À LA DEMANDE et re-monté à chaque toast — UIKit empile par
+  ordre d'arrivée, un hôte monté au lancement finit sous la première modale. Ne pas le
+  « simplifier » en overlay permanent.
+- **Croix directionnelle (14/11/2026)** : `game/hud/CroixDirectionnelle`, bas-gauche,
+  translucide, désactivable dans le menu (`core/preferences` — HORS Redux, dont la forme
+  est celle du web). Elle ne porte AUCUNE règle : `useCarte.pasVers(dx, dy)` rejoue
+  `taperCase` sur la case voisine. Un appui bref = un pas ; le maintien répète et
+  S'ARRÊTE sur un mur, un refus ou un changement de carte (`IssuePas`).
+- **Toasts** : jusqu'à 620 pt de large, durée selon la longueur du message
+  (`dureeLecture`), EN HAUT sur la carte (le bas est aux pouces), en bas dans les modales.
+- **Monstres de plein air** : `useCarte.majCibleMonstre` cible en marchant sur une case
+  `hasMonstre` et décible en la quittant, UNIQUEMENT à l'arrivée sur une case — jamais
+  sur un rechargement `needRefresh`, qui reciblerait le monstre qu'on vient de tuer.
 - Lancer : `cd alcazan-app && npx expo start --ios`. Les pièges de vérification (clavier
   AZERTY du simulateur, `.expo/types` appartenant à root, orientation ignorée par Expo Go)
   sont en fin de `docs/MOBILE_PLAN.md`.

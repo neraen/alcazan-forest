@@ -3,6 +3,12 @@
     "name": "Alcazan Forest",
     "slug": "alcazan-app",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/fe4477cd-292e-4f12-89aa-4f40612b0046"
+    },
     "orientation": "landscape",
     "icon": "./assets/images/icon.png",
     "scheme": "alcazanapp",
@@ -15,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#041e26"
-      }
+      },
+      "package": "com.neraen.alcazanapp"
     },
     "web": {
       "bundler": "metro",
@@ -43,6 +50,12 @@
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#041e26"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fe4477cd-292e-4f12-89aa-4f40612b0046"
+      }
     }
   }
 }

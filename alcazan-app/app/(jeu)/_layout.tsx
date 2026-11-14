@@ -21,6 +21,12 @@ export default function JeuLayout() {
       <Stack.Screen name="profil" options={{ presentation: 'modal' }} />
       <Stack.Screen name="sorts" options={{ presentation: 'modal' }} />
       <Stack.Screen name="pnj/[pnjId]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="etabli" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="hotel" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="artisanat" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="guilde" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="journal" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="classement" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

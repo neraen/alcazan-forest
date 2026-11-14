@@ -12,6 +12,8 @@ import {
   View,
 } from 'react-native';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { useAuth } from '@/src/core/AuthContext';
 import { mediaUrl } from '@/src/core/media';
 import GameButton from '@/src/ui/GameButton';
@@ -20,6 +22,7 @@ import { colors, fonts, radius, spacing } from '@/src/ui/tokens';
 
 export default function ConnexionScreen() {
   const { seConnecter } = useAuth();
+  const insets = useSafeAreaInsets();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [erreur, setErreur] = useState('');
@@ -44,14 +47,27 @@ export default function ConnexionScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <Image
-            source={{ uri: mediaUrl('/img/alcazan_forest_logo.png') }}
-            style={styles.logo}
-            contentFit="contain"
-          />
-          <Text style={styles.brand}>Alcazan Forest</Text>
-          <Text style={styles.tagline}>MMORPG médiéval</Text>
+        {/* L'app est verrouillée en PAYSAGE : empilés, le blason et le formulaire
+            faisaient 560 pt de haut pour 400 d'écran — le champ mot de passe et le bouton
+            étaient sous la ligne de flottaison. Côte à côte, tout tient sans défiler. */}
+        <ScrollView
+          contentContainerStyle={[
+            styles.scroll,
+            {
+              paddingLeft: Math.max(insets.left, spacing.xl),
+              paddingRight: Math.max(insets.right, spacing.xl),
+            },
+          ]}
+          keyboardShouldPersistTaps="handled">
+          <View style={styles.marque}>
+            <Image
+              source={{ uri: mediaUrl('/img/alcazan_forest_logo.png') }}
+              style={styles.logo}
+              contentFit="contain"
+            />
+            <Text style={styles.brand}>Alcazan Forest</Text>
+            <Text style={styles.tagline}>MMORPG médiéval</Text>
+          </View>
 
           <Panel style={styles.card}>
             <Text style={styles.title}>Connexion</Text>
@@ -111,15 +127,17 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: {
     flexGrow: 1,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.xl,
-    gap: spacing.xs,
+    paddingVertical: spacing.md,
+    gap: spacing.xxl,
   },
-  logo: { width: 86, height: 86, marginBottom: spacing.sm },
+  marque: { alignItems: 'center', gap: spacing.xs, flexShrink: 1 },
+  logo: { width: 110, height: 110, marginBottom: spacing.sm, borderRadius: radius.panel },
   brand: {
     fontFamily: fonts.titleBold,
-    fontSize: 26,
+    fontSize: 22,
     color: colors.gold,
     letterSpacing: 2,
     textTransform: 'uppercase',
@@ -130,9 +148,8 @@ const styles = StyleSheet.create({
     color: colors.textFaint,
     letterSpacing: 3,
     textTransform: 'uppercase',
-    marginBottom: spacing.xl,
   },
-  card: { width: '100%', maxWidth: 420, gap: spacing.lg },
+  card: { flex: 1, maxWidth: 400, gap: spacing.md },
   title: {
     fontFamily: fonts.title,
     fontSize: 20,
@@ -150,7 +167,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   input: {
-    minHeight: 46,
+    minHeight: 42,
     paddingHorizontal: spacing.md,
     borderRadius: radius.slot,
     borderWidth: 1,

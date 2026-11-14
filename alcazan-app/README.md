@@ -1,4 +1,36 @@
-# Welcome to your Expo app 👋
+# Alcazan Forest — application mobile
+
+## Preview Android et mises à jour
+
+Les builds installés utilisent le même serveur que le site :
+`https://alcazan-forest.com/api/` pour l'API, `https://alcazan-forest.com` pour les
+images et `https://alcazan-forest.com/.well-known/mercure` pour le temps réel.
+En développement avec Metro, les services locaux restent utilisés. Les variables
+`EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_MEDIA_URL` et `EXPO_PUBLIC_MERCURE_URL` permettent
+de surcharger ces adresses au moment de générer le bundle.
+
+Depuis ce dossier :
+
+```bash
+npx eas-cli@latest build --platform android --profile preview
+```
+
+Installer cet APK une première fois : les APK antérieurs à l'ajout d'`expo-updates`
+ne peuvent pas recevoir les mises à jour à distance.
+
+Pour publier ensuite un correctif JavaScript ou des assets compatibles :
+
+```bash
+npx eas-cli@latest update --channel preview --environment preview --platform android --message "Description du correctif"
+```
+
+La mise à jour est téléchargée au lancement et appliquée au prochain redémarrage
+de l'app. Le canal `production` est séparé du canal `preview`. La politique de
+runtime `fingerprint` empêche une mise à jour incompatible de parvenir à un ancien
+APK : un changement de dépendance native, de SDK ou de configuration native exige
+un nouveau build. Utiliser le même environnement EAS pour le build et l'update.
+
+## Documentation Expo
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 

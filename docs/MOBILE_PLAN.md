@@ -152,31 +152,46 @@ Le survol affiche une étiquette.
 
 ### Mise en page de l'écran de jeu (paysage, 874 × 402 pt sur un iPhone 16 Pro)
 
-La carte occupe tout l'écran ; le HUD est **en surimpression**, en colonne à gauche —
-même disposition que le web, mais flottante : une colonne OPAQUE de 340 pt prendrait
-40 % de la largeur.
+La carte occupe tout l'écran ; le HUD est **en surimpression, dans les COINS**. La
+première version reprenait la colonne du web (fiche joueur de 244 × 230 pt à gauche,
+barre de dix emplacements en bas) : sur 400 pt de haut elle couvrait un tiers du décor.
+Refonte du 13/11/2026 :
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│ ☰  Tutoriel Boisé  ◎                                         │
-│ ┌──────────────────────┐                                     │
-│ │ avatar  testrefonte  │                                     │
-│ │ Niv.1 ▰▰▰▰ 400/400   │            (la carte)               │
-│ │ 958 Or  600 PA 800 PM│         ~18 × 8 cases visibles      │
-│ └──────────────────────┘                                     │
-│ ┌──────────────────────┐                                     │
-│ │ CIBLE Loup ▰▰ 40/120 │   ┌──────────────────────────────┐  │
-│ └──────────────────────┘   │ XP ▰▰▰▰▰░░ 4123/10000        │  │
-│                            │ [🗡][🏹][✨][ ][ ] │ [🧪][🧪]  │  │
-│                            └──────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────┘
+│ (◉) TESTREFONTE        ┌ TUTORIEL BOISÉ ┐   ◎958 600PA 799PM ☰│
+│  1  ▰▰▰ 400/400        (ou la CIBLE, au                      ◎│
+│     ▰▰▰ 100/100         même emplacement)                     │
+│     ── xp                                                     │
+│                          (la carte)                           │
+│                    ~21 × 10 cases visibles                    │
+│                                                               │
+│                                              ┌─────────────┐  │
+│                                              │ [🏹] │[🧪][🧪]│  │
+└──────────────────────────────────────────────┴─────────────┴──┘
 ```
 
+- **Cartouche du joueur** (haut-gauche, ≈ 204 × 56) : portrait, niveau, PV/PM chiffrés
+  DANS la barre, filet d'XP. Un appui ouvre le Profil.
+- **Centre** : le nom de zone, remplacé par la **carte de cible** quand il y en a une
+  (`TargetCard` reste monté en permanence : c'est lui qui déclenche le chargement de la
+  cible).
+- **Haut-droite** : or / PA / PM, le ☰, et le bouton **◎ de recentrage qui n'apparaît que
+  si la vue a été déplacée à la main** (`onVueLibre`).
+- **Bas-droite** : la barre d'action, qui ne dessine QUE les emplacements remplis (les
+  vides servent au glisser-déposer du web ; ici l'assignation se fait dans l'écran Sorts).
+- **Caméra** : zoom de départ 0,85 (≈ 21 × 10 cases, case de 41 pt), zoom minimal = la
+  carte COUVRE l'écran, pincement ancré sous les doigts, vue bornée au bord du monde —
+  sauf si ce bord enverrait le personnage sous le HUD (`marges` de `MapCanvas`).
+- **Sur la carte, quatre signes et pas un de plus** : point clair = case où marcher ;
+  pastille or = PNJ ou interaction (grise quand elle recharge) ; anneau or au sol = moi ;
+  étiquette rouge = ma cible. Le pseudo d'autrui tient DANS sa case, présence et
+  alignement en badges de coin.
+
 Le rail de navigation (Inventaire, Profil, Sorts, Établi, HDV, Artisanat, Guilde, Journal,
-Classement) passe dans un **drawer** ouvert par le ☰ — fidèle au web, où Inventaire /
-Profil / Sorts / Établi / HDV sont des **modales au-dessus de la carte** et non des pages.
-En RN ce sont des routes `presentation: "modal"` : même sémantique, geste natif de
-fermeture en prime.
+Classement) est une **grille de tuiles** qui sort de la droite, ouverte par le ☰ : en
+paysage une liste verticale n'en montrait que cinq. Inventaire / Profil / Sorts restent
+des routes `presentation: "modal"`.
 
 ## 4. Le kit visuel
 
@@ -209,14 +224,14 @@ Transpositions qui demandent un choix :
 | **6** | PNJ : dialogue, quêtes (`quest/action`), échoppe, métiers ; interactions de case (récolte) | La première quête du tutoriel se termine sur mobile |
 | **7** | Inventaire + équipement + profil (caractéristiques, karma) | On équipe une arme et les stats bougent |
 | **8** | Sorts (grimoire, assignation des 8 slots), consommables | On réassigne sa barre |
-| **9** | Social : guilde, classement, journal, échanges joueur-à-joueur (Mercure) | Un échange à deux aboutit |
-| **10** | Donjons (groupe, salles, combat, sondage 2 s), artisanat, hôtel des ventes | — |
+| **9** | Social : guilde ✅, classement ✅, journal ✅, échanges joueur-à-joueur (Mercure) | Un échange à deux aboutit |
+| **10** | Donjons (groupe, salles, combat, sondage 2 s), artisanat ✅, hôtel des ventes ✅ | — |
 | **11** | Finitions : tutoriel natif, notifications, icône/splash, build EAS | — |
 
 Les lots 0 à 6 constituent la v1 demandée ; 7 et 8 la complètent (ils sont dans le
 périmètre « boucle de jeu » retenu) ; 9+ sont les suites.
 
-## 5 bis. État au 13/11/2026 — lots 0 à 8 livrés
+## 5 bis. État au 14/11/2026 — lots 0 à 8 livrés, 9 et 10 entamés
 
 Vérifié dans le simulateur iOS (iPhone 16 Pro, Expo Go, back Docker local) :
 connexion sur un vrai compte, carte du Tutoriel Boisé avec sprites et autres joueurs,
@@ -229,22 +244,114 @@ alcazan-app/
   app/(jeu)/_layout.tsx      carte plein écran + routes modales
   app/(jeu)/carte.tsx        l'écran-hub
   app/(jeu)/inventaire.tsx   profil.tsx   sorts.tsx   pnj/[pnjId].tsx
-  src/core/                  config, http, auth, media, mapBackgrounds, types
+  app/(jeu)/classement.tsx   journal.tsx   guilde.tsx   hotel.tsx
+  app/(jeu)/artisanat.tsx    etabli.tsx
+  src/core/                  config, http, auth, media, mapBackgrounds, types,
+                             preferences (réglages de confort, hors Redux)
   src/core/api/              users, map, target, quest, interaction, inventaire,
-                             boutique, donjon
+                             boutique, donjon, classement, historique, guilde,
+                             hotelVente, craft, metier
   src/core/store/            actions, reducers, index (forme identique au web)
-  src/core/domain/           distance, items, caracteristiques
+  src/core/domain/           distance, items, caracteristiques, temps, texte
   src/ui/                    tokens, Panel, GaugeBar, Slot, GameButton,
-                             SectionTitle, ModalShell, gameText, toast/
+                             SectionTitle, ModalShell, gameText, toast/,
+                             Onglets, Chip, SearchField, Vignette, Vide, confirmer
   src/game/map/              MapCanvas, CaseTile, InteractionSheet, useCarte
   src/game/hud/              TopBar, PlayerCard, TargetCard, ActionBar,
-                             SpellSlotButton, ConsommableSlotButton, MenuDrawer
+                             SpellSlotButton, ConsommableSlotButton, MenuDrawer,
+                             CroixDirectionnelle
   src/game/pnj/              QuestDialogue, ShopView, ItemCard
+  src/game/artisanat/        MetierCard, RecetteCard, FileFabrication
+  src/game/hotel/            HotelAcheter, HotelVendre, HotelMesVentes, LigneLot
 ```
+
+### Écrans du menu (14/11/2026) — classement, journal, guilde, hôtel, artisanat, établi
+
+Les six entrées du menu qui répondaient « arrive dans un prochain lot » sont livrées :
+du lot 9 il ne reste que les **échanges joueur-à-joueur** (Mercure), du lot 10 que les
+**donjons**. Vérifié à l'écran dans le simulateur : les six écrans, un dépôt puis un
+retrait à l'hôtel des ventes, un retrait à l'établi. **Non vérifié**, faute de données sur
+le compte de test : un achat et la pagination de l'hôtel (catalogue vide), la gestion de
+guilde côté baron/officier (le compte n'est que recrue), la fondation d'une guilde, le
+lancement d'une fabrication (ingrédients manquants), Android.
+
+Ces écrans ne sont pas des pages web rétrécies. Les règles de dessin qu'ils partagent —
+à reprendre telles quelles pour les suivants :
+
+- **Deux colonnes, jamais une pile.** Un rail à gauche (~220 pt, `ScrollView` en
+  `flexGrow: 0`) porte les filtres ou la liste maîtresse ; la colonne de droite
+  (`flex: 1, minWidth: 0`) porte le contenu. 400 pt de haut ne supportent pas une barre
+  de filtres AU-DESSUS d'une liste : elle en mangerait le tiers.
+- **Le détail va dans la colonne d'à côté, pas dans la ligne.** Guilde : toucher un membre
+  remplace la fiche de la guilde par ses actions (grades, transmettre, exclure). Hôtel :
+  toucher un objet du sac remplit le formulaire de vente à droite. Des micro-boutons par
+  ligne (patron du web) font des cibles de 20 pt.
+- **`Onglets`** sous l'en-tête quand l'écran a plusieurs vues (hôtel, guilde), avec une
+  pastille numérique (lots en vente, candidatures en attente).
+- **Cibles de 36 pt minimum** (`Chip`), et un `Chip` porte une information en plus de son
+  libellé quand il le peut (mon rang dans chaque catégorie du classement, le nombre de
+  lignes de chaque nature du journal).
+- **Tout ce qui coûte ou ne s'annule pas passe par `confirmer()`** (`Alert` native) :
+  acheter, retirer une annonce, annuler une fabrication, exclure, transmettre, dissoudre,
+  quitter, fonder. Un pouce dérape plus qu'une souris.
+- **Les champs de saisie sont EN HAUT de leur colonne** : en paysage le clavier couvre la
+  moitié basse de l'écran. Les quantités se règlent au pas-à-pas (− / + / Max), pas au
+  clavier.
+- **Le mode de fabrication est GLOBAL à l'écran** (deux `Chip` + la phrase du serveur), pas
+  un sélecteur par recette comme sur le web : une liste déroulante par carte ne tient pas.
+- **Le serveur fait foi et le dit lui-même** : `realisable`, `prete`, `peutGerer`,
+  `peutPromouvoir`, `estMien`, `rang`, `curseurs` (frais de dépôt) descendent tels quels.
+  Aucun chiffre de règle en dur côté app, aucune durée décomptée localement
+  (`core/domain/temps` recalcule depuis les dates du serveur).
+
+Écart ASSUMÉ avec le web : l'hôtel des ventes liste ses lots en lignes (`LigneLot`) au
+lieu de réutiliser la carte d'échoppe — une grille de cartes ne montrait que quatre
+annonces à la fois.
+
+**Ciblage automatique des monstres de plein air** (`useCarte.majCibleMonstre`) : marcher
+sur une case `hasMonstre` cible le monstre, la quitter décible — comme le web. Il n'est
+joué qu'à l'ARRIVÉE sur une case (premier chargement, déplacement, changement de carte),
+jamais sur un simple rechargement `needRefresh` : sinon le monstre qu'on vient de tuer
+serait reciblé aussitôt, ce que le web ne fait pas non plus.
 
 **Reste à faire pour une v1 complète** : vérifier un combat de bout en bout contre un
 monstre (nécessite d'amener un personnage sur une case de monstre), et le tutoriel
 intro.js, qui n'est pas porté — l'app n'a pas encore d'équivalent natif des bulles.
+
+### Croix directionnelle et messages (14/11/2026)
+
+**Croix directionnelle** (`game/hud/CroixDirectionnelle`), coin bas-gauche de la carte,
+translucide au repos, désactivable dans le menu (`core/preferences`, propre à
+l'appareil, conservée entre deux lancements).
+
+- **Elle n'ajoute aucune règle de déplacement** : `useCarte.pasVers(dx, dy)` cherche la
+  case voisine et rejoue `taperCase` dessus. Cases accessibles, portes, arbitrage du
+  serveur : tout est commun avec le tap, les deux ne peuvent pas diverger.
+- **Un disque, pas quatre boutons** : le pouce glisse d'une direction à l'autre sans se
+  relever, et les diagonales (le jeu a huit voisines) tombent entre deux flèches — 60°
+  par flèche, 30° par diagonale, zone morte au centre.
+- **Un appui bref = UN pas** : la répétition ne démarre qu'après 320 ms de maintien, puis
+  marche à ~6 cases/s. Elle s'ARRÊTE sur un mur, un refus du serveur ou un changement de
+  carte : continuer empilerait un toast par tentative, ou ferait retraverser la porte
+  qu'on vient de franchir.
+- `seDeplacer`/`changerDeCarte` rendent maintenant un booléen et `taperCase` une
+  `IssuePas` (`'pas' | 'carte' | 'rien'`) : c'est ce qui dit à la boucle si elle peut
+  enchaîner. Un tap sur la carte ignore cette valeur.
+- Les préférences sont HORS du store Redux (dont la forme est celle du web) et rangées
+  dans `expo-secure-store`, seul stockage persistant déjà embarqué.
+
+**Messages (toasts)** :
+
+- **Largeur jusqu'à 620 pt, texte centré** : un compte rendu d'attaque tient sur une ou
+  deux lignes au lieu d'une colonne étroite.
+- **Durée selon la LONGUEUR** (`dureeLecture` : 1 s + 38 ms par caractère, entre 2 s et
+  5,5 s) et non plus 4 s fixes ; une barre de temps au pied du message montre ce qu'il
+  reste. Un tap le ferme toujours.
+- **Le même message encore affiché est remplacé, pas empilé.**
+- **Sur la carte ils s'affichent EN HAUT**, sous le bandeau du HUD : le bas appartient
+  aux pouces (croix à gauche, barre d'action à droite). Dans les écrans modaux ils
+  restent en bas, le haut portant l'en-tête et les onglets. Le fournisseur tranche avec
+  `usePathname() === '/carte'`.
 
 ### Pièges rencontrés pendant le portage (à ne pas redécouvrir)
 
@@ -270,6 +377,61 @@ intro.js, qui n'est pas porté — l'app n'a pas encore d'équivalent natif des 
   l'utilisateur.
 - ⚠️ **En paysage, un toast étalé sur toute la largeur recouvre le HUD** : largeur bornée
   et centrage, et un décalage bas supérieur à la hauteur de la barre d'action.
+- ⚠️ **En paysage l'encoche est sur un PETIT côté** : `insets.left`/`right` valent ~60 pt
+  et `insets.top` 0. Tout écran qui ne lit que `top`/`bottom` (réflexe du portrait) a sa
+  première colonne sous l'encoche — c'était le cas de `ModalShell` et du menu.
+- ⚠️ **`<Modal>` de React Native ne connaît que le portrait sur iOS** sans
+  `supportedOrientations` : dans une app verrouillée en paysage, préférer un voile en
+  `absoluteFill` rendu en dernier par l'écran (patron `MenuDrawer`, `InteractionSheet`).
+- ⚠️ **Un `ScrollView` grandit par défaut** (`flexGrow: 1`) : `width: 260` ne le retient
+  pas dans une rangée, il faut `flexGrow: 0`. Et un plancher `minWidth` en points sur des
+  colonnes `flex: 1` les fait SORTIR de l'écran dès que la somme dépasse la largeur utile.
+- ⚠️ **Un `scale` nu zoome depuis l'origine de la vue**, pas depuis les doigts : il faut
+  mémoriser le point du monde sous le pincement et recalculer la translation. Et le
+  panoramique doit être limité à UN doigt (`maxPointers(1)`), sinon les deux gestes
+  écrivent la même translation et la carte tremble.
+- ⚠️ **Le réducteur ignore les clés `undefined`** de `updateJoueurState` (seul écart avec
+  celui du web) : les réponses d'attaque n'ont pas toutes les mêmes clés, et le spread nu
+  affichait « undefined PA » jusqu'au rechargement suivant.
+- ⚠️ **Un Metro lancé avant une suppression de routes garde l'ancien arbre** (écran rouge
+  `ENOENT … app/(drawer)/_layout.tsx`) : le relancer avec `--clear`.
+- ⚠️ **Sur iOS un toast rendu à la racine passe SOUS les routes modales.** Une route en
+  `presentation: 'modal'` est un contrôleur NATIF présenté par-dessus toute la hiérarchie
+  React : aucune confirmation, aucun refus ne se voyait dans l'inventaire, le profil ou
+  l'hôtel des ventes — on les découvrait en refermant l'écran. L'hôte des toasts est donc
+  rendu dans un `FullWindowOverlay` (`react-native-screens`), **monté à la demande et
+  re-monté à chaque toast** (`key`) : UIKit empile par ordre d'arrivée, un hôte monté au
+  lancement se retrouve sous la première modale ouverte après lui. Vérifié : les taps de
+  déplacement passent toujours à côté d'un toast affiché. Android n'en a pas besoin.
+  Corollaire : un message déjà à l'écran est RE-MONTÉ quand le suivant arrive — sa barre
+  de temps repart donc de son échéance (`expireA`), pas de zéro, et il ne rejoue pas son
+  animation d'entrée.
+- ⚠️ **`locationX`/`locationY` d'un toucher ne sont fiables qu'à la POSE du doigt** : en
+  glissant, ils sont mesurés depuis la vue survolée. La croix directionnelle relève son
+  origine à l'écran au premier contact (`pageX − locationX`) puis ne lit plus que
+  `pageX`/`pageY`, et tout son décor est en `pointerEvents: 'none'`.
+- ⚠️ **Le pavé numérique d'iOS n'a pas de touche « Retour »** : en paysage il ne se referme
+  plus et masque le bouton de validation. Champs de prix en
+  `keyboardType="numbers-and-punctuation"`.
+- **Ni `Intl` ni `new Date("YYYY-MM-DD HH:mm:ss")`** — par précaution, pas après un bug
+  constaté : ce format de date (celui du journal) n'est pas de l'ISO et son analyse n'est
+  pas garantie d'un moteur JS à l'autre, pas plus que la présence des formats localisés.
+  `core/domain/temps.dateServeur()` découpe la chaîne à la main et
+  `core/domain/texte.nombre()` pose les séparateurs de milliers par regex.
+- ⚠️ **Les routes typées d'expo-router ne connaissent pas un écran qu'on vient de créer**
+  tant que Metro n'a pas régénéré `.expo/types` : `router.push('/(jeu)/etabli' as never)`,
+  comme le fait déjà `MenuDrawer`.
+- ⚠️ **Recharger à chaud le fournisseur RACINE (`ToastProvider`) pendant qu'une modale est
+  ouverte fige la pile native** : l'écran reste affiché, ne répond plus et ignore les
+  liens. Ce n'est pas un bug de l'app — relancer Expo Go
+  (`xcrun simctl terminate booted host.exp.Exponent`, puis rouvrir l'URL `exp://`).
+- **Ouvrir un écran sans passer par le menu** :
+  `xcrun simctl openurl booted "exp://127.0.0.1:<port>/--/hotel"` (ou `journal`, `guilde`,
+  `classement`, `artisanat`, `etabli`) pousse la route directement.
+- **Vérifier à l'écran** : le simulateur capture en portrait une app en paysage. Pour un
+  tap, un point paysage `(x, y)` se vise en `(402 − y, x)` ; pour lire une capture, la
+  tourner de 270° (`sips -r 270`). La connexion passe par le presse-papier
+  (`xcrun simctl pbcopy booted` puis appui long → Paste), jamais par le clavier.
 
 ## 6. Points de vigilance recensés avant de commencer
 

@@ -366,7 +366,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.qtyBadgeBg,
   },
   quantiteLabel: { fontFamily: fonts.bodyBold, fontSize: 10, color: colors.text },
+  // `flexGrow: 0` : un ScrollView grandit par défaut, et celui-ci prenait la moitié de
+  // l'écran au sac — cinq colonnes d'objets au lieu de neuf, pour une liste de six lignes.
   fiche: {
+    flexGrow: 0,
     width: 260,
     borderLeftWidth: 1,
     borderLeftColor: colors.goldDivider,

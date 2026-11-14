@@ -10,7 +10,7 @@ import {
   spritePnj,
 } from '@/src/core/media';
 import type { CaseCarte, EtatInteraction } from '@/src/core/types';
-import { colors, fonts, radius } from '@/src/ui/tokens';
+import { colors, fonts } from '@/src/ui/tokens';
 
 export type OccupantJoueur = {
   idJoueur: number;
@@ -27,13 +27,21 @@ export type OccupantJoueur = {
 /**
  * Une case de la grille. Les MONSTRES n'y sont volontairement pas dessinés : comme dans
  * tout le jeu, ils sont peints dans l'image de fond et se ciblent en marchant sur leur
- * case (cf. `useCarte.majCibleMonstreInstance`). Ne pas « corriger » cette absence.
+ * case (cf. `useCarte.majCibleMonstre`). Ne pas « corriger » cette absence.
+ *
+ * Vocabulaire visuel de la carte — volontairement réduit à quatre signes, parce que tout
+ * ce qui se pose sur le décor le cache :
+ *  - un POINT clair      → case où l'on peut marcher ;
+ *  - une PASTILLE or     → quelque chose à qui parler ou à utiliser (PNJ, interaction) ;
+ *  - un ANNEAU or au sol → mon personnage (trois archers identiques côte à côte, sinon) ;
+ *  - un ANNEAU rouge     → ma cible.
  */
 function CaseTile({
   uneCase,
   taille,
   accessible,
   joueur,
+  ciblee,
   etatInteraction,
   onTapCase,
   onTapJoueur,
@@ -46,6 +54,7 @@ function CaseTile({
   taille: number;
   accessible: boolean;
   joueur: OccupantJoueur | null;
+  ciblee: boolean;
   etatInteraction?: EtatInteraction;
   onTapCase: (c: CaseCarte) => void;
   onTapJoueur: (j: OccupantJoueur) => void;
@@ -54,6 +63,17 @@ function CaseTile({
   onTapBoss: (c: CaseCarte) => void;
   onTapInteraction: (c: CaseCarte) => void;
 }) {
+  const anneau = (couleur: 'moi' | 'cible') => (
+    <View
+      pointerEvents="none"
+      style={[
+        styles.anneau,
+        { width: taille * 0.94, height: taille * 0.94, borderRadius: taille },
+        couleur === 'moi' ? styles.anneauMoi : styles.anneauCible,
+      ]}
+    />
+  );
+
   const contenu = (() => {
     if (joueur) {
       return (
@@ -61,32 +81,50 @@ function CaseTile({
           onPress={() => onTapJoueur(joueur)}
           onLongPress={() => onLongPressJoueur(joueur, uneCase)}
           style={styles.remplir}>
+          {joueur.estMoi ? anneau('moi') : ciblee ? anneau('cible') : null}
           <Image
             source={{ uri: spriteJoueur(joueur.nomClasse, joueur.sexe) }}
             style={styles.sprite}
             contentFit="contain"
           />
           {!joueur.estMoi && (
-            <View style={styles.etiquette} pointerEvents="none">
-              <Text style={styles.etiquetteNom} numberOfLines={1}>
-                {joueur.pseudo}
-              </Text>
-              {!!joueur.iconeAlignement && (
-                <Image
-                  source={{ uri: urlIconeAlignement(joueur.iconeAlignement) }}
-                  style={styles.iconeAlignement}
-                  contentFit="contain"
+            <>
+              {/* Présence et alignement en BADGES de coin : logés dans l'étiquette, ils
+                  ne laissaient que cinq caractères au pseudo. */}
+              <View style={styles.badges} pointerEvents="none">
+                {/* `enLigne` arrive en 1/0 OU en "1"/"0" selon l'hydratation DQL : un
+                    test de vérité déclarerait tout le monde en ligne, `"0"` étant truthy. */}
+                <View
+                  style={[
+                    styles.presence,
+                    Number(joueur.enLigne) === 1 && styles.presenceEnLigne,
+                  ]}
                 />
-              )}
-              {/* `enLigne` arrive en 1/0 OU en "1"/"0" selon l'hydratation DQL : un test
-                  de vérité déclarerait tout le monde en ligne, `"0"` étant truthy. */}
+                {!!joueur.iconeAlignement && (
+                  <Image
+                    source={{ uri: urlIconeAlignement(joueur.iconeAlignement) }}
+                    style={styles.iconeAlignement}
+                    contentFit="contain"
+                  />
+                )}
+              </View>
+              {/* L'étiquette tient DANS la case (au pied du sprite). Posée au-dessus de
+                  la tête et large de 110 pt, elle recouvrait le voisin du dessus et
+                  celles de deux joueurs côte à côte se chevauchaient. */}
+              {/* Ciblé, c'est l'ÉTIQUETTE qui rougit : elle recouvre le pied du sprite,
+                  donc l'anneau au sol, qui seul ne se voyait pas. */}
               <View
                 style={[
-                  styles.presence,
-                  Number(joueur.enLigne) === 1 && styles.presenceEnLigne,
+                  styles.etiquette,
+                  { maxWidth: taille + 8 },
+                  ciblee && styles.etiquetteCiblee,
                 ]}
-              />
-            </View>
+                pointerEvents="none">
+                <Text style={styles.etiquetteNom} numberOfLines={1}>
+                  {joueur.pseudo}
+                </Text>
+              </View>
+            </>
           )}
         </Pressable>
       );
@@ -100,6 +138,7 @@ function CaseTile({
             style={styles.sprite}
             contentFit="contain"
           />
+          <View style={styles.pastille} pointerEvents="none" />
         </Pressable>
       );
     }
@@ -107,6 +146,7 @@ function CaseTile({
     if (uneCase.bossId && uneCase.bossSkin) {
       return (
         <Pressable onPress={() => onTapBoss(uneCase)} style={styles.remplir}>
+          {ciblee && anneau('cible')}
           <Image
             source={{ uri: spriteBoss(uneCase.bossSkin) }}
             style={styles.spriteBoss}
@@ -125,10 +165,20 @@ function CaseTile({
             style={[styles.sprite, indisponible && styles.epuise]}
             contentFit="contain"
           />
-          {!indisponible && <View style={styles.pastilleInteraction} />}
+          {/* Épuisée, la pastille se grise au lieu de disparaître : les sprites
+              d'interaction sont souvent absents (le décor est peint dans le fond), et
+              sans elle une case en recharge n'existait plus du tout à l'écran. */}
+          <View
+            style={[styles.pastille, indisponible && styles.pastilleEpuisee]}
+            pointerEvents="none"
+          />
         </Pressable>
       );
     }
+
+    // Case libre où l'on peut marcher : un point, pas un voile. Huit cases blanchies
+    // autour du personnage dessinaient un pavé laiteux qui délavait le décor.
+    if (accessible && !uneCase.isWrap) return <View style={styles.pas} pointerEvents="none" />;
 
     return null;
   })();
@@ -144,9 +194,11 @@ function CaseTile({
           left: uneCase.abscisse * taille,
           top: uneCase.ordonnee * taille,
         },
-        accessible && styles.accessible,
-        uneCase.isWrap && styles.passage,
+        // Une case occupée passe DEVANT ses voisines : son étiquette peut déborder de
+        // quelques points et ne doit pas se faire rogner par le sprite d'à côté.
+        !!joueur && styles.devant,
       ]}>
+      {uneCase.isWrap && <View style={styles.passage} pointerEvents="none" />}
       {contenu}
     </Pressable>
   );
@@ -158,48 +210,88 @@ const styles = StyleSheet.create({
       du web, où un enfant mal ancré débordait sur toute la grille et interceptait les
       taps de déplacement. */
   case: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
-  /** Case atteignable en un pas. Le web la peint en blanc à 60 % ; on reste dans la
-      palette du jeu (voile clair + liseré or) pour ne pas délaver le décor. */
-  accessible: {
-    backgroundColor: 'rgba(255, 255, 255, 0.22)',
-    borderWidth: 1,
-    borderColor: colors.goldSofter,
-  },
+  devant: { zIndex: 2 },
+  /** Passage vers une autre carte : cadre or arrondi, en retrait du bord de la case. */
   passage: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    bottom: 3,
+    left: 3,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: colors.goldBorderStrong,
+    backgroundColor: colors.goldSofter,
+  },
+  pas: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
     borderWidth: 1,
-    borderColor: colors.goldHalf,
-    backgroundColor: 'rgba(227, 182, 79, 0.12)',
+    borderColor: colors.mapDotBorder,
+    backgroundColor: colors.mapDot,
   },
   remplir: { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
   sprite: { width: '92%', height: '92%' },
   spriteBoss: { width: '130%', height: '130%' },
   epuise: { opacity: 0.4 },
-  pastilleInteraction: {
+  /** Disque aplati pour faire une ellipse AU SOL : `borderRadius` seul sur un rectangle
+      donne une gélule, pas une ellipse. */
+  anneau: {
     position: 'absolute',
-    top: 2,
-    right: 2,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    bottom: '-31%',
+    // 4 pt de liseré : l'aplatissement en réduit l'épaisseur visible à ~1,5 pt en haut
+    // et en bas de l'ellipse.
+    borderWidth: 4,
+    transform: [{ scaleY: 0.4 }],
+  },
+  anneauMoi: { borderColor: colors.gold, backgroundColor: colors.ringMoi },
+  anneauCible: { borderColor: colors.danger, backgroundColor: colors.ringCible },
+  pastille: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.ink,
     backgroundColor: colors.gold,
   },
-  etiquette: {
+  badges: {
     position: 'absolute',
-    top: -15,
+    top: 1,
+    left: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
-    maxWidth: 110,
-    paddingHorizontal: 5,
-    paddingVertical: 1,
-    borderRadius: radius.bar,
-    borderWidth: 1,
-    borderColor: colors.goldSoft,
-    backgroundColor: 'rgba(4, 26, 33, 0.92)',
+    gap: 2,
   },
-  etiquetteNom: { fontFamily: fonts.bodyBold, fontSize: 9, color: colors.gold },
-  iconeAlignement: { width: 9, height: 9 },
-  presence: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.presenceHorsLigne },
+  pastilleEpuisee: { backgroundColor: colors.textDim3, opacity: 0.8 },
+  etiquette: {
+    position: 'absolute',
+    bottom: -3,
+    paddingHorizontal: 3,
+    paddingVertical: 1,
+    borderRadius: 5,
+    backgroundColor: colors.mapLabelBg,
+  },
+  etiquetteCiblee: { backgroundColor: colors.mapLabelCible },
+  etiquetteNom: {
+    flexShrink: 1,
+    fontFamily: fonts.bodyBold,
+    fontSize: 8,
+    lineHeight: 10,
+    color: colors.text,
+  },
+  iconeAlignement: { width: 10, height: 10 },
+  presence: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.ink,
+    backgroundColor: colors.presenceHorsLigne,
+  },
   presenceEnLigne: { backgroundColor: colors.presenceEnLigne },
 });
 

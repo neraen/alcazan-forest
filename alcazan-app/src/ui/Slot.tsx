@@ -42,9 +42,11 @@ export default function Slot({
         styles.slot,
         { width: dim.box, height: dim.box, borderRadius: dim.radius },
         src ? styles.filled : styles.empty,
-        selected && styles.selected,
         disabled && styles.disabled,
         style,
+        // APRÈS `style` : l'inventaire y passe la couleur de rareté en bordure, qui
+        // écrasait le liseré de sélection — on ne voyait plus quel objet était choisi.
+        selected && styles.selected,
       ]}>
       {!!src && (
         <Image

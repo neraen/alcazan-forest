@@ -9,28 +9,60 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { fondDeCarte } from '@/src/core/mapBackgrounds';
-import type { CaseCarte, EtatInteraction, JoueurMinimal } from '@/src/core/types';
+import type { CaseCarte, EtatInteraction, JoueurMinimal, TypeCible } from '@/src/core/types';
 import { colors } from '@/src/ui/tokens';
 
 import CaseTile, { OccupantJoueur } from './CaseTile';
 
-/** Côté d'une case, en points. 48 px est la valeur du web sur un écran 1080p. */
+/** Côté d'une case, en points, AVANT zoom. 48 px est la valeur du web sur un écran 1080p. */
 export const CELL = 48;
-const ZOOM_MIN = 0.55;
-const ZOOM_MAX = 2;
 
-export type MapCanvasHandle = { recentrer: () => void };
+/**
+ * Zoom de départ. À 1 on ne voyait que 18 × 8 cases : le joueur avait le nez sur son
+ * personnage et aucune idée de ce qui l'entourait. 0,85 en montre ~21 × 10 tout en
+ * laissant une case à 41 pt — la cible tactile recommandée est 44 pt, et une case n'est
+ * jamais tapée « de justesse » puisque ses huit voisines sont aussi des cibles valides.
+ */
+const ZOOM_DEFAUT = 0.85;
+const ZOOM_MAX = 1.6;
+/** Plancher absolu : en dessous, une case passe sous les 24 pt et devient intapable. */
+const ZOOM_PLANCHER = 0.5;
+
+/** Marges du HUD : zone de l'écran où le personnage ne doit JAMAIS se retrouver. */
+export type MargesCamera = { haut: number; bas: number; gauche: number; droite: number };
+
+/**
+ * Borne une translation sur un axe. `margeDebut`/`margeFin` autorisent la carte à
+ * s'écarter du bord d'autant (c'est ce qui laisse sortir le joueur de sous le HUD quand
+ * il longe le bord du monde). Une carte plus petite que la zone est simplement centrée.
+ */
+function borner(
+  valeur: number,
+  tailleCarte: number,
+  tailleVue: number,
+  margeDebut: number,
+  margeFin: number,
+) {
+  const max = margeDebut;
+  const min = tailleVue - margeFin - tailleCarte;
+  if (min > max) return (tailleVue - tailleCarte) / 2;
+  return Math.min(max, Math.max(min, valeur));
+}
 
 /**
  * La carte, sa caméra et ses gestes.
  *
  * Le web affiche les 24×16 cases d'un coup (`100.8vh × 67.2vh`). Sur un téléphone ce
- * serait 21 pt par case, sous la cible tactile de 44 pt : on montre donc une FENÊTRE de
- * la carte, centrée sur le joueur, qu'on peut déplacer et zoomer.
+ * serait 21 pt par case, sous la cible tactile : on montre donc une FENÊTRE de la carte,
+ * centrée sur le joueur, qu'on peut déplacer et zoomer.
  *
- * Règle de la caméra : elle suit le joueur, SAUF si le joueur vient de déplacer la vue à
- * la main. Sans ce drapeau, chaque pas reprendrait la main sur le doigt — on ne pourrait
- * jamais regarder ailleurs que sous ses pieds.
+ * Trois règles de caméra :
+ *  1. Elle suit le joueur, SAUF s'il vient de déplacer la vue à la main. Sans ce drapeau,
+ *     chaque pas reprendrait la main sur le doigt.
+ *  2. Elle ne montre pas de vide : la vue s'arrête au bord du monde au lieu de centrer le
+ *     joueur sur du noir — sauf si ce bord l'enverrait SOUS le HUD (`marges`).
+ *  3. Le zoom s'ancre sous les doigts. Ancré sur le coin haut-gauche de la carte, comme
+ *     le fait un `scale` nu, le décor fuyait pendant le pincement.
  */
 export default function MapCanvas({
   cases,
@@ -41,13 +73,15 @@ export default function MapCanvas({
   interactions,
   isInstance,
   user,
+  cible,
+  marges,
   onTapCase,
   onTapJoueur,
   onLongPressJoueur,
   onTapPnj,
   onTapBoss,
   onTapInteraction,
-  onPanManuel,
+  onVueLibre,
   recentrerSignal,
 }: {
   cases: CaseCarte[];
@@ -58,13 +92,17 @@ export default function MapCanvas({
   interactions: Record<string, EtatInteraction>;
   isInstance: boolean;
   user: JoueurMinimal;
+  /** Cible courante, pour l'entourer sur la carte. */
+  cible: { type?: TypeCible; id?: number };
+  marges: MargesCamera;
   onTapCase: (c: CaseCarte) => void;
   onTapJoueur: (j: OccupantJoueur) => void;
   onLongPressJoueur: (j: OccupantJoueur, c: CaseCarte) => void;
   onTapPnj: (c: CaseCarte) => void;
   onTapBoss: (c: CaseCarte) => void;
   onTapInteraction: (c: CaseCarte) => void;
-  onPanManuel?: () => void;
+  /** `true` dès que le joueur déplace la vue à la main, `false` quand elle le resuit. */
+  onVueLibre?: (libre: boolean) => void;
   /** Incrémenté par le HUD pour forcer un recentrage (bouton « Recentrer »). */
   recentrerSignal: number;
 }) {
@@ -85,29 +123,78 @@ export default function MapCanvas({
   const largeurCarte = colonnes * CELL;
   const hauteurCarte = lignes * CELL;
 
+  // Zoom minimal = celui où la carte COUVRE encore l'écran : dézoomer plus loin ne
+  // montrerait que du vide autour d'un timbre-poste.
+  const zoomMin = useMemo(() => {
+    if (!viewport.largeur || !viewport.hauteur) return ZOOM_PLANCHER;
+    const couvre = Math.max(viewport.largeur / largeurCarte, viewport.hauteur / hauteurCarte);
+    return Math.min(ZOOM_MAX, Math.max(ZOOM_PLANCHER, couvre));
+  }, [viewport, largeurCarte, hauteurCarte]);
+
   const tx = useSharedValue(0);
   const ty = useSharedValue(0);
-  const echelle = useSharedValue(1);
+  const echelle = useSharedValue(ZOOM_DEFAUT);
   const txDebut = useSharedValue(0);
   const tyDebut = useSharedValue(0);
-  const echelleDebut = useSharedValue(1);
+  // Point du MONDE sous les doigts au début du pincement : il doit y rester.
+  const ancreMondeX = useSharedValue(0);
+  const ancreMondeY = useSharedValue(0);
+  const echelleDebut = useSharedValue(ZOOM_DEFAUT);
   const panManuel = useRef(false);
+  const zoomInitialise = useRef(false);
+
+  const { haut, bas, gauche, droite } = marges;
+
+  /** Translation qui centre le joueur au zoom `z`, règles 2 comprises. */
+  const cameraSurJoueur = useCallback(
+    (z: number) => {
+      const demi = (CELL * z) / 2 + 6;
+      const axe = (
+        position: number,
+        tailleCarte: number,
+        tailleVue: number,
+        margeDebut: number,
+        margeFin: number,
+      ) => {
+        const centreMonde = (position + 0.5) * CELL * z;
+        // Centré, puis ramené au bord du monde (aucune marge : pas de vide gratuit).
+        let t = borner(tailleVue / 2 - centreMonde, tailleCarte * z, tailleVue, 0, 0);
+        // …sauf si ce bord cache le personnage sous le HUD : on le dégage du minimum.
+        const ecran = t + centreMonde;
+        if (ecran - demi < margeDebut) t += margeDebut - (ecran - demi);
+        else if (ecran + demi > tailleVue - margeFin) t -= ecran + demi - (tailleVue - margeFin);
+        return t;
+      };
+      return {
+        x: axe(abscisseJoueur, largeurCarte, viewport.largeur, gauche, droite),
+        y: axe(ordonneeJoueur, hauteurCarte, viewport.hauteur, haut, bas),
+      };
+    },
+    [abscisseJoueur, ordonneeJoueur, largeurCarte, hauteurCarte, viewport, haut, bas, gauche, droite],
+  );
 
   const centrerSurJoueur = useCallback(
     (anime = true) => {
       if (!viewport.largeur || !viewport.hauteur) return;
-      const z = echelle.value;
-      const cibleX = viewport.largeur / 2 - (abscisseJoueur + 0.5) * CELL * z;
-      const cibleY = viewport.hauteur / 2 - (ordonneeJoueur + 0.5) * CELL * z;
+      const camera = cameraSurJoueur(echelle.value);
       if (anime) {
-        tx.value = withTiming(cibleX, { duration: 220 });
-        ty.value = withTiming(cibleY, { duration: 220 });
+        tx.value = withTiming(camera.x, { duration: 220 });
+        ty.value = withTiming(camera.y, { duration: 220 });
       } else {
-        tx.value = cibleX;
-        ty.value = cibleY;
+        tx.value = camera.x;
+        ty.value = camera.y;
       }
     },
-    [viewport, abscisseJoueur, ordonneeJoueur, tx, ty, echelle],
+    [viewport, cameraSurJoueur, tx, ty, echelle],
+  );
+
+  const libererVue = useCallback(
+    (libre: boolean) => {
+      if (panManuel.current === libre) return;
+      panManuel.current = libre;
+      onVueLibre?.(libre);
+    },
+    [onVueLibre],
   );
 
   // Suivi du joueur. `panManuel` est remis à zéro par le bouton « Recentrer » du HUD.
@@ -118,27 +205,44 @@ export default function MapCanvas({
   // Changement de carte ou premier affichage : recadrage sec, sans animation (une
   // translation animée depuis la carte précédente n'aurait aucun sens).
   useEffect(() => {
-    panManuel.current = false;
+    if (!viewport.largeur || !viewport.hauteur) return;
+    if (!zoomInitialise.current) {
+      zoomInitialise.current = true;
+      echelle.value = Math.max(ZOOM_DEFAUT, zoomMin);
+    } else if (echelle.value < zoomMin) {
+      // La nouvelle carte est plus petite : le zoom gardé de la précédente la laisserait
+      // flotter dans le vide.
+      echelle.value = zoomMin;
+    }
+    libererVue(false);
     centrerSurJoueur(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapId, viewport.largeur, viewport.hauteur]);
+  }, [mapId, viewport.largeur, viewport.hauteur, zoomMin]);
 
   useEffect(() => {
     if (recentrerSignal > 0) {
-      panManuel.current = false;
+      libererVue(false);
       centrerSurJoueur(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recentrerSignal]);
 
-  const marquerPanManuel = useCallback(() => {
-    panManuel.current = true;
-    onPanManuel?.();
-  }, [onPanManuel]);
+  /** Bornes d'une vue déplacée À LA MAIN : le monde peut s'écarter des bords d'une marge. */
+  const bornerVue = useCallback(
+    (x: number, y: number, z: number) => ({
+      x: borner(x, largeurCarte * z, viewport.largeur, gauche, droite),
+      y: borner(y, hauteurCarte * z, viewport.hauteur, haut, bas),
+    }),
+    [largeurCarte, hauteurCarte, viewport, haut, bas, gauche, droite],
+  );
 
   const pan = useMemo(
     () =>
       Gesture.Pan()
+        // Un seul doigt : à deux, c'est le pincement qui déplace la vue (par son point
+        // focal). Les deux gestes écrivant la même translation, les laisser tourner
+        // ensemble faisait trembler la carte.
+        .maxPointers(1)
         // Le seuil laisse passer les taps vers les cases : sans lui, le moindre
         // tremblement du doigt transformerait un déplacement en panoramique.
         // Il sert AUSSI à poser `panManuel` au bon moment : marquer la vue comme
@@ -150,28 +254,42 @@ export default function MapCanvas({
         .onStart(() => {
           txDebut.value = tx.value;
           tyDebut.value = ty.value;
-          marquerPanManuel();
+          libererVue(true);
         })
         .onUpdate((e) => {
-          tx.value = txDebut.value + e.translationX;
-          ty.value = tyDebut.value + e.translationY;
+          const vue = bornerVue(
+            txDebut.value + e.translationX,
+            tyDebut.value + e.translationY,
+            echelle.value,
+          );
+          tx.value = vue.x;
+          ty.value = vue.y;
         }),
-    [tx, ty, txDebut, tyDebut, marquerPanManuel],
+    [tx, ty, txDebut, tyDebut, echelle, libererVue, bornerVue],
   );
 
   const pinch = useMemo(
     () =>
       Gesture.Pinch()
         .runOnJS(true)
-        .onStart(() => {
+        .onStart((e) => {
           echelleDebut.value = echelle.value;
-          marquerPanManuel();
+          ancreMondeX.value = (e.focalX - tx.value) / echelle.value;
+          ancreMondeY.value = (e.focalY - ty.value) / echelle.value;
+          libererVue(true);
         })
         .onUpdate((e) => {
-          const z = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, echelleDebut.value * e.scale));
+          const z = Math.min(ZOOM_MAX, Math.max(zoomMin, echelleDebut.value * e.scale));
+          const vue = bornerVue(
+            e.focalX - ancreMondeX.value * z,
+            e.focalY - ancreMondeY.value * z,
+            z,
+          );
           echelle.value = z;
+          tx.value = vue.x;
+          ty.value = vue.y;
         }),
-    [echelle, echelleDebut, marquerPanManuel],
+    [echelle, echelleDebut, ancreMondeX, ancreMondeY, tx, ty, zoomMin, libererVue, bornerVue],
   );
 
   const gestes = useMemo(() => Gesture.Simultaneous(pan, pinch), [pan, pinch]);
@@ -234,9 +352,22 @@ export default function MapCanvas({
     [abscisseJoueur, ordonneeJoueur, isInstance, user],
   );
 
+  /** La case porte-t-elle la cible courante ? (joueur ou boss — un monstre n'est pas dessiné) */
+  const estCiblee = useCallback(
+    (c: CaseCarte, occupant: OccupantJoueur | null) => {
+      if (!cible.id) return false;
+      if (cible.type === 'player') return !!occupant && !occupant.estMoi && occupant.idJoueur === cible.id;
+      if (cible.type === 'boss') return c.bossId === cible.id;
+      return false;
+    },
+    [cible.type, cible.id],
+  );
+
   return (
-    <View style={styles.viewport} onLayout={mesurer}>
-      <GestureDetector gesture={gestes}>
+    // Les gestes sont posés sur la FENÊTRE, pas sur le monde : sinon un doigt posé sur
+    // le vide laissé par un bord de carte ne déplaçait rien.
+    <GestureDetector gesture={gestes}>
+      <View style={styles.viewport} onLayout={mesurer} collapsable={false}>
         <Animated.View
           style={[
             styles.monde,
@@ -249,25 +380,29 @@ export default function MapCanvas({
             contentFit="fill"
             transition={150}
           />
-          {cases.map((c) => (
-            <CaseTile
-              key={c.carteCarreauId}
-              uneCase={c}
-              taille={CELL}
-              accessible={accessibles.has(c.carteCarreauId)}
-              joueur={occupantDe(c)}
-              etatInteraction={interactions?.[String(c.carteCarreauId)]}
-              onTapCase={onTapCase}
-              onTapJoueur={onTapJoueur}
-              onLongPressJoueur={onLongPressJoueur}
-              onTapPnj={onTapPnj}
-              onTapBoss={onTapBoss}
-              onTapInteraction={onTapInteraction}
-            />
-          ))}
+          {cases.map((c) => {
+            const occupant = occupantDe(c);
+            return (
+              <CaseTile
+                key={c.carteCarreauId}
+                uneCase={c}
+                taille={CELL}
+                accessible={accessibles.has(c.carteCarreauId)}
+                joueur={occupant}
+                ciblee={estCiblee(c, occupant)}
+                etatInteraction={interactions?.[String(c.carteCarreauId)]}
+                onTapCase={onTapCase}
+                onTapJoueur={onTapJoueur}
+                onLongPressJoueur={onLongPressJoueur}
+                onTapPnj={onTapPnj}
+                onTapBoss={onTapBoss}
+                onTapInteraction={onTapInteraction}
+              />
+            );
+          })}
         </Animated.View>
-      </GestureDetector>
-    </View>
+      </View>
+    </GestureDetector>
   );
 }
 

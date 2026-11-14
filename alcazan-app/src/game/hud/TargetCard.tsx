@@ -1,19 +1,24 @@
 import { Image } from 'expo-image';
 import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import { imageMonstre, mediaUrl, spriteBoss } from '@/src/core/media';
 import { useAppDispatch, useAppSelector } from '@/src/core/store';
 import { fetchTargetInfo, removePlayerTarget } from '@/src/core/store/actions';
-import GaugeBar from '@/src/ui/GaugeBar';
-import Panel from '@/src/ui/Panel';
 import { colors, fonts, radius, spacing } from '@/src/ui/tokens';
+
+import { Jauge } from './PlayerCard';
 
 /**
  * Carte de ciblage — port de `components/target/Target.jsx`.
  *
  * Un monstre d'instance (« renfort ») se présente EXACTEMENT comme un monstre du monde
  * ouvert : `/api/target/renfort` renvoie les mêmes clés, la carte est donc mutualisée.
+ *
+ * Même gabarit que le cartouche du joueur (portrait + jauges chiffrées dans la barre),
+ * liseré rouge : elle se pose au centre du bandeau, face à lui, et non plus dans une
+ * colonne qui mangeait le quart gauche de la carte.
  */
 export default function TargetCard() {
   const dispatch = useAppDispatch();
@@ -68,62 +73,80 @@ export default function TargetCard() {
   const decibable = target.type !== 'monstre' && target.type !== 'renfort';
 
   return (
-    <Panel padding="sm" style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.tag}>Cible</Text>
-        {decibable && (
-          <Pressable onPress={() => dispatch(removePlayerTarget())} hitSlop={10}>
-            <Text style={styles.close}>✕</Text>
-          </Pressable>
+    <Animated.View
+      entering={FadeIn.duration(160)}
+      exiting={FadeOut.duration(120)}
+      style={styles.cartouche}>
+      <Image source={{ uri: affichage.image }} style={styles.portrait} contentFit="contain" />
+
+      <View style={styles.corps}>
+        <View style={styles.ligneNom}>
+          <Text style={styles.nom} numberOfLines={1}>
+            {affichage.nom || '…'}
+          </Text>
+          <Text style={styles.sous} numberOfLines={1}>
+            {affichage.sous}
+          </Text>
+        </View>
+        <Jauge variante="hp" valeur={affichage.pv.valeur} max={affichage.pv.max} hauteur={11} />
+        {!!affichage.mana && (
+          <Jauge variante="mp" valeur={affichage.mana.valeur} max={affichage.mana.max} hauteur={9} />
         )}
       </View>
 
-      <View style={styles.identite}>
-        <Image source={{ uri: affichage.image }} style={styles.avatar} contentFit="contain" />
-        <View style={styles.noms}>
-          <Text style={styles.nom} numberOfLines={1}>
-            {affichage.nom}
-          </Text>
-          <Text style={styles.sous}>{affichage.sous}</Text>
-        </View>
-      </View>
-
-      <GaugeBar variant="hp" label="Santé" value={affichage.pv.valeur} max={affichage.pv.max} height={9} />
-      {!!affichage.mana && (
-        <GaugeBar
-          variant="mp"
-          label="Mana"
-          value={affichage.mana.valeur}
-          max={affichage.mana.max}
-          height={9}
-        />
+      {decibable && (
+        <Pressable
+          onPress={() => dispatch(removePlayerTarget())}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel="Ne plus cibler"
+          style={styles.fermer}>
+          <Text style={styles.fermerLabel}>✕</Text>
+        </Pressable>
       )}
-    </Panel>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { gap: spacing.sm, borderColor: colors.dangerBorder },
-  header: { flexDirection: 'row', alignItems: 'center' },
-  tag: {
-    flex: 1,
-    fontFamily: fonts.bodyBold,
-    fontSize: 10,
-    color: colors.dangerText,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
+  cartouche: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    width: 216,
+    maxWidth: '100%',
+    padding: 5,
+    borderRadius: radius.card,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
+    backgroundColor: colors.hudBg,
   },
-  close: { color: colors.textMute, fontSize: 13 },
-  identite: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  avatar: {
-    width: 38,
-    height: 38,
+  portrait: {
+    width: 40,
+    height: 40,
     borderRadius: radius.slot,
     borderWidth: 1,
     borderColor: colors.dangerBorder,
     backgroundColor: colors.pastilleBg,
   },
-  noms: { flex: 1 },
-  nom: { fontFamily: fonts.titleBold, fontSize: 14, color: colors.text },
-  sous: { fontFamily: fonts.body, fontSize: 11, color: colors.textFaint },
+  corps: { flex: 1, gap: 3 },
+  ligneNom: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs },
+  nom: {
+    flex: 1,
+    fontFamily: fonts.titleBold,
+    fontSize: 11,
+    lineHeight: 14,
+    color: colors.text,
+    letterSpacing: 0.4,
+  },
+  sous: { fontFamily: fonts.bodyBold, fontSize: 9.5, color: colors.dangerText },
+  fermer: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: colors.badgeNeutralBg,
+  },
+  fermerLabel: { color: colors.textMute, fontSize: 11, lineHeight: 14 },
 });
