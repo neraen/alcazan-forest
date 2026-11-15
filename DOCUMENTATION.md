@@ -3462,3 +3462,32 @@ ignorant les récompenses ; double encodage des archives.
 trois endpoints d'attaque) ; `diePlayer` sans transaction propre ; `chusei_test` avec 34 clés
 étrangères de moins que `chusei` ; un champ de DTO typé enum qui répond 500 au lieu de 422
 (travers général du projet) ; `guilde.niveau` décoratif.
+
+
+### 21.15 Images des ressources sur la carte — 15/11/2026
+
+`objet.image_carte` (nullable, PNG dans `img/interaction`, sans extension) est indépendant
+ de `objet.image` (inventaire). Le champ « Image affichée sur la carte » dans ArtisanatMaker
+réutilise l’uploader de la collection `interaction`. Le DTO et la liste de l’éditeur
+transportent `imageCarte` : omis/null conserve, chaîne vide retire.
+
+Pour `RECOLTER`, `Interaction::getSkinCarte()` et la projection DQL de la carte résolvent
+l’image de l’objet récompensé en priorité, puis `interaction.skin`. Les coffres et leviers
+gardent leur image même s’ils donnent une ressource. Le contrat `interactionSkin`/`etat.skin`
+est conservé pour le web et l’app. Les images ne sont pas copiées dans les interactions.
+
+Web : sprite + petit éclat (repère de repli si absent), infobulle hors grille via portal,
+fiche d’inspection avant exécution ; aucun coût au premier clic/toucher. App : la fiche
+existante s’ouvre aussi pour les interactions sans choix de mode et affiche leur sprite.
+Les refus et coûts restent arbitrés par le serveur, y compris après la fin du compteur.
+
+Migration `Version20261115184019` appliquée à `chusei` et `chusei_test`, sauvegardes dans
+`backups/`. Huit PNG générés et liés aux huit ressources de la base locale ; contenu exporté
+par `scripts/content-dump.sh`. Prompts et catalogue : `docs/IMAGES_RESSOURCES.md`.
+Galerie : `/img/interaction/ressources.html`. Le « Filon de cuivre » donne historiquement
+le minerai de fer ; cette incohérence de contenu est conservée.
+
+Validation : tests fonctionnels ArtisanatEditor, Interaction et ImageCarteRessource ; tests
+React d’inspection, confirmation et repli ; TypeScript mobile ; build web (avertissements
+préexistants). Les tests fonctionnels couvrent l’admin ; pas de validation visuelle dans une
+session admin locale authentifiée. Aucun déploiement de production effectué.

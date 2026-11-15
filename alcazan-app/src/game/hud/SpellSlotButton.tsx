@@ -28,6 +28,9 @@ import { colors, fonts } from '@/src/ui/tokens';
  * mise à jour d'état, donc plus de ciblage ni de survols jusqu'au rechargement.
  *
  * `killMessage` est ce qui fait DÉCIBLER après une mise à mort.
+ *
+ * Le COOLDOWN ne s'applique qu'aux sorts lancés sur soi et contre un autre joueur —
+ * jamais contre un monstre, un boss ou un renfort (voir `frapper`).
  */
 export default function SpellSlotButton({
   spell,
@@ -190,7 +193,11 @@ export default function SpellSlotButton({
         toast.info("Vous n'avez pas de cible.");
         return;
       }
-      lancerCooldown();
+      // Le cooldown est une notion de PvP : il ne part que contre un JOUEUR (et sur soi,
+      // plus haut). Contre un monstre, un boss ou un renfort on enchaîne librement, comme
+      // sur le web (`Spell.handleAttack` n'appelle `activateSkill` que pour `player`) —
+      // ce sont les PA qui bornent le rythme, et `enVol` empêche deux envois simultanés.
+      if (target.type === 'player') lancerCooldown();
       await lancerAttaque();
     } finally {
       enVol.current = false;

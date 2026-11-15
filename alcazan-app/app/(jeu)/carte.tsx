@@ -15,6 +15,7 @@ import {
   updatePlayerTarget,
 } from '@/src/core/store/actions';
 import type { CaseCarte, EtatInteraction, JoueurMinimal } from '@/src/core/types';
+import EchangeBandeau from '@/src/game/echange/EchangeBandeau';
 import ActionBar from '@/src/game/hud/ActionBar';
 import CroixDirectionnelle from '@/src/game/hud/CroixDirectionnelle';
 import MenuDrawer from '@/src/game/hud/MenuDrawer';
@@ -179,21 +180,10 @@ export default function CarteScreen() {
     [dispatch, toast],
   );
 
-  const aDesModes = etat.modesRecolte.length > 0;
-  const tapInteraction = useCallback(
-    (uneCase: CaseCarte) => {
-      const etatCase = interactions?.[String(uneCase.carteCarreauId)];
-      // Un gisement qui propose le choix demande d'abord COMMENT prélever. Sur une case
-      // indisponible on n'ouvre rien : la requête part, et le serveur donne lui-même la
-      // vraie raison du refus.
-      if (etatCase?.recolteChoix && etatCase.disponible && aDesModes) {
-        setInteractionOuverte(uneCase);
-        return;
-      }
-      executerInteraction(uneCase);
-    },
-    [interactions, aDesModes, executerInteraction],
-  );
+  // Un premier toucher inspecte toujours, sans dépenser de PA.
+  const tapInteraction = useCallback((uneCase: CaseCarte) => {
+    setInteractionOuverte(uneCase);
+  }, []);
 
   const cible = useMemo(
     () => ({ type: target.type, id: target.targetId }),
@@ -308,11 +298,21 @@ export default function CarteScreen() {
         </View>
       )}
 
+      {/* Échange : une ligne au-dessus de la barre d'action, centrée — le seul endroit qui
+          ne recouvre ni la croix (à gauche), ni les sorts (en bas), ni les messages (en
+          haut). Elle ne rend rien tant qu'il n'y a ni invitation ni session. */}
+      <View
+        style={[styles.echange, { bottom: Math.max(insets.bottom, spacing.sm) + 70 }]}
+        pointerEvents="box-none">
+        <EchangeBandeau />
+      </View>
+
       {menuOuvert && <MenuDrawer zone={etat.nom} onClose={() => setMenuOuvert(false)} />}
 
       {!!interactionOuverte && (
         <InteractionSheet
           nom={interactionOuverte.interactionNom ?? ''}
+          skin={interactionOuverte.interactionSkin}
           etat={interactions?.[String(interactionOuverte.carteCarreauId)]}
           modes={etat.modesRecolte}
           onChoisir={(mode) => {
@@ -349,4 +349,5 @@ const styles = StyleSheet.create({
   ligneDroite: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   hudBas: { position: 'absolute', alignItems: 'flex-end' },
   croix: { position: 'absolute' },
+  echange: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
 });

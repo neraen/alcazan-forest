@@ -387,6 +387,30 @@ est capturé automatiquement) :
   mobile et toujours ciblée. Côté front, `DonjonCombatHost` détecte la perte d'instance
   (`instanceId` qui passe à null) et relit `/joueur/data/minimal` : c'est le seul signal qu'a
   le client d'une mort décidée par le tick.
+- **Le jeu charge SA carte SANS `mapId` (15/11/2026)** : `/api/map/cases/data` renvoie les
+  cases de la carte DEMANDÉE mais la position du joueur sur sa carte RÉELLE. Le web et le
+  mobile demandaient `joueurState.mapId`, remis à jour seulement au franchissement d'un
+  passage : au moindre décalage (téléportation serveur, passage « réussi » sans
+  déplacement) le personnage était dessiné aux coordonnées d'une autre carte — « téléporté
+  au milieu d'un étang », sans case accessible. Désormais `mapId` absent = carte réelle (le
+  client adopte `data.mapId`) ; `mapId` explicite = consultation (MapMaker). Et
+  `/joueur/map/update_position` REFUSE (`{"message"}`) quand la case d'arrivée est prise,
+  au lieu de répondre la nouvelle carte sans avoir bougé le joueur.
+- **Le serveur arbitre chaque pas (15/11/2026)** : `DeplacementService::verifierPas` est
+  LA règle de `/joueur/case/update_position` — case voisine (Tchebychev ≤ 1, pas sur
+  place), `is_usable`, pas de PNJ, PM ≥ 1 ; refus = 400 `{"message"}`, sans bouger ni
+  débiter. Avant, n'importe quelle case libre envoyée était appliquée (téléportation,
+  décor traversé, PM négatifs). Deux cas restent VOLONTAIREMENT hors refus : case prise
+  par un joueur (course légitime → 200, pas de déplacement) et `mapId` périmé (200 +
+  état frais, que le client réadopte : c'est une resynchronisation). Les cases `is_wrap`
+  ne sont pas refusées (le clavier du web peut y poser le pied).
+- **Temps réel : jamais sans filet (15/11/2026)** : la reconnexion native d'`EventSource`
+  rejoue la MÊME URL donc le même jeton (1 h) → 401 → flux fermé pour de bon, invitations
+  invisibles jusqu'au F5. Le web reconnecte désormais À LA MAIN avec un jeton neuf (comme le
+  mobile), et les deux `EchangeHost` sondent `/echange/current` même flux ouvert (30 s ; 4 s
+  en session si le flux est coupé) : un flux ouvert ne prouve pas que les publications
+  arrivent. ⚠️ **Aucune position de joueur n'est diffusée en temps réel** : on ne voit
+  bouger les autres qu'en rechargeant sa carte (son propre pas, F5).
 - **Un refus de passage doit se voir** : `/api/joueur/map/update_position` renvoie
   `{"message"}` en cas de refus (condition de salle, verrou, wrap) et `{"annonce"}` quand une
   salle vient de se peupler ; `Map.changeMap` les toaste. Ces toasts étaient commentés : un
@@ -529,8 +553,8 @@ une autre branche) : `alcazan-app/src/core/` est un **port fidèle** de `src/ser
 …), pour qu'un correctif se transpose d'un dépôt à l'autre sans relecture. Lots 0 à 8
 livrés (connexion, carte, HUD, combat, PNJ/quêtes, échoppe, inventaire, profil, sorts),
 plus les écrans du menu le 14/11/2026 (classement, journal, guilde, hôtel des ventes,
-artisanat, établi) ; restent les **échanges joueur-à-joueur** et les **donjons** ;
-l'administration ne sera jamais portée.
+artisanat, établi), la fiche publique d'un joueur et les échanges joueur-à-joueur ;
+restent les **donjons** ; l'administration ne sera jamais portée.
 
 - Les **fonds de carte sont EMBARQUÉS** (`assets/images/maps/`, table statique
   `src/core/mapBackgrounds.ts`) : Metro ne sait pas faire de `require()` dynamique. Tout le
@@ -576,6 +600,21 @@ l'administration ne sera jamais portée.
   S'ARRÊTE sur un mur, un refus ou un changement de carte (`IssuePas`).
 - **Toasts** : jusqu'à 620 pt de large, durée selon la longueur du message
   (`dureeLecture`), EN HAUT sur la carte (le bas est aux pouces), en bas dans les modales.
+- **Cooldown des sorts = notion de PvP** : `SpellSlotButton` ne le lance que sur soi
+  (`portee === 0`) ou contre un `player` — jamais contre `monstre`/`boss`/`renfort`, où
+  l'on enchaîne librement (ce sont les PA qui bornent). Même règle que `Spell.jsx`.
+- **Fiche d'un joueur + échanges (14/11/2026, `docs/MOBILE_PLAN.md` §5 bis)** : toucher le
+  PORTRAIT de la cible (joueur) ouvre `app/(jeu)/joueur/[pseudo]`, qui porte « Proposer un
+  échange » — le clic droit du web n'existe pas au doigt. `EchangeHost` ne REND rien et
+  est monté UNE fois dans `app/(jeu)/_layout.tsx` (pas dans la carte : une invitation
+  doit arriver inventaire ouvert) ; ce qui se voit = `EchangeBandeau` sur la carte +
+  l'écran `echange` (trois colonnes sac → mon offre → son offre). ⚠️ **RN n'a pas
+  d'`EventSource`** : `core/sse.ts` lit le flux Mercure sur un XHR, `core/useMercure`
+  reconnecte à la main avec un jeton NEUF, et l'adresse du hub est `MERCURE_URL` — jamais
+  le `mercureUrl` de la réponse (c'est le `localhost` du back). Sondage REST de repli +
+  resync au retour d'arrière-plan : ne pas les retirer, iOS suspend le flux. ✕ REPLIE
+  l'écran sans annuler (bandeau « Reprendre ») et l'écran s'ouvre quand la session
+  S'OUVRE, pas « tant qu'elle est ouverte » — sinon le replier le rouvre en boucle.
 - **Monstres de plein air** : `useCarte.majCibleMonstre` cible en marchant sur une case
   `hasMonstre` et décible en la quittant, UNIQUEMENT à l'arrivée sur une case — jamais
   sur un rechargement `needRefresh`, qui reciblerait le monstre qu'on vient de tuer.

@@ -137,8 +137,9 @@ Le survol affiche une étiquette.
 - **Tap sur une case** = le `handleClick` du web, à l'identique : wrap adjacent → changement
   de carte ou modale de porte de donjon ; case dans `unabledCases` → déplacement. Rien
   d'autre ne se produit, et surtout aucune règle n'est ajoutée.
-- **Appui long sur un autre joueur** remplace le clic droit (menu contextuel d'échange,
-  lot 9). **Tap sur un PNJ** ouvre sa modale. **Tap sur une interaction** ouvre le panneau
+- **Le clic droit sur un autre joueur n'a pas d'équivalent au doigt** : on le CIBLE (tap),
+  puis on touche son portrait dans la carte de cible → sa fiche publique, qui porte
+  « Proposer un échange » (lot 9, voir « Profil d'un joueur et échanges »). **Tap sur un PNJ** ouvre sa modale. **Tap sur une interaction** ouvre le panneau
   de récolte.
 - **Pas de survol** : l'étiquette joueur/PNJ devient une **info-bulle au tap** qui se ferme
   au tap suivant. ⚠️ `Map.getJoueur()` renvoie `props.user` entier pour soi mais un objet
@@ -224,14 +225,14 @@ Transpositions qui demandent un choix :
 | **6** | PNJ : dialogue, quêtes (`quest/action`), échoppe, métiers ; interactions de case (récolte) | La première quête du tutoriel se termine sur mobile |
 | **7** | Inventaire + équipement + profil (caractéristiques, karma) | On équipe une arme et les stats bougent |
 | **8** | Sorts (grimoire, assignation des 8 slots), consommables | On réassigne sa barre |
-| **9** | Social : guilde ✅, classement ✅, journal ✅, échanges joueur-à-joueur (Mercure) | Un échange à deux aboutit |
+| **9** | Social : guilde ✅, classement ✅, journal ✅, échanges joueur-à-joueur ✅ (Mercure), fiche publique d'un joueur ✅ | Un échange à deux aboutit |
 | **10** | Donjons (groupe, salles, combat, sondage 2 s), artisanat ✅, hôtel des ventes ✅ | — |
 | **11** | Finitions : tutoriel natif, notifications, icône/splash, build EAS | — |
 
 Les lots 0 à 6 constituent la v1 demandée ; 7 et 8 la complètent (ils sont dans le
 périmètre « boucle de jeu » retenu) ; 9+ sont les suites.
 
-## 5 bis. État au 14/11/2026 — lots 0 à 8 livrés, 9 et 10 entamés
+## 5 bis. État au 14/11/2026 — lots 0 à 9 livrés, 10 entamé
 
 Vérifié dans le simulateur iOS (iPhone 16 Pro, Expo Go, back Docker local) :
 connexion sur un vrai compte, carte du Tutoriel Boisé avec sprites et autres joueurs,
@@ -268,8 +269,8 @@ alcazan-app/
 ### Écrans du menu (14/11/2026) — classement, journal, guilde, hôtel, artisanat, établi
 
 Les six entrées du menu qui répondaient « arrive dans un prochain lot » sont livrées :
-du lot 9 il ne reste que les **échanges joueur-à-joueur** (Mercure), du lot 10 que les
-**donjons**. Vérifié à l'écran dans le simulateur : les six écrans, un dépôt puis un
+du lot 9 il ne restait que les **échanges joueur-à-joueur** (livrés le même jour, voir
+plus bas), du lot 10 il ne reste que les **donjons**. Vérifié à l'écran dans le simulateur : les six écrans, un dépôt puis un
 retrait à l'hôtel des ventes, un retrait à l'établi. **Non vérifié**, faute de données sur
 le compte de test : un achat et la pagination de l'hôtel (catalogue vide), la gestion de
 guilde côté baron/officier (le compte n'est que recrue), la fondation d'une guilde, le
@@ -317,6 +318,77 @@ serait reciblé aussitôt, ce que le web ne fait pas non plus.
 **Reste à faire pour une v1 complète** : vérifier un combat de bout en bout contre un
 monstre (nécessite d'amener un personnage sur une case de monstre), et le tutoriel
 intro.js, qui n'est pas porté — l'app n'a pas encore d'équivalent natif des bulles.
+
+**Cooldown des sorts** : notion de PvP. `SpellSlotButton` ne le déclenche que pour un sort
+lancé sur soi ou contre un autre joueur ; contre un monstre, un boss ou un renfort on
+enchaîne sans attendre (le port l'appliquait à tort à toutes les cibles — le web ne le
+fait que pour `player`).
+
+### Profil d'un joueur et échanges (14/11/2026)
+
+**Fiche publique** (`app/(jeu)/joueur/[pseudo].tsx`, port de `ProfilJoueur.jsx`) : on y
+arrive en touchant le PORTRAIT de la carte de cible quand la cible est un joueur (le lien
+`/profil/<pseudo>` de `Target.jsx`). Trois colonnes — qui il est + ce qu'on peut lui
+proposer, ce qu'il porte, le détail de la pièce touchée. Lecture seule. Amis et messagerie
+ne sont pas portés. C'est aussi la **porte d'entrée de l'échange** : « Proposer un
+échange » y remplace le clic droit du web (`PlayerContextMenu`). Le bouton se grise si la
+cible est à plus d'une case, mais ce n'est qu'un confort : le serveur revérifie.
+
+**Échange joueur-à-joueur** — faisable sans rien toucher au back, tous les endpoints
+existaient. Le port tient en cinq pièces :
+
+| Pièce | Rôle |
+|---|---|
+| `core/api/echange.ts` | port de `EchangeApi.js`, mêmes noms, mêmes payloads |
+| `core/sse.ts` + `core/useMercure.ts` | le temps réel (voir ci-dessous) |
+| `game/echange/EchangeHost.tsx` | l'hôte SANS rendu, monté UNE fois dans `app/(jeu)/_layout.tsx` |
+| `game/echange/EchangeBandeau.tsx` | ce qui se voit sur la carte |
+| `app/(jeu)/echange.tsx` | la session ouverte |
+
+L'état Redux `data.echange = { etat, invitations }` est celui du web au champ près
+(`UPDATE_ECHANGE` ignore toujours une `version` plus ancienne de la même session).
+
+- **L'hôte est dans le LAYOUT du jeu, pas dans la carte.** Sur le web `EchangeHost` rend
+  bannière et modale au même endroit ; ici une route modale est un écran à part, donc
+  l'hôte ne rend rien et ce qui se voit est réparti entre le bandeau (carte) et l'écran
+  d'échange. Monté dans le layout, il reçoit une invitation même inventaire ouvert.
+- **Temps réel : React Native n'a pas d'`EventSource`.** `core/sse.ts` lit le flux sur un
+  `XMLHttpRequest` (`responseText` grandit au fil de l'eau dès `readyState 3`) — ~70
+  lignes, aucune dépendance native, donc ça marche dans Expo Go. `useMercure` refait la
+  reconnexion À LA MAIN, avec un jeton NEUF à chaque tentative (il expire, et il doit
+  couvrir le topic de la session en cours). ⚠️ L'adresse du hub vient de `MERCURE_URL`
+  (`core/config.ts`) et NON du `mercureUrl` renvoyé par `POST /mercure/token` : le back y
+  répond sa propre vision (`localhost:5001`), fausse depuis un vrai téléphone.
+- **Deux filets que le web n'a pas** : un sondage REST de repli tant que le hub n'est pas
+  joint (4 s pendant une session, 20 s sinon), et une resynchronisation au retour au
+  premier plan (`AppState`) — iOS suspend le flux d'une app en arrière-plan, et une
+  session ne vit que cinq minutes.
+- **L'écran d'échange est REDESSINÉ pour le paysage** : le web empile « mon offre / son
+  offre » au-dessus du sac, ce qui ne tient pas dans ~260 pt de haut. Ici trois colonnes
+  dans l'ordre du geste — MON SAC (je touche) → MON OFFRE → SON OFFRE. Toucher un objet
+  en propose UN de plus, l'appui long propose toute la pile ; « − » et ✕ sur mes lignes.
+  Le champ d'or est EN HAUT de sa colonne : vérifié, il reste visible clavier ouvert.
+- **Interface pessimiste, comme le web** : chaque geste part avec `expectedVersion`, rien
+  ne bouge avant l'état renvoyé ; un 409 fait adopter l'état frais (`useEchange.executer`).
+  Pas de grisé pendant l'envoi : à ~100 ms par geste, toute la colonne clignoterait.
+- **✕ REPLIE l'écran, il n'annule pas** (écart assumé avec le web, où la croix annule) :
+  elle est sous le pouce, et un échange annulé par mégarde oblige les deux joueurs à tout
+  refaire. Le bandeau de la carte propose alors « Reprendre ». Annuler est un bouton à
+  part, derrière `confirmer()`. Pour la même raison la route a `gestureEnabled: false`.
+- **L'écran s'ouvre quand la session S'OUVRE** (effet sur l'id de la session `ouvert`),
+  pas « tant qu'une session est ouverte » : sinon le replier le rouvrirait en boucle.
+- **Le bandeau est au-dessus de la barre d'action, centré** : c'est le seul endroit qui
+  ne recouvre ni la croix, ni les sorts, ni les messages (en haut). Une seule invitation
+  affichée à la fois.
+
+Vérifié dans le simulateur avec un second joueur piloté par l'API : invitation reçue en
+temps réel, invitation envoyée depuis la fiche, ouverture automatique à l'acceptation,
+ajout/retrait d'objets, pile entière à l'appui long, or saisi au clavier, offre adverse
+mise à jour en direct, double confirmation → « Échange conclu ! » (or et sac vérifiés en
+base), repli puis reprise, annulation par l'autre joueur. **Non vérifié** : l'expiration
+des cinq minutes à l'écran, le chemin 409, le sondage de repli (hub coupé), le retour
+d'arrière-plan, Android, et un vrai téléphone (où `MERCURE_URL` doit désigner la machine
+de dev — port 5001 — ou le hub de production).
 
 ### Croix directionnelle et messages (14/11/2026)
 
@@ -449,9 +521,10 @@ l'appareil, conservée entre deux lancements).
   rencontre (doc §13.7). Au lot 10, ce sondage doit s'arrêter quand l'app passe en
   arrière-plan (`AppState`) — sinon on consomme de la batterie pour rien, et le combat
   avance sans spectateur.
-- **Mercure** (lot 9) : hub sur le port hôte **5001**, abonnement par
-  `POST /api/mercure/token` + query param `authorization` de l'EventSource. RN n'a pas
-  d'`EventSource` natif → `react-native-sse`.
+- **Mercure** (lot 9, fait) : hub sur le port hôte **5001**, abonnement par
+  `POST /api/mercure/token` + query param `authorization`. RN n'a pas d'`EventSource`
+  natif → client maison `core/sse.ts` sur XHR (pas de `react-native-sse` : une
+  dépendance de moins pour ~70 lignes).
 - **`react-native-reanimated` exige son plugin Babel** en dernière position de
   `babel.config.js`, et `react-native-gesture-handler` un `GestureHandlerRootView` à la
   racine. Les deux dépendances sont déjà installées mais **ni l'une ni l'autre n'est

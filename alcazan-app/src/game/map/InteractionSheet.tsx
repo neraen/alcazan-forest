@@ -1,3 +1,5 @@
+import { Image } from 'expo-image';
+import { spriteInteraction } from '@/src/core/media';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
@@ -20,15 +22,17 @@ import { colors, fonts, radius, spacing } from '@/src/ui/tokens';
  */
 export default function InteractionSheet({
   nom,
+  skin,
   etat,
   modes,
   onChoisir,
   onFermer,
 }: {
   nom: string;
+  skin?: string | null;
   etat?: EtatInteraction;
   modes: ModeRecolte[];
-  onChoisir: (mode: 'ethique' | 'intensive') => void;
+  onChoisir: (mode: 'ethique' | 'intensive' | null) => void;
   onFermer: () => void;
 }) {
   return (
@@ -39,12 +43,21 @@ export default function InteractionSheet({
       <Pressable style={styles.backdrop} onPress={onFermer}>
         <Pressable onPress={() => {}}>
           <Panel style={styles.carte}>
-            <SectionTitle size="sm">{etat?.nom || nom}</SectionTitle>
+            <View style={styles.entete}>
+              {!!skin && <Image source={{ uri: spriteInteraction(skin) }} style={styles.apercu} contentFit="contain" />}
+              <View style={styles.description}>
+                <SectionTitle size="sm">{etat?.nom || nom}</SectionTitle>
+                <Text style={styles.modeDescription}>
+                  {etat?.gisementEpuise ? 'Gisement épuisé' : etat?.disponible === false ? 'Indisponible' : 'Disponible'}
+                </Text>
+                {!!etat?.raison && <Text style={styles.modeDescription}>{etat.raison}</Text>}
+              </View>
+            </View>
             {!!etat?.coutPa && <Text style={styles.cout}>{etat.coutPa} PA</Text>}
 
             {/* Côte à côte : empilés, deux modes + titre + annulation dépassaient les
                 ~400 pt de haut d'un téléphone en paysage. */}
-            <View style={styles.modes}>
+            {etat?.recolteChoix && etat.disponible && modes.length > 0 ? <View style={styles.modes}>
             {modes.map((mode) => (
               <Pressable
                 key={mode.value}
@@ -67,7 +80,9 @@ export default function InteractionSheet({
                 </View>
               </Pressable>
             ))}
-            </View>
+            </View> : <Pressable accessibilityRole="button" onPress={() => onChoisir(null)} style={[styles.mode, { flex: 0 }]}>
+              <Text style={styles.modeLabel}>{etat?.verbe || 'Interagir'}</Text>
+            </Pressable>}
 
             <Pressable onPress={onFermer} style={styles.annuler}>
               <Text style={styles.annulerLabel}>Annuler</Text>
@@ -88,6 +103,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.scrim,
   },
   carte: { width: 560, maxWidth: '100%', gap: spacing.md },
+  entete: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  apercu: { width: 56, height: 56 },
+  description: { flex: 1, gap: spacing.xs },
   modes: { flexDirection: 'row', gap: spacing.md },
   cout: { fontFamily: fonts.body, fontSize: 12, color: colors.paLabel },
   mode: {

@@ -884,6 +884,7 @@ CREATE TABLE `objet` (
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `metier_id` int DEFAULT NULL,
   `niveau_ressource` int NOT NULL DEFAULT '0',
+  `image_carte` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_46CD4C38ED16FA20` (`metier_id`),
   CONSTRAINT `FK_46CD4C38ED16FA20` FOREIGN KEY (`metier_id`) REFERENCES `metier` (`id`)
@@ -896,7 +897,7 @@ CREATE TABLE `objet` (
 
 LOCK TABLES `objet` WRITE;
 /*!40000 ALTER TABLE `objet` DISABLE KEYS */;
-INSERT INTO `objet` VALUES (1,'Ailes de libellule','Ailes provenant des libellules géantes d\'Alcazan, utiles pour l\'alchimie. ',24,'aile_4.png',NULL,0),(2,'Coquille bleu','Coquille d\'un redoutable escargot venimeux. A manipuler avec précaution.',18,'coquille4.png',NULL,0),(3,'Crinière de hérisson','Nombreux sont ceux qui se sont retrouvé les doigts en sang en essayant de la ramasser ...',46,'criniere_herisson.png',NULL,0),(4,'Chapeau de champignon bleu','Chapi chapo ...',8,'chapeau1.png',1,1),(5,'Feuille de sauge des bois','Une sauge commune des sous-bois, amère et tenace.',6,'plante_herboriste.png',1,1),(6,'Minerai de fer','Un fer brut, encore pris dans sa gangue.',9,'minerai_fer.png',2,1),(7,'Minerai d\'argent','Un filon plus rare, qui ne se laisse pas prendre par un débutant.',38,'minerai_argent.png',2,20),(8,'Bûche de chêne','Un billot dense, lourd à porter.',7,'bois.png',3,1),(9,'Peau de bête coriace','Une peau brute qu\'il faudra tanner.',11,'peau1.png',4,1),(12,'Cuir travaillé','Une peau assouplie, prête à être taillée.',26,'cuir_depeceur.png',11,1),(13,'Marguerite','Un simple marguerite',26,'marguerite.png',5,30);
+INSERT INTO `objet` VALUES (1,'Ailes de libellule','Ailes provenant des libellules géantes d\'Alcazan, utiles pour l\'alchimie. ',24,'aile_4.png',NULL,0,NULL),(2,'Coquille bleu','Coquille d\'un redoutable escargot venimeux. A manipuler avec précaution.',18,'coquille4.png',NULL,0,NULL),(3,'Crinière de hérisson','Nombreux sont ceux qui se sont retrouvé les doigts en sang en essayant de la ramasser ...',46,'criniere_herisson.png',NULL,0,NULL),(4,'Chapeau de champignon bleu','Chapi chapo ...',8,'chapeau1.png',1,1,'champignon-bleu-carte'),(5,'Feuille de sauge des bois','Une sauge commune des sous-bois, amère et tenace.',6,'plante_herboriste.png',1,1,'sauge-des-bois-carte'),(6,'Minerai de fer','Un fer brut, encore pris dans sa gangue.',9,'minerai_fer.png',2,1,'minerai-fer-carte'),(7,'Minerai d\'argent','Un filon plus rare, qui ne se laisse pas prendre par un débutant.',38,'minerai_argent.png',2,20,'minerai-argent-carte'),(8,'Bûche de chêne','Un billot dense, lourd à porter.',7,'bois.png',3,1,'chene-carte'),(9,'Peau de bête coriace','Une peau brute qu\'il faudra tanner.',11,'peau1.png',4,1,'peau-bete-carte'),(12,'Cuir travaillé','Une peau assouplie, prête à être taillée.',26,'cuir_depeceur.png',11,1,'cuir-travaille-carte'),(13,'Marguerite','Un simple marguerite',26,'marguerite.png',5,30,'marguerite-carte');
 /*!40000 ALTER TABLE `objet` ENABLE KEYS */;
 UNLOCK TABLES;
 

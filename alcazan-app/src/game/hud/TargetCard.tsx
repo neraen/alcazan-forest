@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -22,6 +23,7 @@ import { Jauge } from './PlayerCard';
  */
 export default function TargetCard() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const target = useAppSelector((s) => s.data.target);
   const precedent = useRef<{ type?: string; id?: number }>({});
 
@@ -77,7 +79,22 @@ export default function TargetCard() {
       entering={FadeIn.duration(160)}
       exiting={FadeOut.duration(120)}
       style={styles.cartouche}>
-      <Image source={{ uri: affichage.image }} style={styles.portrait} contentFit="contain" />
+      {/* Le portrait d'un JOUEUR ouvre sa fiche publique — le lien `/profil/<pseudo>` de
+          `Target.jsx`. Monstres et boss n'ont pas de fiche : leur portrait reste inerte. */}
+      <Pressable
+        disabled={target.type !== 'player' || !target.pseudo}
+        onPress={() =>
+          router.push({
+            pathname: '/(jeu)/joueur/[pseudo]',
+            params: { pseudo: target.pseudo ?? '' },
+          } as never)
+        }
+        hitSlop={6}
+        accessibilityRole="button"
+        accessibilityLabel={`Voir le profil de ${affichage.nom}`}
+        style={({ pressed }) => (pressed ? styles.portraitPresse : undefined)}>
+        <Image source={{ uri: affichage.image }} style={styles.portrait} contentFit="contain" />
+      </Pressable>
 
       <View style={styles.corps}>
         <View style={styles.ligneNom}>
@@ -129,6 +146,7 @@ const styles = StyleSheet.create({
     borderColor: colors.dangerBorder,
     backgroundColor: colors.pastilleBg,
   },
+  portraitPresse: { opacity: 0.7 },
   corps: { flex: 1, gap: 3 },
   ligneNom: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs },
   nom: {

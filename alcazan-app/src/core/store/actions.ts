@@ -1,3 +1,4 @@
+import type { Echange } from '../api/echange';
 import * as targetApi from '../api/target';
 import type { Cible, TypeCible } from '../types';
 
@@ -20,6 +21,9 @@ export const CLOSE_PNJ_INTERACTION = 'close pnj interaction';
 export const OPEN_DONJON_PORTE = 'open donjon porte';
 export const CLOSE_DONJON_PORTE = 'close donjon porte';
 export const UPDATE_DONJON_COMBAT = 'update donjon combat';
+export const UPDATE_ECHANGE = 'update echange';
+export const CLOSE_ECHANGE = 'close echange';
+export const SET_ECHANGE_INVITATIONS = 'set echange invitations';
 
 export type JoueurState = {
   idJoueur: number;
@@ -93,3 +97,13 @@ export const closeDonjonPorte = () => ({ type: CLOSE_DONJON_PORTE }) as const;
    en particulier il ne décompte pas les zones lui-même, il affiche `resoudreAt`. */
 export const updateDonjonCombat = (combat: unknown) =>
   ({ type: UPDATE_DONJON_COMBAT, combat }) as const;
+
+/* Échange joueur-à-joueur : `etat` = session active (ou null), `invitations` = reçues en
+   attente. L'état est TOUJOURS le payload normalisé du serveur (REST ou Mercure) : jamais
+   une modification optimiste côté client. */
+export const updateEchange = (etat: Echange) => ({ type: UPDATE_ECHANGE, etat }) as const;
+
+export const closeEchange = () => ({ type: CLOSE_ECHANGE }) as const;
+
+export const setEchangeInvitations = (invitations: Echange[]) =>
+  ({ type: SET_ECHANGE_INVITATIONS, invitations }) as const;

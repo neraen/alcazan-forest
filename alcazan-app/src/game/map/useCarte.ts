@@ -146,12 +146,16 @@ export function useCarte(user: JoueurMinimal | null) {
 
   const chargerCarte = useCallback(async () => {
     if (!user) return;
-    // `||` et NON `??` : l'état part à `mapId: 0`, qui n'est ni null ni undefined — un
-    // `??` le retiendrait et demanderait la carte 0, que le serveur refuse en 500.
-    const mapId = joueurState.mapId || etatRef.current.mapId || user.mapId;
     setChargement(true);
     try {
-      const data = await mapApi.find(mapId);
+      // SANS mapId : le serveur répond la carte où se trouve RÉELLEMENT le joueur. On
+      // demandait `joueurState.mapId || etat.mapId` ; or le serveur répond la position du
+      // joueur quelle que soit la carte demandée, et `joueurState.mapId` n'était remis à
+      // jour qu'en franchissant un passage. Le moindre décalage (téléportation serveur,
+      // passage refusé) dessinait le personnage aux coordonnées d'une AUTRE carte — au
+      // milieu d'un étang, sans aucune case accessible.
+      const data = await mapApi.find();
+      const mapId = data.mapId;
       // La carte a pu être rechargée après une téléportation décidée par le SERVEUR
       // (entrée en donjon, éjection d'une instance expirée, mort) : la position est donc
       // RÉADOPTÉE depuis la réponse, jamais devinée ici.
@@ -163,7 +167,7 @@ export function useCarte(user: JoueurMinimal | null) {
       const avant = etatRef.current;
       const arrivee =
         !avant.chargee ||
-        avant.mapId !== (data.mapId ?? mapId) ||
+        avant.mapId !== mapId ||
         avant.abscisseJoueur !== abscisse ||
         avant.ordonneeJoueur !== ordonnee;
 
@@ -171,7 +175,7 @@ export function useCarte(user: JoueurMinimal | null) {
         cases,
         nom: data.mapInfo?.nom ?? '',
         isInstance: !!data.mapInfo?.isInstance,
-        mapId: data.mapId ?? mapId,
+        mapId,
         portesDonjon: data.portesDonjon ?? {},
         interactions: data.interactions ?? {},
         modesRecolte: data.modesRecolte ?? [],
@@ -180,6 +184,8 @@ export function useCarte(user: JoueurMinimal | null) {
         casesAccessibles: calculerAccessibles(cases, abscisse, ordonnee),
         chargee: true,
       });
+      // La carte du joueur est celle que le serveur vient de dire : le store suit.
+      dispatch(updateJoueurState({ mapId }));
       dispatch(updatePositionJoueur({ abscisse, ordonnee }));
       majCibleMonstre(cases, abscisse, ordonnee, arrivee);
     } catch (erreur) {
@@ -189,7 +195,7 @@ export function useCarte(user: JoueurMinimal | null) {
     } finally {
       setChargement(false);
     }
-  }, [user, joueurState.mapId, dispatch, toast, calculerAccessibles, majCibleMonstre]);
+  }, [user, dispatch, toast, calculerAccessibles, majCibleMonstre]);
 
   // Premier chargement.
   useEffect(() => {
@@ -241,7 +247,9 @@ export function useCarte(user: JoueurMinimal | null) {
         casesAccessibles: calculerAccessibles(cases, data.abscisseJoueur, data.ordonneeJoueur),
       }));
       dispatch(updatePositionJoueur({ abscisse: data.abscisseJoueur, ordonnee: data.ordonneeJoueur }));
-      dispatch(updateJoueurState({ lifeJoueur: data.life, manaJoueur: data.mana, pm: data.pm }));
+      dispatch(
+        updateJoueurState({ lifeJoueur: data.life, manaJoueur: data.mana, pm: data.pm, mapId: data.mapId }),
+      );
       // Décible le monstre quitté ET cible celui sur lequel on arrive, d'un seul geste.
       majCibleMonstre(cases, data.abscisseJoueur, data.ordonneeJoueur, true);
       return true;

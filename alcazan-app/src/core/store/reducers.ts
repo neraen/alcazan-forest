@@ -1,5 +1,6 @@
 import * as actions from './actions';
 import type { JoueurState } from './actions';
+import type { Echange } from '../api/echange';
 import type { Cible } from '../types';
 
 /**
@@ -15,6 +16,7 @@ export type AppState = {
     positionJoueur: { abscisse: number; ordonnee: number };
     pnjInteraction: { pnjId: number | null; abscisse: number | null; ordonnee: number | null };
     donjon: { porte: unknown; combat: unknown };
+    echange: { etat: Echange | null; invitations: Echange[] };
     joueurState: JoueurState;
   };
   loading: boolean;
@@ -27,6 +29,7 @@ const etatInitial: AppState = {
     positionJoueur: { abscisse: 0, ordonnee: 0 },
     pnjInteraction: { pnjId: null, abscisse: null, ordonnee: null },
     donjon: { porte: null, combat: null },
+    echange: { etat: null, invitations: [] },
     joueurState: {
       idJoueur: 0,
       experience: 0,
@@ -133,6 +136,38 @@ export function playerStatsReducer(state: AppState = etatInitial, action: AnyAct
       return {
         ...state,
         data: { ...state.data, donjon: { ...state.data.donjon, combat: action.combat } },
+      };
+
+    case actions.UPDATE_ECHANGE: {
+      // Les événements Mercure peuvent arriver dans le désordre : une version plus
+      // ancienne que l'état affiché est ignorée (même session uniquement).
+      const etatActuel = state.data.echange.etat;
+      if (
+        etatActuel &&
+        etatActuel.id === action.etat.id &&
+        action.etat.version < etatActuel.version
+      ) {
+        return state;
+      }
+      return {
+        ...state,
+        data: { ...state.data, echange: { ...state.data.echange, etat: action.etat } },
+      };
+    }
+
+    case actions.CLOSE_ECHANGE:
+      return {
+        ...state,
+        data: { ...state.data, echange: { ...state.data.echange, etat: null } },
+      };
+
+    case actions.SET_ECHANGE_INVITATIONS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          echange: { ...state.data.echange, invitations: action.invitations },
+        },
       };
 
     default:
