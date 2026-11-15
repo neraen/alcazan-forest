@@ -1,0 +1,71 @@
+x-php: &php
+  build:
+    context: .
+    dockerfile: deploy/coolify/api.Dockerfile
+  restart: unless-stopped
+  environment:
+    APP_ENV: prod
+    APP_DEBUG: '0'
+  volumes:
+    - type: bind
+      source: /data/alcazan/runtime.env
+      target: /var/www/html/.env.local
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: /data/alcazan/jwt
+      target: /var/www/html/config/jwt
+      read_only: true
+      bind: {create_host_path: false}
+    - /data/alcazan/media/equipement:/var/www/html/public/img/equipement
+    - /data/alcazan/media/metier:/var/www/html/public/img/metier
+    - /data/alcazan/media/objet:/var/www/html/public/img/objet
+    - /data/alcazan/media/pnj:/var/www/html/public/img/pnj
+    - /data/alcazan/media/monstre:/var/www/html/public/img/monstre
+    - /data/alcazan/media/interaction:/var/www/html/public/img/interaction
+  networks: [game, data]
+services:
+  api:
+    <<: *php
+    mem_limit: 512m
+  web:
+    build:
+      context: .
+      dockerfile: deploy/coolify/web.Dockerfile
+    restart: unless-stopped
+    mem_limit: 96m
+    expose: ["80"]
+    volumes:
+      - /data/alcazan/media:/srv/alcazan/img:ro
+    networks: [game]
+    depends_on: [api, mercure]
+  mercure:
+    image: dunglas/mercure@sha256:916834e499613d475e9ad5118cd2349875338f52d99d65b58aeff82f97ccb0c6
+    restart: unless-stopped
+    mem_limit: 128m
+    environment:
+      SERVER_NAME: ':80'
+    volumes:
+      - type: bind
+        source: /data/alcazan/hub.key
+        target: /run/secrets/hub.key
+        read_only: true
+        bind: {create_host_path: false}
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        export MERCURE_PUBLISHER_JWT_KEY="$$(cat /run/secrets/hub.key)"
+        export MERCURE_SUBSCRIBER_JWT_KEY="$$MERCURE_PUBLISHER_JWT_KEY"
+        exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+    networks: [game]
+  scheduler:
+    <<: *php
+    mem_limit: 256m
+    command: ["/bin/sh", "/opt/alcazan-scheduler"]
+    depends_on: [api]
+networks:
+  game: {}
+  data:
+    external: true
+    name: coolify

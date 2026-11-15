@@ -1,0 +1,8 @@
+*
+!alcazan-front-prod/
+!alcazan-front-prod/package*.json
+!alcazan-front-prod/src/**
+!alcazan-front-prod/public/**
+!deploy/
+!deploy/coolify/
+!deploy/coolify/web.conf
