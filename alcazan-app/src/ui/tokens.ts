@@ -69,6 +69,8 @@ export const colors = {
   textDim3: '#557077',
   textSoft: '#c4dbde',
   level: '#cbe64f',
+  levelSoftBg: 'rgba(203, 230, 79, 0.12)',
+  levelBorder: 'rgba(203, 230, 79, 0.5)',
   goldPale: '#f2e2b0',
 
   /* --- Barres (PV / PM / XP / PA) --- */

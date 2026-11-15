@@ -29,6 +29,7 @@ type Entree = { label: string; icone: string; route?: string };
 const ENTREES: Entree[] = [
   { label: 'Inventaire', icone: '/img/icons/bag.png', route: '/(jeu)/inventaire' },
   { label: 'Profil', icone: '/img/icons/people.png', route: '/(jeu)/profil' },
+  { label: 'Quêtes', icone: '/img/icons/parchemin.png', route: '/(jeu)/quetes' },
   { label: 'Sorts', icone: '/img/menu/livre.png', route: '/(jeu)/sorts' },
   { label: 'Établi', icone: '/img/menu/epee.png', route: '/(jeu)/etabli' },
   { label: 'Hôtel des ventes', icone: '/img/gui/Money03.png', route: '/(jeu)/hotel' },
@@ -38,8 +39,10 @@ const ENTREES: Entree[] = [
   { label: 'Classement', icone: '/img/icons/shild.png', route: '/(jeu)/classement' },
 ];
 
-const COLONNES = 3;
-const TUILE = 92;
+// Quatre colonnes depuis l'arrivée des Quêtes (10 entrées) : en trois colonnes, une
+// quatrième rangée repoussait la déconnexion sous le bord de l'écran paysage (~400 pt).
+const COLONNES = 4;
+const TUILE = 84;
 const ECART = spacing.sm;
 // +2 : le liseré gauche du panneau prend 1 pt sur la largeur utile, et une grille
 // calculée au point près repassait à deux colonnes.

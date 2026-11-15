@@ -452,6 +452,7 @@ auth JWT obligatoire (`^/api`) sauf mention.
 | `/api/pnj/interaction` | `{pnjId}` → **lecture pure**, réponse discriminée par `view: quest\|dialogue\|shop\|guilde` |
 | `/api/quest/start` | `{pnjId}` → démarre la quête (prérequis vérifiés, unique par joueur) |
 | `/api/quest/action` | `{sequenceId, actionId}` → **l'unique endpoint d'action**, tous types confondus |
+| `/api/quest/journal` | `{}` → journal de quêtes du joueur (en cours / disponibles / terminées), **lecture pure** — §22 |
 | `/api/map/action` | `{actionId}` → action de case (effet scripté, adjacence vérifiée) |
 | `/api/quest/editor/list\|get\|referentiels\|config\|save\|delete` | QuestMaker (ROLE_ADMIN, lectures comprises) |
 | `/api/joueur/guilde/join`, `/api/guildes/player`, `/api/guilde/infos`, `/api/guildes/player/check` | Guildes |
@@ -3491,3 +3492,94 @@ Validation : tests fonctionnels ArtisanatEditor, Interaction et ImageCarteRessou
 React d’inspection, confirmation et repli ; TypeScript mobile ; build web (avertissements
 préexistants). Les tests fonctionnels couvrent l’admin ; pas de validation visuelle dans une
 session admin locale authentifiée. Aucun déploiement de production effectué.
+
+---
+
+## 22. Journal de quêtes — 15/11/2026
+
+Jusqu'ici, une quête n'existait pour le joueur QUE dans le dialogue de son PNJ : une fois la
+fenêtre fermée, plus rien ne disait ce qu'il fallait faire, ni où retourner. Le journal
+répond à trois questions, dans cet ordre : *que dois-je faire maintenant, et OÙ ?* (en
+cours), *où trouver du travail ?* (disponibles), *qu'ai-je accompli ?* (terminées).
+
+### 22.1 Back — `POST /api/quest/journal`
+
+`QuestJournalService` (lecture pure, aucun flush) renvoie `{enCours, disponibles, terminees}`.
+**Il ne décide rien** : progression d'un objectif compté → `QuestProgressionService::buildProgress`
+(passée publique pour ça), état d'une condition → `isActionConditionMet`, prérequis →
+`checkPrerequisites`, aperçu de récompense → `RecompenseService::apercu` (nouvelle, sans
+distribution, même forme que `distribuer()` + image brute). S'il recalculait, le journal
+finirait par annoncer « 3 / 5 » quand le PNJ en compte 4.
+
+Fiche en cours : `etape` = numéro, titre, paroles du PNJ, **PNJ à aller voir + son lieu**
+(carte, case, `ici` si le joueur s'y tient), objectifs, `pret`, `decision`, récompenses.
+
+Lectures du contenu qu'il faut connaître :
+- **Les actions à condition d'une étape sont des ALTERNATIVES** (chacune est un bouton, une
+  seule suffit à avancer) → `objectifsAuChoix` dès qu'il y en a deux. Les CHOIX /
+  PASSER_DIALOGUE / SCRIPTED_EFFECT ne sont PAS des objectifs : une étape qui n'a qu'eux est
+  `pret` (« Parlez à X »), et un CHOIX lève `decision`.
+- **Pas de total d'étapes** : une quête BRANCHE (`Action.nextSequence`, `endsQuest`), donc
+  « étape 2 sur 3 » mentirait sur une quête dont un choix saute à la fin. On donne le numéro.
+- **Récompense** : annoncée au niveau de l'étape seulement si toutes les actions qui en
+  portent une portent LA MÊME ; sinon `recompensesVariables` et chaque objectif porte la
+  sienne (pour un CHOIX elle reste cachée — la dévoiler gâcherait la décision).
+- **Possession** (DONNER_*/POSSEDER_OBJET, DONNER_OR) : progression lue sur le DISPONIBLE
+  (possédé − réservé), comme la condition — unité « en sac ».
+- `objectif.bouton` = libellé de l'action tel que l'auteur l'a écrit : c'est lui que le
+  joueur cherchera dans le dialogue (« … et choisissez « Voici le bois » »).
+- **Disponibles** = jamais commencées, prérequis remplis, une séquence en position 1 ET un
+  donneur posé sur une carte. Les verrouillées ne sont PAS listées (liste de choses
+  impossibles + contenu révélé), un donneur hors carte enverrait le joueur nulle part.
+- **Lieu d'un PNJ posé sur plusieurs cartes** : celle où se tient le joueur, sinon la
+  première case. Un PNJ posé nulle part → `lieu: null`, affiché « Lieu inconnu », jamais un
+  faux lieu.
+- **Date de fin** : lue dans `evenement_jeu` (`QUETE_TERMINEE`, nouvelle méthode
+  `EvenementJeuRepository::datesQuetesTerminees`) — `user_quete` n'a aucune date. Une quête
+  finie avant le journal (01/08/2026) ou au-delà de la rétention de 90 j n'en a donc pas :
+  `termineeLe: null`, et le front le dit (« Achevée il y a longtemps déjà »).
+
+### 22.2 Web — `components/modals/quetesModal/`
+
+Entrée « Quêtes » du rail (`SideMenu`, icône `img/icons/parchemin.png`), modale `GameModal`
++ `ModalShell` (patron HDV : pas de slice Redux, rechargée à chaque ouverture — la quête a
+pu avancer dans un dialogue). Liste à gauche (3 onglets avec compteurs, liseré coloré par
+état : or = prête, bleu = en cours, vert-niveau = nouvelle, vert = terminée), fiche à droite :
+carte « où aller » (portrait du PNJ, carte, case, « Vous y êtes »), objectifs avec coche et
+jauge chiffrée, récompenses, dernières paroles du PNJ. La modale s'ouvre sur le premier
+onglet NON VIDE. `queteUtils.js` ne choisit que les mots (aucune règle). Titres de section
+maison et non `SectionTitle` (20 px minimum, trop lourd dans une colonne de ~520 px).
+Tokens ajoutés : `--success`, `--success-border`, `--success-bg` (miroir du mobile).
+Sous 1180 px de large la pastille de la liste disparaît (le liseré porte l'état) et les
+onglets se resserrent ; vérifié à 1440×900, 1280×720 et 1024×768.
+
+⚠️ **L'icône `img/gui/Xp.png` est illisible en puce** (texte gris translucide) : l'XP est
+une pastille dessinée en CSS. Et l'overlay d'erreur du serveur de dev CRA (`process is not
+defined`, react-error-overlay) peut rester en `<iframe>` vide par-dessus la page après un
+rechargement à chaud : TOUS les clics semblent morts. Artefact de dev, recharger la page.
+
+### 22.3 Mobile — `app/(jeu)/quetes.tsx`
+
+Port fidèle (`core/api/quest.ts` typé, `core/domain/quetes.ts` = `queteUtils.js`,
+`game/quetes/QueteDetail.tsx`). Paysage : rail de 240 pt (onglets « En cours / Dispo. /
+Finies », raccourcis pour tenir sans tronquer) + fiche défilante. Le menu ☰ passe à
+**4 colonnes de 84 pt** : avec dix entrées, une quatrième rangée de 3 repoussait
+« Se déconnecter » sous le bord de l'écran.
+
+### 22.4 Tests
+
+`QuestJournalApiFunctionalTest` (4 tests) : lecture pure (aucun `user_quete` créé), la quête
+initiale passe de disponible à en cours puis terminée (avec date), récompense commune
+annoncée, objectif de chasse chiffré depuis l'instantané (les kills antérieurs ne comptent
+pas), `pret` qui bascule, donneur hors carte non proposé, 401 sans jeton.
+`QueteDetail.test.jsx` (6 tests React) : objectif chiffré + bouton à choisir, étape de
+dialogue seul, pas de double affichage des récompenses au choix, « Lieu inconnu », quête
+terminée sans date, résumés de liste.
+
+### 22.5 Remarque de contenu (non corrigée)
+
+Leopold (PNJ 1) est posé sur DEUX cartes : « Tutoriel Boisé » (6, 11) et « Le bois de Hal »
+**(0, 0)** — ce second placement ressemble à un reliquat. Le journal prend la première case
+quand le joueur n'est sur aucune des deux, et annonce donc « Le bois de Hal · case 0, 0 ».
+À trancher dans le MapMaker (retirer la case parasite), pas dans le code.
+

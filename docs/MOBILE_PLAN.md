@@ -425,6 +425,16 @@ l'appareil, conservée entre deux lancements).
   restent en bas, le haut portant l'en-tête et les onglets. Le fournisseur tranche avec
   `usePathname() === '/carte'`.
 
+### Journal de quêtes (15/11/2026)
+
+`app/(jeu)/quetes.tsx` — port de `modals/quetesModal/` (web), contrat `POST
+/api/quest/journal` (DOCUMENTATION.md §22). Rail de 240 pt (onglets « En cours / Dispo. /
+Finies » + liste à liseré coloré), fiche défilante à droite : OÙ aller (portrait, carte,
+case), objectifs chiffrés, récompenses, paroles du PNJ. Aucune règle côté client
+(`core/domain/quetes.ts` ne choisit que les mots). Entrée « Quêtes » du menu ☰, qui passe à
+**4 colonnes de 84 pt** : dix tuiles en 3 colonnes faisaient une 4e rangée qui repoussait la
+déconnexion sous le bord de l'écran.
+
 ### Pièges rencontrés pendant le portage (à ne pas redécouvrir)
 
 - ⚠️ **`??` n'est pas `||` sur un état initialisé à 0.** `joueurState.mapId ??

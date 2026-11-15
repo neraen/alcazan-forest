@@ -288,6 +288,15 @@ est capturé automatiquement) :
   est effacé en base au premier enregistrement (piège §17.4). Le karma n'a toujours AUCUN
   effet de jeu (lot 6 différé) : il est stocké, affiché en jauge dans le Profil, et gagné ou
   perdu par la récolte, la fabrication et les choix de quête.
+- **Journal de quêtes (15/11/2026, doc §22)** : `POST /api/quest/journal` →
+  `QuestJournalService`, LECTURE PURE qui ne calcule RIEN elle-même (progression, conditions,
+  prérequis et aperçu de récompense viennent de `QuestProgressionService` /
+  `RecompenseService::apercu`) — sinon le journal et le PNJ annonceraient deux chiffres. Les
+  actions à condition d'une étape sont des ALTERNATIVES (`objectifsAuChoix`), on ne donne
+  JAMAIS de total d'étapes (les quêtes branchent), les quêtes verrouillées et les donneurs
+  hors carte ne sont pas proposés, la date de fin vient de `evenement_jeu` (peut être null).
+  Web : `modals/quetesModal/` (entrée « Quêtes » du `SideMenu`) ; mobile :
+  `app/(jeu)/quetes.tsx`, menu ☰ en 4 colonnes depuis.
 - Front quêtes : la modale PNJ est rendue UNE fois (`PnjInteractionHost` dans MapPage), pilotée
   par le state Redux `pnjInteraction` — ne jamais remettre de modale par tuile ni de fetch au
   mount des PNJ. Les dialogues sont des paragraphes texte (pas de HTML injecté).

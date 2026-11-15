@@ -30,6 +30,7 @@ export default function JeuLayout() {
         <Stack.Screen name="hotel" options={{ presentation: 'modal' }} />
         <Stack.Screen name="artisanat" options={{ presentation: 'modal' }} />
         <Stack.Screen name="guilde" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="quetes" options={{ presentation: 'modal' }} />
         <Stack.Screen name="journal" options={{ presentation: 'modal' }} />
         <Stack.Screen name="classement" options={{ presentation: 'modal' }} />
         <Stack.Screen name="joueur/[pseudo]" options={{ presentation: 'modal' }} />
