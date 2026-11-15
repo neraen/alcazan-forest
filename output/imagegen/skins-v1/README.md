@@ -1,0 +1,38 @@
+# Propositions de skins — v1
+
+Huit propositions générées avec l’outil intégré ImageGen depuis les sprites de alcazan-front-prod/public/img/classes/. Images de direction artistique, non intégrées au jeu. Les originaux sont en 32 × 32 ; les propositions nécessitent une adaptation et une vérification à la taille réelle avant intégration.
+
+## Prompts exacts
+
+### archer_masculin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: archer masculin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
+### archer_feminin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: archer feminin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
+### guerrier_masculin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: guerrier masculin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
+### guerrier_feminin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: guerrier feminin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
+### sorcier_masculin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: sorcier masculin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
+### sorcier_feminin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: sorcier feminin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
+### moine_masculin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: moine masculin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
+### moine_feminin
+
+Use case: style-transfer. Create ONE modernized game map character sprite proposal for Alcazan Forest: moine feminin. The attached image is the original 32x32 map sprite, use it as the identity and style reference. Preserve its recognizable clothing, palette, hairstyle/headgear, frontal standing pose and compact retro RPG proportions. Subtle modernization only: cleaner deliberate pixel clusters, more readable silhouette, restrained richer shading. Entire body including feet visible, centered. Pixel art designed on a 48x48 logical pixel grid, enlarged with hard crisp pixel edges; around 28 pixels wide and 42 tall. No painting, no smooth illustration, no realistic anatomy, no 3D, no elaborate equipment additions. One character only, no text, no border, no scenery, no ground platform. Real transparent background. This is a visual proposal of the existing map skin, not a portrait.
+
