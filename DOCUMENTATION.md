@@ -73,7 +73,12 @@ Incohérences à connaître :
   `src/Config/GameContent.php` (l'incohérence carte 1/carte 2 a été corrigée le 13/07/2026).
 - La vraie classe est choisie en jeu via la quête initiale (effet scripté `choisir_classe`,
   `QuestEffectRegistry`) : `archer`, `sorcier`, `guerrier`, `moine`, équipement de départ
-  défini dans `GameContent`.
+  défini dans `GameContent`. Avant ce choix le personnage est **gueux** et se bat avec
+  « Patate de forain ». Depuis le 16/11/2026 le choix **vide la barre de sorts
+  personnalisée** (`UserSortilegeRepository::viderBarre`) : une ligne restée sur un sort de
+  l'ancienne classe, invisible à l'affichage (la barre joint les sorts de la classe
+  COURANTE), suffisait à empêcher `seedSpellBarIfEmpty` de matérialiser la nouvelle barre à
+  la première personnalisation — le joueur ne gardait que le sort qu'il venait de placer.
 
 ### Cartes & déplacement
 - Une `Carte` = grille de `CarteCarreau` **24×16** (abscisse 0–23, ordonnée 0–15). Chaque case a

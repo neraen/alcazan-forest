@@ -1,6 +1,6 @@
 # Alcazan Forest — proposition de quêtes, niveaux 1 à 50
 
-Dossier de conception à relire — 14 novembre 2026. **Aucune quête de ce dossier n'est installée dans la base.** Les numéros Q01–Q40 sont des références éditoriales, pas des identifiants SQL.
+Dossier de conception à relire — 14 novembre 2026. **Aucune quête de ce dossier n'est installée dans la base.** Les numéros Q01–Q40 sont des références éditoriales, pas des identifiants SQL. Q01 révisée le 16 novembre 2026 (combat sans classe, glandes de sève, raccord par Q05) : déroulé au §4.0.
 
 ## 1. Direction proposée : « La sève et les rouages »
 
@@ -61,15 +61,17 @@ La campagne accompagne la montée 1–50 ; elle ne promet pas de fournir à elle
 
 ### Niveaux 1–10 — prendre racine à Limuren
 
-#### Q01 — Pas encore un héros
+#### Q01 — La sève noire
 
-**Niveau 1 · Parcours · Leopold · Tutoriel Boisé.** Pré requis : choix de classe existant terminé.
+**Niveau 1 · Tutoriel · Leopold · Tutoriel Boisé.** Première quête du jeu : elle **remplace** l'actuelle « Choix de la classe » (quête 1), dont le choix de classe devient l'étape 3. Révisée le 16/11/2026, déroulé complet au §4.0.
 
-> « Ton arme a l'air convaincue. Reste à voir si tu sais où la porter. »
+> « Tu dormais contre cet arbre comme s'il t'avait recraché. Regarde son écorce… ça suinte. »
 
-Rejoindre le bois de Hal → parler à la borne de garde tenue par Nelle, une éclaireuse proposée → vaincre 3 jeunes psilofrosts → revenir à Leopold. Nelle explique la case de monstre, le ciblage, les PA et les PM avant la chasse.
+Se réveiller au pied d'un arbre qui suinte une sève noire → se défendre **sans classe** contre 5 jeunes psilofrosts → retrouver sa classe comme un souvenir → s'équiper → prélever une fiole de sève → rapporter 3 glandes de sève lâchées par des libellules contaminées → atteindre le niveau 2 → partir vers Limuren avec la fiole pour Dezelle.
 
-**Récompense :** 2 000 XP, 30 or, 2 potions de vie mineures. **À créer :** Nelle et une variante débutante du psilofrost ; ne pas employer le rat existant, dont la vie maximale vaut 0 dans le seed.
+Le joueur combat d'abord en gueux, puis avec sa classe : la différence de puissance justifie le choix de classe sans qu'il faille l'expliquer. La sève noire, qui est le fil rouge de la campagne, apparaît dès la première minute.
+
+**Récompense :** 10 000 XP (garantit le niveau 2 quelle que soit l'XP de combat), 30 or, 2 potions de vie mineures remises avant le second combat. **À créer :** jeune psilofrost, libellule contaminée, Fiole de sève noire, Glande de sève, interaction « arbre suintant » ; ne pas employer le rat existant, dont la vie maximale vaut 0 dans le seed.
 
 #### Q02 — La soupe a des jambes
 
@@ -101,9 +103,11 @@ Rapporter 4 ailes de libellule. Le joueur peut chasser ou acheter les ailes ; le
 
 #### Q05 — Des racines et Dezelle
 
-**Niveau 5 · Parcours, début de campagne · Dezelle.** Adaptation de la quête existante, pas un doublon à importer.
+**Niveau 2 pour l'ouverture, 5 pour la suite · Parcours, début de campagne · Dezelle.** Adaptation de la quête existante, pas un doublon à importer. Elle prend le relais de Q01 : son niveau minimal passe de 4 à 2.
 
 > « Hier, cette plante était saine. Aujourd'hui, ses racines sont noires. Demain, j'aimerais avoir autre chose à te montrer qu'un pot vide. »
+
+**Ouverture (raccord avec Q01) :** remettre la Fiole de sève noire (`DONNER_OBJET`) → Dezelle reconnaît la pourriture de ses pots, mais renvoie le joueur s'aguerrir (`ATTEINDRE_LEVEL` 5, ce qui laisse la place à Q02–Q04). La remise se fait dans Q05 parce qu'un PNJ ne présente que sa propre quête (§7, point 1) : une étape de Q01 posée chez Dezelle serait invisible.
 
 Vaincre 5 psilofrosts de lisière → apporter 3 chapeaux de champignon bleu → écouter le diagnostic : la contamination est transportée, elle n'est pas née dans les pots.
 
@@ -407,7 +411,99 @@ Recevoir les nouvelles des trois régions → revenir auprès du premier pot mal
 
 **Récompense :** 10 000 XP, 500 or, Souvenir de la première feuille, objet commémoratif sans statistique. Trois textes de fin. Un titre de profil peut être ajouté plus tard ; il n'est pas promis comme fonctionnalité existante.
 
-## 4. Les cinq initiations, prêtes à scénariser
+## 4. Les six initiations, prêtes à scénariser
+
+### 4.0 Q01 — La sève noire : entrer dans l'histoire par ses mécaniques
+
+**Principe.** Chaque mécanique répond à un besoin du récit : on ne présente pas les PA, on donne une raison d'en dépenser, puis on nomme ce que le joueur vient de faire. Une seule mécanique nouvelle par étape. La première quête n'enseigne que le cœur du jeu : **bouger, parler, combattre, interagir, progresser**. Alignements, métiers, échanges, HDV, guildes et donjons viennent avec leurs propres initiations (Q03, Q06, Q08, Q11). L'intro.js existant (flag « tutoriel actif ») montre où cliquer ; la quête porte l'histoire.
+
+Contexte de la carte : le joueur apparaît en (9,9) du Tutoriel Boisé, Leopold se tient en (6,11) et Eolan en (11,9). Des psilofrosts y sont déjà posés.
+
+| # | Étape | Mécanique apprise | Condition | Ce qu'affiche le journal |
+|---|---|---|---|---|
+| 1 | Réveil | Marcher (PM), ouvrir un dialogue | `PASSER_DIALOGUE` | « Parlez à Leopold » + lieu |
+| 2 | Les mains nues | Ciblage, barre de sorts, PA, riposte, PV | `BATTRE_MONSTRE` ×5 jeune psilofrost | « Vaincre 5 × Jeune psilofrost — 3 / 5 » |
+| 3 | Ce qui te revient | Choix de classe | `CHOIX` → `SCRIPTED_EFFECT` `choisir_classe` (actions existantes 1–4) | décision à prendre |
+| 4 | Ça ne te va pas comme ça | Inventaire, équiper | voir ci-dessous | — |
+| 5 | Prélever la sève | Case interactive, coût en PA, sac | `POSSEDER_OBJET` Fiole de sève noire | « Posséder Fiole de sève noire » |
+| 6 | Ce que la sève a changé | Butin, combat de classe, potion, remettre un objet | `DONNER_OBJET` ×3 Glande de sève | « Apporter 3 × Glande de sève — 1 / 3 en sac » |
+| 7 | Des forces qui se réveillent | Niveau, points de caractéristiques | `PASSER_DIALOGUE` (action existante 8 « Terminer ») | « Parlez à Leopold » |
+
+**Étape 1 — Réveil.**
+
+> « Tu dormais contre cet arbre comme s'il t'avait recraché. Regarde son écorce… ça suinte. Tu te souviens de ton nom, au moins ? Bon. C'est déjà ça. »
+
+Le joueur marche de (9,9) jusqu'à Leopold : trois cases, trois PM, et la jauge bouge sous ses yeux. Bouton : « Où suis-je ? ».
+
+**Étape 2 — Les mains nues.**
+
+> « Tu entends ? La sève les attire. Ils arrivent. Pas d'arme ? Alors tes poings feront l'affaire — défends-toi ! »
+
+Le joueur est encore **gueux** (classe par défaut). Sa barre propose un seul sort, « Patate de forain » (corps à corps, 1 PA, 38 de dégâts de base). Il apprend à marcher sur la case d'un monstre pour le cibler, à frapper, à voir les PA baisser et à encaisser une riposte. Une phrase de Leopold suffit sur la mort : « Si tu tombes, tu te réveilleras au cimetière, plus faible d'un peu d'expérience. Évite. »
+
+Le compteur part de l'entrée dans l'étape (`compteurs_depart`) : les psilofrosts tués avant ne comptent pas.
+
+**Étape 3 — Ce qui te revient.**
+
+> « Tu te bats comme un gueux. Mais ce geste-là, juste avant de frapper… tu l'as déjà fait mille fois. Qu'est-ce que tu tenais, avant ? »
+
+Quatre boutons, qui sont des souvenirs et pas un menu de classes : « Un arc » (archer), « Une lame » (guerrier), « Un grimoire » (sorcier), « Rien — mes poings suffisaient » (moine). Ce sont les actions existantes 1–4 avec leurs libellés réécrits. L'équipement de départ arrive dans le sac.
+
+**Étape 4 — Ça ne te va pas comme ça.**
+
+> « Un arc au fond d'un sac, ça ne protège personne. Sors-le. »
+
+Aucun `ActionType` ne vérifie qu'un objet est équipé. Deux options :
+- **Ajouter `EQUIPER_EQUIPEMENT`** : un `case` dans l'enum, sa condition lue sur `user_equipement`, son champ dans `QuestActionTypeConfig`. C'est la version qui valide vraiment le geste.
+- **Sans développement** : `PASSER_DIALOGUE` et guidage intro.js vers l'inventaire. Le joueur peut alors passer l'étape sans s'équiper ; l'étape 6 le lui fera vite sentir.
+
+**Étape 5 — Prélever la sève.**
+
+> « Je veux un peu de cette saleté dans une fiole. Pas sur tes mains. »
+
+Une interaction posée sur l'arbre suintant, à côté du point d'apparition : petit coût en PA, récompense = 1 Fiole de sève noire. Elle enseigne les cases interactives et le sac. L'interaction n'est **pas** conditionnée à Q01 : un vétéran qui a fait l'ancienne quête doit pouvoir y prendre la fiole pour ouvrir Q05. Recharge de portée JOUEUR longue (24 h) ; la fiole n'a pas de prix de vente, ce qui rend toute tentative de farm inutile.
+
+Récompense de l'étape : **2 potions de vie mineures**, avant le combat qui suit.
+
+**Étape 6 — Ce que la sève a changé.**
+
+> « Les libellules de la mare ont bu à cet arbre. Elles ne sont plus tout à fait des libellules. Rapporte-moi ce qu'elles ont dans le ventre — trois, que je compare. »
+
+Le joueur se bat cette fois avec les sorts de sa classe : il sent la différence avec l'étape 2 sans qu'on la lui explique. La libellule contaminée lâche une Glande de sève à **100 %** : avec 60 %, il faut en moyenne 5 victoires pour 3 glandes, et certains joueurs en feraient 9. Un butin, c'est la ligne « droppedItems » de la réponse d'attaque ; le joueur voit l'objet tomber dans son sac et la jauge du journal avancer.
+
+La remise des 3 glandes porte la récompense de la quête : **10 000 XP et 30 or**. Le niveau 2 tombe à ce moment-là.
+
+**Étape 7 — Des forces qui se réveillent.**
+
+> « Tu le sens ? Ce n'est pas la sève, ça. C'est toi. Va voir ce que tu as dans le ventre, toi aussi. »
+
+Guidage intro.js vers le Profil et la répartition des points de caractéristiques. Puis la transition :
+
+> « Cette pourriture n'est pas d'ici. Dezelle, à Limuren, saura ce que c'est. Prends la fiole, passe par le bois de Hal. Et ne la bois pas. »
+
+Le bouton « Terminer » clôt Q01. La remise de la fiole se fait dans **Q05**, chez Dezelle : un PNJ ne présente que sa propre quête (§7, point 1).
+
+**Combat : premiers chiffres à éprouver.** Avec 1 point par caractéristique, « Patate de forain » fait environ 40 dégâts.
+
+| Créature | PV | Puissance | Riposte (`rand(p, 2,2p)`) | Coût estimé |
+|---|---|---|---|---|
+| Jeune psilofrost | 80 | 6 | 6–13 | 2 coups par victoire, ~10 PA et ~100 PV perdus sur 400 pour 5 victoires |
+| Libellule contaminée | 180 | 12 | 12–26 | 2 à 4 coups selon la classe (sorts de niveau 1 de 45 à 120 de base), ~6–12 PA pour 3 victoires ; les potions servent |
+
+Le psilofrost d'origine (500 PV, puissance 20) demanderait une douzaine de coups au gueux et le tuerait avant la 5e victoire. Total visé : moins de 30 PA pour toute la quête, la régénération n'étant que de +10 PA par heure. Recharges courtes (30 s) : plusieurs débutants partagent la même carte.
+
+**Données existantes et parties en cours.**
+- Garder l'id de la quête 1 et ses actions 1–4 (choix de classe) et 8 (« Terminer »). La séquence qui porte les actions 1–4 passe en position 3, celle de l'action 8 en position 7. La contrainte unique `(quete_id, position)` impose de renuméroter en passant par des positions temporaires.
+- Un joueur arrêté sur l'ancienne étape 1 reprend directement au choix de classe : il saute le combat en gueux, ce qui est acceptable.
+- Un joueur qui a déjà fini l'ancienne Q01 ne la refait pas ; il peut prendre la fiole sur l'arbre pour ouvrir Q05.
+- La quête 2 « Un début prometteur » n'a aucune séquence : la supprimer ou la réutiliser, mais ne pas la laisser proposée.
+- Les nouveaux monstres doivent être **peints dans le fond de la carte** (§6) : la mare des libellules et les psilofrosts près de l'arbre.
+
+**À vérifier avant publication.**
+- ~~Barre de sorts après le choix de classe~~ — **corrigé le 16/11/2026** : `choisirClasse` vide désormais `user_sortilege` (`UserSortilegeRepository::viderBarre`). Avant, la ligne « Patate de forain » d'un gueux qui avait personnalisé sa barre restait en base : la barre de la nouvelle classe s'affichait bien, mais sa première personnalisation ne matérialisait pas la barre par défaut, et le joueur ne gardait que le sort qu'il venait de placer.
+- Plusieurs `monstre_carreau` du Tutoriel Boisé ont une `quantity` négative (−25, −3) : comprendre ce que le moteur en fait avant d'y poser les nouvelles créatures.
+- L'XP de combat (180–240 par action) ne doit pas suffire à passer niveau 2 avant l'étape 6, sinon le moment de la montée de niveau est perdu.
+- Parcours complet dans les quatre classes, et une mort volontaire à l'étape 2.
 
 ### 4.1 Q03 — récolter sans imposer un métier
 
@@ -574,11 +670,14 @@ Aucun camp n'a le monopole du bon choix, aucun bonus de statistiques ne pousse v
 
 Nelle (éclaireuse), intendant des apprentis (quête, distinct d'Eolan qui conserve son écran métier), Orrin (pêcheur), Maëline, Varo, Ysarde (émissaires), Darel (instructeur), Solan (greffier), Mira (éclusière), Bastian (receleur), Adra (contremaîtresse), Petrus Cimber (à incarner), plus les rôles secondaires : archiviste, voyageur, garde de Dunhill, fontainier, cuisinier, ouvrière et déplacée.
 
+Nelle n'apparaît plus dans Q01 (révisée le 16/11/2026) : sa première scène est désormais Q08, dont le texte doit la présenter.
+
 Limiter les nouveaux visages uniques aux principaux ; les figurants peuvent partager une illustration générique. Ne pas utiliser le PNJ de test comme personnage canonique.
 
 ### Bestiaire et butin
 
-- Variantes 1–10 : jeunes psilofrosts et psilofrosts de lisière ; libellule existante à tester.
+- Variantes 1–10 : jeunes psilofrosts (80 PV, puissance 6, pensés pour un gueux), libellule contaminée (180 PV, puissance 12, butin Glande de sève à 100 %) et psilofrosts de lisière ; libellule existante à tester.
+- Objets de Q01 : Fiole de sève noire (interaction, sans prix de vente, remise à Dezelle dans Q05) et Glande de sève (butin, remise à Leopold).
 - Variantes 11–20 : loup de lisière, éclat d'eau troublée.
 - Variantes 21–30 : élémental des canaux, araignée des berges, pillard gobelin, loup affamé.
 - Variantes 31–40 : araignée des murs, mercenaire gobelin ; boss Régulateur.
@@ -586,7 +685,7 @@ Limiter les nouveaux visages uniques aux principaux ; les figurants peuvent part
 
 Les variantes peuvent réutiliser les visuels existants si le décor et les libellés permettent de comprendre la différence. Leurs PV/dégâts restent à simuler avec les quatre classes et l'équipement attendu. Réutiliser un sprite n'autorise pas à supposer qu'une nouvelle créature est déjà peinte dans le décor.
 
-Drops de livraison : ailes 60 %, fibres 75 %, chapeaux selon la table existante. Aucun objet critique d'enquête à 1 % : preuves données par étapes garanties. Si une quête impose réellement « obtenir en combat », un objet acheté ne suffit pas et un suivi spécifique est nécessaire ; les livraisons de ce dossier autorisent explicitement l'achat.
+Drops de livraison : glandes de sève 100 % (tutoriel), ailes 60 %, fibres 75 %, chapeaux selon la table existante. Aucun objet critique d'enquête à 1 % : preuves données par étapes garanties. Si une quête impose réellement « obtenir en combat », un objet acheté ne suffit pas et un suivi spécifique est nécessaire ; les livraisons de ce dossier autorisent explicitement l'achat.
 
 ### Artisanat
 
@@ -645,7 +744,8 @@ Audit fondé sur `DOCUMENTATION.md`, le code local et `seeds/content-seed.sql`. 
 6. **Boss déjà vaincus.** `BATTRE_BOSS` repose sur les données existantes du joueur. Accepter explicitement une victoire passée, ou créer une condition « vaincu depuis le début de cette étape » pour Q15/Q31/Q39. Ne pas annoncer une nouvelle victoire sans la vérifier.
 7. **PvP.** `KILL_PVP` reste déclaré non implémenté. Q11 est volontairement une initiation aux règles sans cet objectif. Une version pratique demanderait un contrat de duel adapté ; le cumul brut des morts infligées ne garantit ni adversaire pertinent ni absence de farm.
 8. **Objets et récompenses multiples.** Une récompense porte des références limitées et une quantité commune. Distribuer les lots de quantités différentes sur des étapes distinctes, gardées contre le double gain, ou étendre proprement le modèle ; ne pas coder une distribution parallèle.
-9. **Preuves et amorçage.** Un objet nécessaire perdu doit pouvoir être récupéré sans nouvelle récompense économique. L'amorçage de Q06 est donné avant les branches et une seule fois. Les changements de branche ne doivent ni redonner l'or ni effacer silencieusement une pratique déjà acquise.
+9. **Équiper et changer de classe (Q01).** Aucun `ActionType` ne vérifie qu'un objet est équipé : ajouter `EQUIPER_EQUIPEMENT` ou se contenter d'un guidage (§4.0, étape 4). La barre de sorts est vidée au changement de classe depuis le 16/11/2026 (§4.0).
+10. **Preuves et amorçage.** Un objet nécessaire perdu doit pouvoir être récupéré sans nouvelle récompense économique. L'amorçage de Q06 est donné avant les branches et une seule fois. Les changements de branche ne doivent ni redonner l'or ni effacer silencieusement une pratique déjà acquise.
 
 ### Ordre de réalisation conseillé après relecture
 
