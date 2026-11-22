@@ -158,13 +158,25 @@ function CaseTile({
 
     if (uneCase.interactionId) {
       const indisponible = etatInteraction?.disponible === false;
+      const disponible = etatInteraction?.disponible === true && !etatInteraction.gisementEpuise
+        && (!etatInteraction.disponibleAt || new Date(etatInteraction.disponibleAt).getTime() <= Date.now());
       return (
         <Pressable onPress={() => onTapInteraction(uneCase)} style={styles.remplir}>
-          <Image
-            source={{ uri: spriteInteraction(uneCase.interactionSkin) }}
-            style={[styles.sprite, indisponible && styles.epuise]}
-            contentFit="contain"
-          />
+          {/* La silhouette dorée suit l'alpha du PNG, sans carré lumineux autour. */}
+          {disponible && !!uneCase.interactionSkin && (
+            <View pointerEvents="none" style={styles.haloRessource}>
+              <Image source={{ uri: spriteInteraction(uneCase.interactionSkin) }}
+                style={styles.spriteRessource} contentFit="contain" contentPosition="bottom"
+                tintColor={colors.gold} blurRadius={3} />
+            </View>
+          )}
+          <View pointerEvents="none" style={styles.visuelRessource}>
+            <Image
+              source={{ uri: spriteInteraction(uneCase.interactionSkin) }}
+              style={[styles.spriteRessource, indisponible && styles.epuise]}
+              contentFit="contain" contentPosition="bottom"
+            />
+          </View>
           {/* Épuisée, la pastille se grise au lieu de disparaître : les sprites
               d'interaction sont souvent absents (le décor est peint dans le fond), et
               sans elle une case en recharge n'existait plus du tout à l'écran. */}
@@ -234,6 +246,11 @@ const styles = StyleSheet.create({
   remplir: { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
   sprite: { width: '92%', height: '92%' },
   spriteBoss: { width: '130%', height: '130%' },
+  // Même ancrage que le web : compensation de la marge transparente des sprites.
+  // Les vues décoratives ne capturent aucun toucher sur les cases voisines.
+  visuelRessource: { position: 'absolute', left: '-25%', bottom: '-18%', width: '150%', height: '180%' },
+  haloRessource: { position: 'absolute', left: '-25%', bottom: '-18%', width: '150%', height: '180%', opacity: 0.95 },
+  spriteRessource: { width: '100%', height: '100%' },
   epuise: { opacity: 0.4 },
   /** Disque aplati pour faire une ellipse AU SOL : `borderRadius` seul sur un rectangle
       donne une gélule, pas une ellipse. */
