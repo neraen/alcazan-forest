@@ -1,0 +1,102 @@
+{
+  "tool": "image_gen (outil intégré)",
+  "transparent_background": false,
+  "portraits": [
+    {
+      "key": "loup-cuivre",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Loup à crinière cuivrée: one powerful woodland wolf with a magnificent long copper-orange mane, russet fur, amber eyes, curved ivory fangs and dark claws. Alert prowling pose in a mossy forest clearing. Emphasize copper fur rather than grey werewolf.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-00f8bbcf-bad6-4abe-8c77-63407d34ce42.png",
+      "skin": "loot-001-loup-cuivre-v1",
+      "monster_id": 9,
+      "previous_skin": "loup",
+      "name": "Loup à crinière cuivrée",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-loup-cuivre-v1.png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "key": "myceliandre",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Mycéliandre des clairières: one charming but wild fungal creature, squat walking mushroom guardian with pearlescent lavender mushroom cap, ivory stalk body, small rootlike arms and feet, expressive glowing eyes. Tiny red mushrooms, multicolored flowers, clover and dew-covered leaves grow beside it in a woodland clearing.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-43d892dc-b1ea-4022-a30b-6d5aaec447cd.png",
+      "skin": "loot-001-myceliandre-v1",
+      "monster_id": 10,
+      "previous_skin": "psilofrost_avatar",
+      "name": "Mycéliandre des clairières",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-myceliandre-v1.png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "key": "basilic",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Basilic des failles: one fearsome winged reptile with thick slate-grey armored scales, golden slit-pupil eyes, blue wing bones and translucent orange-red wing membranes. Four reptilian legs and two wings, curled tail. Perched in a rocky fissure, a blue spotted egg in a distant nest. Strong readable silhouette.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-1be26dee-e6f3-4c0e-9124-b8fb172037a0.png",
+      "skin": "loot-001-basilic-v1",
+      "monster_id": 11,
+      "previous_skin": "libellule_avatar",
+      "name": "Basilic des failles",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-basilic-v1.png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "key": "devoreur",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Dévoreur des profondeurs: one subterranean burrowing beast with a thick segmented ochre worm body, a circular crimson sucker-like mouth rimmed with small purple knobs, and a few violet tentacles with pale suction cups. Emerald snail-shell fragments nearby in a damp cavern. Fantastical creature, no blood, no exposed organs, no victims.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-4022af9b-8843-4b69-ae06-ae103975883b.png",
+      "skin": "loot-001-devoreur-v1",
+      "monster_id": 12,
+      "previous_skin": "larve_ver_sable",
+      "name": "Dévoreur des profondeurs",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-devoreur-v1.png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "key": "golem",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Gardien d’émeraude: one massive golem made of angular dark slate and silver-grey stone plates, emerald crystals growing from shoulders and back, a bright green crystalline core embedded in chest, small green eyes. Heavy protective stance in an ancient moss-covered mineral cavern with sparse green crystal deposits.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-821f361d-4506-404b-8507-da8ba2c93001.png",
+      "skin": "loot-001-golem-v1",
+      "monster_id": 13,
+      "previous_skin": "elemental_aquatique",
+      "name": "Gardien d’émeraude",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-golem-v1.png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "key": "pillard",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Pillard des caravanes: one wiry green-skinned goblin highway scavenger with long pointed ears, mischievous shrewd face, patched leather jerkin, travel hood, belt pouches, short worn dagger. Carries a bulging sack with a loaf of bread and stolen golden cup visible. Broken wooden wagon wheel and small crate beside a forest road. Not an orc or heavily armored warrior.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-844d4f35-3a4a-4711-88f4-bb9104831c68.png",
+      "skin": "loot-001-pillard-v1",
+      "monster_id": 14,
+      "previous_skin": "gobelin_guerrier",
+      "name": "Pillard des caravanes",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-pillard-v1.png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "key": "chaman",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Chaman des plumes rouges: one green-skinned goblin ritual shaman wearing red and violet feather headdress, small pale horned mask pushed above face, golden spotted fur mantle, bird-skull necklace and red gem pendant. Holds a carved wooden staff with orange tassels and blue trinkets. Blue luminous flowers and a soft red-gold ritual glow in a forest grove. No writing or symbols resembling text.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-ac972201-1c82-4281-892e-e6e4ed73a572.png",
+      "skin": "loot-001-chaman-v1",
+      "monster_id": 15,
+      "previous_skin": "gobelin_guerrier",
+      "name": "Chaman des plumes rouges",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-chaman-v1.png",
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "key": "revenant",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG. Create exactly ONE finished illustration, not a sheet. Style: polished hand-painted stylized fantasy game art, confident angular painterly shapes, clean bold silhouette, rich restrained colors, soft cel-shaded planes, intricate but readable, not photorealistic, not pixel art, no 3D render. Composition: single creature centered, full body or near full body filling 75-85% of square canvas, clear face and main features readable in a small portrait, atmospheric simplified environment behind it, strong foreground/background separation, consistent three-quarter view. No frame, no text, no label, no watermark. Revenant de la cour écarlate: one regal undead court dignitary, aged ivory skull-like face inset with three small green gems at forehead, thin golden crown with ruby jewels, tattered deep crimson court robes over tarnished antique armor. Holds closed red grimoire with a single eye motif and toothlike clasp. Ornate gold key on belt. Standing in ruined palace overgrown by dark forest, ember glow and muted teal shadows. No gore.",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-dfac659a-4dc4-4ce7-826b-3547e536cc2d.png",
+      "skin": "loot-001-revenant-v1",
+      "monster_id": 16,
+      "previous_skin": "gobelin_guerrier",
+      "name": "Revenant de la cour écarlate",
+      "file": "alcazan-front-prod/public/img/monstre/loot-001-revenant-v1.png",
+      "width": 1254,
+      "height": 1254
+    }
+  ]
+}

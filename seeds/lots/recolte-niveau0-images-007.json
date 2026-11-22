@@ -1,0 +1,48 @@
+{
+  "lot": "recolte-niveau0-images-007",
+  "date": "2026-11-19",
+  "method": "builtin-imagegen",
+  "items": [
+    {
+      "id": 6,
+      "skin": "recolte-fer-niv0-v1",
+      "prompt": "Use case: stylized-concept. Generate ONE original game-map harvestable environment sprite. The supplied screenshot is ONLY a visual style, camera and scale reference: match the three solid decorative rock props, trees and foliage on that map. This is NOT an inventory icon. Classic 2D top-down JRPG tileset pixel art, slightly elevated three-quarter view (not diamond isometric), chunky low-resolution pixel clusters, crisp stepped edges, no smooth high resolution illustration, no vector. Design as if at 64x64 game pixels with nearest-neighbor enlargement. Strong readable light/dark planes, upper-left daylight, dark lower-right outline, rich earthy colors compatible with vivid green grass. The object must occupy 90-94% of image width and height with very little empty padding, compact substantial silhouette fully contained, bottom aligned. True transparent RGBA background. No background tile, no grass square, no frame, no UI, no text, no glow, no aura, no vignette, no ground disk, no long cast shadow. A tiny contact shadow attached at base is okay. Must remain very visible as a full-cell prop at 64px on green grass. Subject: A single compact pile of THREE interlocking chunky iron ore rocks, like the gray and brown rocks in the screenshot. Largest boulder behind two smaller boulders, warm slate-gray broad jagged faces with clearly visible rusty reddish-brown iron seams and a few silver-gray ore facets. Broad base, squat solid rock formation nearly square, about one full tile wide and one tile high. Not tiny scattered stones, not crystals, no pickaxe.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-19ee681c-5acf-4ab5-81f7-8f6b6b035607.png",
+      "sha256": "5d87cbd16e4d05e0d5625e85b3ed465f183395f47ecb229a68bf1af907c9d6b2",
+      "name": "Minerai de fer",
+      "previous_image_carte": "minerai-fer-carte",
+      "existing_harvest_interactions": [
+        {
+          "id": 9,
+          "nom": "Filon de cuivre"
+        }
+      ]
+    },
+    {
+      "id": 189,
+      "skin": "recolte-frene-niv0-v1",
+      "prompt": "Use case: stylized-concept. Generate ONE original game-map harvestable environment sprite. The supplied screenshot is ONLY a visual style, camera and scale reference: match the three solid decorative rock props, trees and foliage on that map. This is NOT an inventory icon. Classic 2D top-down JRPG tileset pixel art, slightly elevated three-quarter view (not diamond isometric), chunky low-resolution pixel clusters, crisp stepped edges, no smooth high resolution illustration, no vector. Design as if at 64x64 game pixels with nearest-neighbor enlargement. Strong readable light/dark planes, upper-left daylight, dark lower-right outline, rich earthy colors compatible with vivid green grass. The object must occupy 90-94% of image width and height with very little empty padding, compact substantial silhouette fully contained, bottom aligned. True transparent RGBA background. No background tile, no grass square, no frame, no UI, no text, no glow, no aura, no vignette, no ground disk, no long cast shadow. A tiny contact shadow attached at base is okay. Must remain very visible as a full-cell prop at 64px on green grass. Subject: A compact living young ASH TREE for chopping, inspired by the screenshot's broadleaf trees but sized as ONE tile prop: wide rounded bushy canopy of recognizable leaf clusters in bright yellow-green and deep forest green, stout clearly visible brown trunk with two short spreading roots, silhouette approximately square, canopy wide and dense. Show upper and front canopy surfaces, warm sunlit top, dark shaded underside. Entire trunk and canopy within image. Not harvested logs or a stump, no fruit, no accessories.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-ab8e986d-184e-4c6d-a61c-754bd02fafe9.png",
+      "sha256": "6fc159c00c926597bc685fcd2be5f3bac518cf9c8bd7df90678f170a43ade408",
+      "name": "Bois de frêne",
+      "previous_image_carte": null,
+      "existing_harvest_interactions": []
+    },
+    {
+      "id": 177,
+      "skin": "recolte-ortie-niv0-v1",
+      "prompt": "Use case: stylized-concept. Generate ONE original game-map harvestable environment sprite. The supplied screenshot is ONLY a visual style, camera and scale reference: match the three solid decorative rock props, trees and foliage on that map. This is NOT an inventory icon. Classic 2D top-down JRPG tileset pixel art, slightly elevated three-quarter view (not diamond isometric), chunky low-resolution pixel clusters, crisp stepped edges, no smooth high resolution illustration, no vector. Design as if at 64x64 game pixels with nearest-neighbor enlargement. Strong readable light/dark planes, upper-left daylight, dark lower-right outline, rich earthy colors compatible with vivid green grass. The object must occupy 90-94% of image width and height with very little empty padding, compact substantial silhouette fully contained, bottom aligned. True transparent RGBA background. No background tile, no grass square, no frame, no UI, no text, no glow, no aura, no vignette, no ground disk, no long cast shadow. A tiny contact shadow attached at base is okay. Must remain very visible as a full-cell prop at 64px on green grass. Subject: A dense LARGE harvestable cluster of nettles rooted in place: multiple short upright stems with broad pointed sharply serrated leaves, overlapping layers filling almost the entire square footprint. Sunlit yellow-green leaf tops with dark blue-green shadows and tiny pale cream nettle flower clusters as bright accents. A chunky compact bushy plant clump visible against green grass, taller central stems and wide lower leaves, a few visible brown stem bases. No pot, no bunch tie, no inventory framing, not tiny sparse grass.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-683f372b-8d82-4a4e-aa4a-03adca7757a8.png",
+      "sha256": "7e399600369cbad6bd713458ae6a2f7b2f653cbae5d26a3638dc44d4f2813c71",
+      "name": "Ortie",
+      "previous_image_carte": null,
+      "existing_harvest_interactions": []
+    }
+  ],
+  "reference": "output/imagegen/recolte-niveau0-v1/reference-carte.png",
+  "validation": {
+    "alpha": "Trois PNG avec alpha transparent, silhouettes occupant 91 à 96 % de la largeur.",
+    "display": "CSS existant : boîte 120 % x 145 %, contain, ancrage bas ; silhouettes environ 109 à 115 % de la largeur de case.",
+    "preview": "output/qa/recolte-niveau0.html — simulation non inspectée dans le navigateur, protocole file bloqué."
+  }
+}

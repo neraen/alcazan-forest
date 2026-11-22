@@ -1,0 +1,235 @@
+{
+  "lot": "peaux-minerais-images-006",
+  "date": "2026-11-19",
+  "method": "builtin-imagegen",
+  "references": {
+    "peaux": [
+      "output/imagegen/peaux-minerais-v1/references/peaux-1.png",
+      "output/imagegen/peaux-minerais-v1/references/peaux-2.png",
+      "output/imagegen/peaux-minerais-v1/references/peaux-3.png"
+    ],
+    "minerais": [
+      "output/imagegen/peaux-minerais-v1/references/minerais-1.png",
+      "output/imagegen/peaux-minerais-v1/references/minerais-2.png",
+      "output/imagegen/peaux-minerais-v1/references/minerais-3.png"
+    ]
+  },
+  "items": [
+    {
+      "id": 201,
+      "slug": "peau-souple",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-souple.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A supple raw light tan hide scrap with irregular organic lobed edges, one soft corner curled forward revealing its pale suede underside, broad smooth flexible surface. No fur.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-98c131df-e66b-4323-a36c-083f2554b3ae.png",
+      "sha256": "f406e17518ff1d8d9257b33b35e926a493fc13f1ec6fb5a5ac8ea612e3c314c6",
+      "name": "Peau souple",
+      "level": 0,
+      "previous_image": null
+    },
+    {
+      "id": 202,
+      "slug": "peau-epaisse",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-epaisse.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A thick ochre-brown raw hide, chunky clearly thick edge, broad leathery folds and a rolled corner, irregular organic outline, strong weight and thickness. No fur.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-7c3d6119-df0d-42db-bde1-344cf3d2b0e9.png",
+      "sha256": "b1dfdd6cc3f47b7aebcf13f76ff9dd01e49a45f997d26ff1f449250d952e08bf",
+      "name": "Peau épaisse",
+      "level": 20,
+      "previous_image": null
+    },
+    {
+      "id": 203,
+      "slug": "fourrure-dense",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-fourrure-dense.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A dense warm russet-brown fur pelt scrap, compact mound of thick coarse tufts with golden tips, irregular furry edges and a tiny tan underside edge; abundant volume.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-f52456a0-69de-43e6-8dc7-cda4ad6ac851.png",
+      "sha256": "a411a30a3bdde33bff872a7628108723b6527d25ea4402e0ff4e88c46051a1e0",
+      "name": "Fourrure dense",
+      "level": 40,
+      "previous_image": "metiers-002-054.png"
+    },
+    {
+      "id": 204,
+      "slug": "peau-ecailleuse",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-ecailleuse.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A flexible moss-green reptilian hide scrap covered in large overlapping olive emerald scales, a folded corner showing ochre underside, irregular organic edge. No animal.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-a536b318-daa3-4ceb-b07d-2c0ec7e6d8f7.png",
+      "sha256": "a0049755c271bcbb74391ec67640f7e2478124ff19a9f679a130d4dcdbfa7b1b",
+      "name": "Peau écailleuse",
+      "level": 50,
+      "previous_image": null
+    },
+    {
+      "id": 205,
+      "slug": "peau-rugueuse",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-rugueuse.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A dark sienna raw hide scrap with large rough pebble-like texture and shallow creases, jagged organic edges, curled corner with ochre underside. Clearly rough leather, not rocks.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-26ace53b-2ed4-4f3d-908a-b7bf16b0d0ab.png",
+      "sha256": "b4116852a3fba51781e8287c18056c90f362c6bab425b2d3aece03abac1ed710",
+      "name": "Peau rugueuse",
+      "level": 60,
+      "previous_image": null
+    },
+    {
+      "id": 206,
+      "slug": "peau-corrompue",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-corrompue.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A raw charcoal-purple hide scrap with luminous violet cracks and magenta veins, soft folded corner, jagged organic edge, restrained purple halo. Clearly hide, no wounds or gore.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-a3e33319-0cd3-4939-a38a-650f1791ed97.png",
+      "sha256": "7b88b0498b7e9bece5746766f32e709d9f5db4f9c80213fb54193a8e7f4aa5c7",
+      "name": "Peau corrompue",
+      "level": 80,
+      "previous_image": null
+    },
+    {
+      "id": 207,
+      "slug": "fourrure-soyeuse",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-fourrure-soyeuse.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A pearl cream fur pelt scrap with long smooth flowing silky locks and warm champagne highlights, graceful sweeping strands, pale suede underside barely visible. Luxurious soft fur.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-ad7f8812-ea0f-4327-b25b-703b2f468e19.png",
+      "sha256": "5cb4c2c155ab4a74c9eb696ec15384381e8eabaded8b81a7c53d63d40d4787e7",
+      "name": "Fourrure soyeuse",
+      "level": 100,
+      "previous_image": null
+    },
+    {
+      "id": 208,
+      "slug": "peau-enchantee",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-enchantee.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A soft teal-blue raw hide scrap with subtle luminous cyan flowing natural veins and emerald highlights, irregular lobed edges and one curled corner, restrained magical teal glow. No runic text.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-a349b085-4034-4ea1-9553-aefe0812f2b0.png",
+      "sha256": "cfcfbde3ea1cac5e8aea175ada0396013ab6d8ace3f4b59f61913ad87e17cc2d",
+      "name": "Peau enchantée",
+      "level": 120,
+      "previous_image": null
+    },
+    {
+      "id": 209,
+      "slug": "peau-chitineuse",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-chitineuse.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A harvested flexible chitinous hide scrap with overlapping broad purple-brown beetle shell plates and golden edge highlights, bent slightly to show dark fibrous underside. No beetle legs or animal head.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-ede35fb2-d2e4-4d1b-9293-f008ee259033.png",
+      "sha256": "0be786ef4b01ef7a4bea23ea5a05b75b706d4b4389b3959fdadaad0ff8d8b7da",
+      "name": "Peau chitineuse",
+      "level": 140,
+      "previous_image": null
+    },
+    {
+      "id": 210,
+      "slug": "fourrure-givre",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-fourrure-givre.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: An icy white fur pelt scrap with thick pointed pale blue tufts, restrained tiny frost crystals on tips, soft blue-white halo, clearly a pelt of fur not a pile of crystals.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-0f7622a5-e2bf-491f-a783-8f82d16d015e.png",
+      "sha256": "2e799f803b4a22dc41d6d1a870f57eaee8169eb764953fb7142af33909e7c0ce",
+      "name": "Fourrure de givre",
+      "level": 150,
+      "previous_image": null
+    },
+    {
+      "id": 211,
+      "slug": "peau-pierre",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-pierre.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A flexible gray raw hide scrap with stony broad cracked surface plates, visible thick leather fold revealing warm gray suede underside, silver-gray highlights. It is a hide, not a rock pile.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-ad2efdf4-7244-41da-ac7f-56c22a319a22.png",
+      "sha256": "f9b089c91f8fd0ee45352319c9acd7eb86fc911b1c57dd7adb54d07ab41e6eaf",
+      "name": "Peau de pierre",
+      "level": 160,
+      "previous_image": null
+    },
+    {
+      "id": 212,
+      "slug": "peau-ancestrale",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-ancestrale.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: An ancient bronze-brown raw hide scrap with sweeping deep natural wrinkles and subtle amber luminous veins, thick irregular edge and rolled corner, warm gold halo. No inscriptions or symbols.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-7211e553-65ba-4378-bb5d-c0aa46596fc8.png",
+      "sha256": "d5ea6ee28ffeb183e2966d3ddc3b8fac77de601238464af460926db23aa5bee3",
+      "name": "Peau ancestrale",
+      "level": 180,
+      "previous_image": null
+    },
+    {
+      "id": 213,
+      "slug": "peau-primordiale",
+      "metier_id": 4,
+      "image": "materiaux-generes-v1-peau-primordiale.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A precious primordial raw hide scrap, ivory-gold supple surface with natural luminous emerald veins, curled corner revealing golden underside, restrained green-gold halo and three tiny golden motes. No symbols.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-684ed78e-6a76-4e99-bbe7-621626770ce6.png",
+      "sha256": "c58e51a4036e608348563bd486f4a59ea62e5616977b60b6943f826b331d3fa4",
+      "name": "Peau primordiale",
+      "level": 200,
+      "previous_image": null
+    },
+    {
+      "id": 165,
+      "slug": "minerai-etain",
+      "metier_id": 2,
+      "image": "materiaux-generes-v1-minerai-etain.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: Three angular pieces of raw tin-bearing ore as one compact cluster: cool silver-gray metallic veins embedded in dark warm gray rocky matrix, angular rough broken surfaces, subtle pale gold light. Raw mineral, NOT ingot or jewelry.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-802f8c63-c604-4b3b-af81-2481de18b9d2.png",
+      "sha256": "bf58563ce4994cb7bfddfa5c42bae37c533d062c6427e0cef5151f26ee39fceb",
+      "name": "Minerai d’étain",
+      "level": 40,
+      "previous_image": null
+    },
+    {
+      "id": 166,
+      "slug": "charbon",
+      "metier_id": 2,
+      "image": "materiaux-generes-v1-charbon.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A compact cluster of three angular rough black coal chunks, visible charcoal-gray facets with restrained cool blue and warm gold edge highlights, black readable against dark background. No fire, embers or smoke.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-1929b68c-9063-4388-bb23-924c73fd9ec8.png",
+      "sha256": "3e599e493284785bf200550a03891509704f77c1ecaacf59cda64301b3811ac1",
+      "name": "Charbon",
+      "level": 50,
+      "previous_image": null
+    },
+    {
+      "id": 167,
+      "slug": "minerai-cobalt",
+      "metier_id": 2,
+      "image": "materiaux-generes-v1-minerai-cobalt.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A compact cluster of raw cobalt-bearing fantasy ore: rich cobalt-blue metallic mineral veins and angular blue fragments embedded in charcoal-gray stone, silver-blue highlights. Rough mined ore, NOT metal ingots.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-f27f27d7-bbbf-417a-8357-4dc6b6b9a6cf.png",
+      "sha256": "531ed020c3f2e25fc50acca48d65b978bad24a8cf62c5bcd5a1ca97f1cc3bf41",
+      "name": "Minerai de cobalt",
+      "level": 60,
+      "previous_image": null
+    },
+    {
+      "id": 172,
+      "slug": "serpentine",
+      "metier_id": 2,
+      "image": "materiaux-generes-v1-serpentine.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A compact cluster of rough green serpentine stones, moss-green and deep olive surfaces with winding lighter yellow-green mineral veins, waxy painted sheen, broad irregular broken facets. No snake, no emerald crystal spires.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-06cd6adc-a48e-40ae-8416-aac7f6005e70.png",
+      "sha256": "8612859e57a99667ca8c18a91465193f7d709e7dce8908bf0ec4ea7fe96c6c80",
+      "name": "Serpentine",
+      "level": 160,
+      "previous_image": null
+    },
+    {
+      "id": 175,
+      "slug": "saphir",
+      "metier_id": 2,
+      "image": "materiaux-generes-v1-saphir.png",
+      "prompt": "Use case: stylized-concept. ONE square fantasy RPG inventory resource icon, original artwork closely matching the reference pack rendering and the previously generated wood series. Hand-painted 2D casual RPG, bold chunky silhouette, clean edge shadows, broad smoothly blended painted planes, saturated colors, warm golden upper-left highlights, small glossy highlights. NOT photo, not 3D render, not vector. One harvested raw material centered diagonally, fully contained with 8% margins, occupies 80% of square. Plain near-black warm charcoal background, restrained soft halo behind material. Readable at 48px. No text, border, UI, scenery, tools, character, animal head, blood, flesh, gore, stitching or finished armor. Subject: A large rich royal-blue sapphire with a smaller sapphire shard beside it, bold angular faceted gemstone silhouette, deep indigo shadows and brilliant cyan highlights with one small restrained sparkle. No setting or jewelry.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-377f95ce-70f3-41c7-91e2-ef4f3a517dfb.png",
+      "sha256": "376948b78804049bd1b2a8b65f6be990747f0fcb79516f703d1eac9f2ccb13ec",
+      "name": "Saphir",
+      "level": 200,
+      "previous_image": null
+    }
+  ]
+}

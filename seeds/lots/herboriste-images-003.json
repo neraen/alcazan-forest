@@ -1,0 +1,133 @@
+{
+  "lot": "herboriste-images-003",
+  "archives": [
+    {
+      "name": "craftpix-net-815388-50-free-rpg-mushroom-icons.zip",
+      "sha256": "0536808adbc46f893b3b9b984b73ff6d485a46414c30e6ae1a5ab7a0d4594dd0"
+    },
+    {
+      "name": "background-20261118T225320Z-1-001.zip",
+      "sha256": "17c5ef330e0289b86802e94587ab7e5ddca439f5a156e16bd2916adc52f1351c"
+    },
+    {
+      "name": "background-20261118T225359Z-1-001.zip",
+      "sha256": "4cef555e57a5f1f2fc0e24c9fa3b823b505ab4adff7662c753c582c7e76e13b6"
+    }
+  ],
+  "notes": [
+    "Les 50 PNG de la troisième archive sont identiques à ceux du pack Craftpix.",
+    "Visuels originaux conservés avec leur fond, aucune modification graphique.",
+    "La Mandragore reste sans image faute de racine adaptée.",
+    "Les intentions artistiques initiales ne sont pas toutes reproduites : la Morille des songes est dorée dans cette sélection."
+  ],
+  "image_updates": [
+    {
+      "id": 177,
+      "name": "Ortie",
+      "image": "herboriste-003-177.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/21.png",
+      "sha256": "045929688167359785a49cb487f8fed9d2e3cb27b31f5e436459278c5111b0fc",
+      "previous_image": null
+    },
+    {
+      "id": 178,
+      "name": "Camomille",
+      "image": "herboriste-003-178.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/8.png",
+      "sha256": "e80c25715ac60de36058859a84f5becf6dc354db69bd0fe42537c744e06c279c",
+      "previous_image": null
+    },
+    {
+      "id": 179,
+      "name": "Bolet luisant",
+      "image": "herboriste-003-179.png",
+      "archive": "craftpix-net-815388-50-free-rpg-mushroom-icons.zip",
+      "source": "PNG/background/24.png",
+      "sha256": "0a70aa4a86e658265a0bd4e08542ffa29d6cbb7b22cc686d4096b3c983263772",
+      "previous_image": null
+    },
+    {
+      "id": 180,
+      "name": "Menthe sauvage",
+      "image": "herboriste-003-180.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/27.png",
+      "sha256": "f627dc133c988b61a3f16004867c5b96f5ae737761212a161fea221a49df2d06",
+      "previous_image": "metiers-002-023.png"
+    },
+    {
+      "id": 181,
+      "name": "Lavande",
+      "image": "herboriste-003-181.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/31.png",
+      "sha256": "f9cf2057920c91d7c47c89c182f0e2beb2bcd1714f2ef598683936776d0925c1",
+      "previous_image": null
+    },
+    {
+      "id": 182,
+      "name": "Champignon corrompu",
+      "image": "herboriste-003-182.png",
+      "archive": "craftpix-net-815388-50-free-rpg-mushroom-icons.zip",
+      "source": "PNG/background/38.png",
+      "sha256": "1e57bc182a388bace2e2d9ecc163e621d931dd0821732edb2da929e37d517aaa",
+      "previous_image": null
+    },
+    {
+      "id": 5,
+      "name": "Sauge",
+      "image": "herboriste-003-5.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/36.png",
+      "sha256": "472687bb1c535f40d226281793bca4ce95efdc875f84f71555cff15f46be141f",
+      "previous_image": null
+    },
+    {
+      "id": 183,
+      "name": "Fleur enchantée",
+      "image": "herboriste-003-183.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/10.png",
+      "sha256": "fc5eb5c7ce5c34d8b0cf67527c08b2cbcd47f7fc69c9cb20122d18fc43d4079d",
+      "previous_image": "metiers-002-006.png"
+    },
+    {
+      "id": 184,
+      "name": "Morille des songes",
+      "image": "herboriste-003-184.png",
+      "archive": "craftpix-net-815388-50-free-rpg-mushroom-icons.zip",
+      "source": "PNG/background/18.png",
+      "sha256": "5fcfe67d9680769cb5cf31a7088de01f4c5151a1213828603dcfa5ecbcd6ae3a",
+      "previous_image": null
+    },
+    {
+      "id": 186,
+      "name": "Orchidée lunaire",
+      "image": "herboriste-003-186.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/6.png",
+      "sha256": "12c22e81176d11ac8416e2b3be5e0a4dcd9fe8809aaca8ce6beac35aee267476",
+      "previous_image": null
+    },
+    {
+      "id": 187,
+      "name": "Amanite spectrale",
+      "image": "herboriste-003-187.png",
+      "archive": "craftpix-net-815388-50-free-rpg-mushroom-icons.zip",
+      "source": "PNG/background/25.png",
+      "sha256": "e244f6c57ddfeb91e87320617fefb82476b9f572d566c362334e6aa7a0685631",
+      "previous_image": null
+    },
+    {
+      "id": 188,
+      "name": "Fleur de l’arbre-monde",
+      "image": "herboriste-003-188.png",
+      "archive": "background-20261118T225320Z-1-001.zip",
+      "source": "background/14.png",
+      "sha256": "445d2c51d55ad882d4d14a25fe11190a2b9e1d4e605d7ee525e5953ba6b82649",
+      "previous_image": "metiers-002-040.png"
+    }
+  ]
+}

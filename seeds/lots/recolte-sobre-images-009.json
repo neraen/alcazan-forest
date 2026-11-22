@@ -1,0 +1,39 @@
+{
+  "lot": "recolte-sobre-images-009",
+  "method": "builtin-imagegen",
+  "notes": [
+    "Corrige les anciennes ressources visibles : chêne, champignon bleu, sauge.",
+    "Fer, frêne et orties inchangés.",
+    "Champignon recadré via imagegen pour réduire les marges transparentes."
+  ],
+  "items": [
+    {
+      "id": 8,
+      "skin": "chene-carte-sobre-v3",
+      "prompt": "Create ONE original transparent harvestable MAP prop sprite matching the environment tiles in reference image 1. Screenshot is style/camera reference: specifically match its ordinary leafy green trees, small orange mushroom props, and small shrubs, NOT the garish turquoise tree and neon blue mushroom in the center (those are the problem to replace). This must blend into a classic 2D top-down JRPG woodland map. Slightly elevated view, softly shaded fine pixel-art texture, subtle pixel clusters rather than huge square blocks. Modest natural saturation, earthy olive and moss greens, warm muted browns, restrained soft highlights. Natural volumetric shading, no thick black/navy outline, no sticker appearance, no white rim, no neon, no cyan, no bright cobalt blue, no luminous highlights, no halo or magic effect. Transparent background, no square tile, no ground disk, only tiny contact shadow. Compact readable full-cell sprite filling 90-94% of square with small margins, keep fully within frame. No text or UI. Subject: A small sturdy living oak tree with a dense rounded canopy in clustered natural olive-green leaves and warm gray-brown trunk with two short roots. Similar proportion and rendering to the ordinary round trees on the screenshot, but one-cell compact footprint. No huge acorns, no ornamental shape, no turquoise leaves.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-9227e992-8014-4d0e-bed0-a93d03e7e104.png",
+      "sha256": "203b3501f3c9b887acb5f0792264474a5e2c07ece90e9c46891210e7dac71c1f",
+      "name": "Bûche de chêne",
+      "previous_skin": "chene-carte"
+    },
+    {
+      "id": 4,
+      "skin": "champignon-bleu-carte-sobre-v3",
+      "prompt": "Create ONE original transparent harvestable MAP prop sprite matching the environment tiles in reference image 1. Screenshot is style/camera reference: specifically match its ordinary leafy green trees, small orange mushroom props, and small shrubs, NOT the garish turquoise tree and neon blue mushroom in the center (those are the problem to replace). This must blend into a classic 2D top-down JRPG woodland map. Slightly elevated view, softly shaded fine pixel-art texture, subtle pixel clusters rather than huge square blocks. Modest natural saturation, earthy olive and moss greens, warm muted browns, restrained soft highlights. Natural volumetric shading, no thick black/navy outline, no sticker appearance, no white rim, no neon, no cyan, no bright cobalt blue, no luminous highlights, no halo or magic effect. Transparent background, no square tile, no ground disk, only tiny contact shadow. Compact readable full-cell sprite filling 90-94% of square with small margins, keep fully within frame. No text or UI. Subject: A low compact clump of three mushrooms: one medium cap behind two smaller caps, broad caps in quiet desaturated SLATE BLUE GRAY with subtle pale gray speckles, short beige stems and shaded brown undersides. Match the ordinary orange mushroom map props in scale, shading, perspective and texture, using a modest blue-gray hue because the resource is named blue mushroom. No tall skinny stems, no saturated royal blue, no luminous spots.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-5de203b6-10dc-4730-a0ee-64ebf6737558.png",
+      "sha256": "f1658c70d7db02ae254708995659e9bd3bbbbbec854171df1de0c678e8881491",
+      "name": "Chapeau de champignon bleu",
+      "previous_skin": "champignon-bleu-carte"
+    },
+    {
+      "id": 5,
+      "skin": "sauge-des-bois-carte-sobre-v3",
+      "prompt": "Create ONE original transparent harvestable MAP prop sprite matching the environment tiles in reference image 1. Screenshot is style/camera reference: specifically match its ordinary leafy green trees, small orange mushroom props, and small shrubs, NOT the garish turquoise tree and neon blue mushroom in the center (those are the problem to replace). This must blend into a classic 2D top-down JRPG woodland map. Slightly elevated view, softly shaded fine pixel-art texture, subtle pixel clusters rather than huge square blocks. Modest natural saturation, earthy olive and moss greens, warm muted browns, restrained soft highlights. Natural volumetric shading, no thick black/navy outline, no sticker appearance, no white rim, no neon, no cyan, no bright cobalt blue, no luminous highlights, no halo or magic effect. Transparent background, no square tile, no ground disk, only tiny contact shadow. Compact readable full-cell sprite filling 90-94% of square with small margins, keep fully within frame. No text or UI. Subject: A low dense clump of sage growing naturally: muted moss and gray-green oval leaves, a few very small dusty mauve flower spikes, layered foliage with natural shading and short barely visible brown stems. Similar modest shrub style to the screenshot, no turquoise leaves, no large magenta flowers, no neon.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-b2f0a73d-fc1b-4054-b420-5d1aa0ed8a6d.png",
+      "sha256": "ea7a7ec16635b2b2734cf2147f5aba99498306f89421d246625fed962c064589",
+      "name": "Sauge",
+      "previous_skin": "sauge-des-bois-carte"
+    }
+  ],
+  "reference": "output/imagegen/recolte-sobre-v3/reference-carte.png"
+}

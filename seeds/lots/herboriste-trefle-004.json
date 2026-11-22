@@ -1,0 +1,27 @@
+{
+  "lot": "herboriste-trefle-004",
+  "previous": {
+    "id": 185,
+    "name": "Mandragore",
+    "description": "Ressource de l’herboriste accessible au niveau 150 du métier, utilisée en alchimie.",
+    "prix_vente": 21,
+    "image": null,
+    "metier_id": 1,
+    "niveau_ressource": 150,
+    "image_carte": null
+  },
+  "current": {
+    "id": 185,
+    "name": "Trèfle astral",
+    "description": "Plante aux feuilles bleu-vert parcourues de reflets lumineux, récoltable au niveau 150 du métier d’herboriste. Ingrédient d’alchimie.",
+    "prix_vente": 21,
+    "image": "herboriste-trefle-astral.png",
+    "metier_id": 1,
+    "niveau_ressource": 150,
+    "image_carte": null
+  },
+  "recipe_ingredient_count": 13,
+  "source_archive": "background-20261118T225320Z-1-001.zip",
+  "source": "background/28.png",
+  "sha256": "bb6bcd56a95bb4853b0dc4bd6a2000107ddbf1eb8bee0f33a0a8dfdaf8a32c3b"
+}

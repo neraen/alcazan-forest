@@ -1,0 +1,3849 @@
+{
+  "lot": "alchimie-001",
+  "archives": [
+    {
+      "archive": "WenrexaMiningPack_Vol3.zip",
+      "sha256": "581efdf886b9cb401b6fb3114f8ab115352a692d0e8d8131f6f7ece6cac8ce91"
+    },
+    {
+      "archive": "WenrexaPotionsPack_Vol2.zip",
+      "sha256": "b2f1ad2aa9393be67ea2a18b5ca4aca4a7ab2af084e008f7f3e6e42ae92a7e01"
+    }
+  ],
+  "resources": [
+    {
+      "key": "mine-0",
+      "name": "Minerai de fer",
+      "level": 0,
+      "metier": "Mineur",
+      "image": "metier-mineur-01.png",
+      "source": "256px/minerals/iron_ore_256px_31.png",
+      "reuse_id": 6,
+      "sale_price": 9,
+      "description": "Ressource du mineur accessible au niveau 0 du métier.",
+      "previous": {
+        "id": 6,
+        "name": "Minerai de fer",
+        "description": "Un fer brut, encore pris dans sa gangue.",
+        "prix_vente": 9,
+        "image": "minerai_fer.png",
+        "metier_id": 2,
+        "niveau_ressource": 1,
+        "image_carte": "minerai-fer-carte"
+      },
+      "id": 6
+    },
+    {
+      "key": "mine-1",
+      "name": "Minerai de cuivre",
+      "level": 20,
+      "metier": "Mineur",
+      "image": "metier-mineur-02.png",
+      "source": "256px/minerals/copper_ore_256px_07.png",
+      "reuse_id": null,
+      "sale_price": 14,
+      "description": "Ressource du mineur accessible au niveau 20 du métier.",
+      "id": 164
+    },
+    {
+      "key": "mine-2",
+      "name": "Minerai d’étain",
+      "level": 40,
+      "metier": "Mineur",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 19,
+      "description": "Ressource du mineur accessible au niveau 40 du métier.",
+      "id": 165
+    },
+    {
+      "key": "mine-3",
+      "name": "Charbon",
+      "level": 50,
+      "metier": "Mineur",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 21,
+      "description": "Ressource du mineur accessible au niveau 50 du métier.",
+      "id": 166
+    },
+    {
+      "key": "mine-4",
+      "name": "Minerai de cobalt",
+      "level": 60,
+      "metier": "Mineur",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 24,
+      "description": "Ressource du mineur accessible au niveau 60 du métier.",
+      "id": 167
+    },
+    {
+      "key": "mine-5",
+      "name": "Minerai corrompu",
+      "level": 80,
+      "metier": "Mineur",
+      "image": "metier-mineur-06.png",
+      "source": "256px/minerals/glowing_demonite_ore_chunk_256px_26.png",
+      "reuse_id": null,
+      "sale_price": 29,
+      "description": "Ressource du mineur accessible au niveau 80 du métier.",
+      "id": 168
+    },
+    {
+      "key": "mine-6",
+      "name": "Minerai d’argent",
+      "level": 100,
+      "metier": "Mineur",
+      "image": "metier-mineur-07.png",
+      "source": "256px/minerals/silver_ore_256px_84.png",
+      "reuse_id": 7,
+      "sale_price": 34,
+      "description": "Ressource du mineur accessible au niveau 100 du métier.",
+      "previous": {
+        "id": 7,
+        "name": "Minerai d'argent",
+        "description": "Un filon plus rare, qui ne se laisse pas prendre par un débutant.",
+        "prix_vente": 38,
+        "image": "minerai_argent.png",
+        "metier_id": 2,
+        "niveau_ressource": 20,
+        "image_carte": "minerai-argent-carte"
+      },
+      "id": 7
+    },
+    {
+      "key": "mine-7",
+      "name": "Minerai enchanté",
+      "level": 120,
+      "metier": "Mineur",
+      "image": "metier-mineur-08.png",
+      "source": "256px/minerals/crystal_shard_256px_09.png",
+      "reuse_id": null,
+      "sale_price": 39,
+      "description": "Ressource du mineur accessible au niveau 120 du métier.",
+      "id": 169
+    },
+    {
+      "key": "mine-8",
+      "name": "Quartz",
+      "level": 140,
+      "metier": "Mineur",
+      "image": "metier-mineur-09.png",
+      "source": "256px/minerals/quartz_crystal_256px_63.png",
+      "reuse_id": null,
+      "sale_price": 44,
+      "description": "Ressource du mineur accessible au niveau 140 du métier.",
+      "id": 170
+    },
+    {
+      "key": "mine-9",
+      "name": "Améthyste",
+      "level": 150,
+      "metier": "Mineur",
+      "image": "metier-mineur-10.png",
+      "source": "256px/minerals/purple_fluorite_crystal_256px_61.png",
+      "reuse_id": null,
+      "sale_price": 46,
+      "description": "Ressource du mineur accessible au niveau 150 du métier.",
+      "id": 171
+    },
+    {
+      "key": "mine-10",
+      "name": "Serpentine",
+      "level": 160,
+      "metier": "Mineur",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 49,
+      "description": "Ressource du mineur accessible au niveau 160 du métier.",
+      "id": 172
+    },
+    {
+      "key": "mine-11",
+      "name": "Minerai d’or",
+      "level": 180,
+      "metier": "Mineur",
+      "image": "metier-mineur-12.png",
+      "source": "256px/minerals/single_gold_nugget_256px_87.png",
+      "reuse_id": null,
+      "sale_price": 54,
+      "description": "Ressource du mineur accessible au niveau 180 du métier.",
+      "id": 173
+    },
+    {
+      "key": "mine-12",
+      "name": "Rubis",
+      "level": 200,
+      "metier": "Mineur",
+      "image": "metier-mineur-13.png",
+      "source": "256px/minerals/red_jasper_stone_256px_76.png",
+      "reuse_id": null,
+      "sale_price": 59,
+      "description": "Ressource du mineur accessible au niveau 200 du métier.",
+      "id": 174
+    },
+    {
+      "key": "mine-13",
+      "name": "Saphir",
+      "level": 200,
+      "metier": "Mineur",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 59,
+      "description": "Ressource du mineur accessible au niveau 200 du métier.",
+      "id": 175
+    },
+    {
+      "key": "mine-14",
+      "name": "Cristal pur",
+      "level": 200,
+      "metier": "Mineur",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 59,
+      "description": "Ressource du mineur accessible au niveau 200 du métier.",
+      "id": 176
+    },
+    {
+      "key": "herbe-0",
+      "name": "Ortie",
+      "level": 0,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 3,
+      "description": "Ressource de l’herboriste accessible au niveau 0 du métier, utilisée en alchimie.",
+      "id": 177
+    },
+    {
+      "key": "herbe-1",
+      "name": "Camomille",
+      "level": 20,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 5,
+      "description": "Ressource de l’herboriste accessible au niveau 20 du métier, utilisée en alchimie.",
+      "id": 178
+    },
+    {
+      "key": "herbe-2",
+      "name": "Bolet luisant",
+      "level": 40,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 8,
+      "description": "Ressource de l’herboriste accessible au niveau 40 du métier, utilisée en alchimie.",
+      "id": 179
+    },
+    {
+      "key": "herbe-3",
+      "name": "Menthe sauvage",
+      "level": 50,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 9,
+      "description": "Ressource de l’herboriste accessible au niveau 50 du métier, utilisée en alchimie.",
+      "id": 180
+    },
+    {
+      "key": "herbe-4",
+      "name": "Lavande",
+      "level": 60,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 10,
+      "description": "Ressource de l’herboriste accessible au niveau 60 du métier, utilisée en alchimie.",
+      "id": 181
+    },
+    {
+      "key": "herbe-5",
+      "name": "Champignon corrompu",
+      "level": 80,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 13,
+      "description": "Ressource de l’herboriste accessible au niveau 80 du métier, utilisée en alchimie.",
+      "id": 182
+    },
+    {
+      "key": "herbe-6",
+      "name": "Sauge",
+      "level": 100,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": 5,
+      "sale_price": 15,
+      "description": "Ressource de l’herboriste accessible au niveau 100 du métier, utilisée en alchimie.",
+      "previous": {
+        "id": 5,
+        "name": "Feuille de sauge des bois",
+        "description": "Une sauge commune des sous-bois, amère et tenace.",
+        "prix_vente": 6,
+        "image": "plante_herboriste.png",
+        "metier_id": 1,
+        "niveau_ressource": 1,
+        "image_carte": "sauge-des-bois-carte"
+      },
+      "id": 5
+    },
+    {
+      "key": "herbe-7",
+      "name": "Fleur enchantée",
+      "level": 120,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 18,
+      "description": "Ressource de l’herboriste accessible au niveau 120 du métier, utilisée en alchimie.",
+      "id": 183
+    },
+    {
+      "key": "herbe-8",
+      "name": "Morille des songes",
+      "level": 140,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 20,
+      "description": "Ressource de l’herboriste accessible au niveau 140 du métier, utilisée en alchimie.",
+      "id": 184
+    },
+    {
+      "key": "herbe-9",
+      "name": "Mandragore",
+      "level": 150,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 21,
+      "description": "Ressource de l’herboriste accessible au niveau 150 du métier, utilisée en alchimie.",
+      "id": 185
+    },
+    {
+      "key": "herbe-10",
+      "name": "Orchidée lunaire",
+      "level": 160,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 23,
+      "description": "Ressource de l’herboriste accessible au niveau 160 du métier, utilisée en alchimie.",
+      "id": 186
+    },
+    {
+      "key": "herbe-11",
+      "name": "Amanite spectrale",
+      "level": 180,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 25,
+      "description": "Ressource de l’herboriste accessible au niveau 180 du métier, utilisée en alchimie.",
+      "id": 187
+    },
+    {
+      "key": "herbe-12",
+      "name": "Fleur de l’arbre-monde",
+      "level": 200,
+      "metier": "Herboriste",
+      "image": null,
+      "source": null,
+      "reuse_id": null,
+      "sale_price": 28,
+      "description": "Ressource de l’herboriste accessible au niveau 200 du métier, utilisée en alchimie.",
+      "id": 188
+    }
+  ],
+  "potions": [
+    {
+      "source_index": 1,
+      "name": "Potion d’intelligence — Améthyste obscure",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 0,
+      "value": 5,
+      "duration": 600,
+      "description": "+5 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-001.png",
+      "source": "256px/potions_various/amethyst_purple_poison_vial_256px_01.png",
+      "sha256": "37cc6025610978ec6a8a564dbc124983eb1064809d2c6a8973954ac64c99e3af",
+      "sale_price": 3,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8
+      },
+      "craft_seconds": 20,
+      "craft_xp": 5,
+      "difficulty": 1,
+      "buff_id": 6,
+      "id": 3,
+      "recompense_id": 25,
+      "recette_id": 4,
+      "ingredient_ids": [
+        {
+          "id": 6,
+          "objet_id": 177,
+          "quantity": 8
+        }
+      ]
+    },
+    {
+      "source_index": 3,
+      "name": "Potion de dextérité — Bouillon verdoyant",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 0,
+      "value": 5,
+      "duration": 600,
+      "description": "+5 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-003.png",
+      "source": "256px/potions_various/bubbling_green_brew_256px_03.png",
+      "sha256": "576e966f15cf4b55c5a51cc8ad93a1814caad27182648d9ffd3c1f83ebfb6115",
+      "sale_price": 3,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8
+      },
+      "craft_seconds": 20,
+      "craft_xp": 5,
+      "difficulty": 1,
+      "buff_id": 7,
+      "id": 4,
+      "recompense_id": 26,
+      "recette_id": 5,
+      "ingredient_ids": [
+        {
+          "id": 7,
+          "objet_id": 177,
+          "quantity": 8
+        }
+      ]
+    },
+    {
+      "source_index": 7,
+      "name": "Potion de mana — Azur limpide",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 0,
+      "value": 25,
+      "duration": 0,
+      "description": "Rend 25 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-007.png",
+      "source": "256px/potions_various/clear_glass_potion_bottle_256px_07.png",
+      "sha256": "b53fdd36e315e34f51ad59ba93e1422a7eb012878dd6661ef902b1fe573fe70c",
+      "sale_price": 3,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8
+      },
+      "craft_seconds": 20,
+      "craft_xp": 5,
+      "difficulty": 1,
+      "buff_id": null,
+      "id": 5,
+      "recompense_id": 27,
+      "recette_id": 6,
+      "ingredient_ids": [
+        {
+          "id": 8,
+          "objet_id": 177,
+          "quantity": 8
+        }
+      ]
+    },
+    {
+      "source_index": 8,
+      "name": "Potion de force — Flamme de verre",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 0,
+      "value": 5,
+      "duration": 600,
+      "description": "+5 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-008.png",
+      "source": "256px/potions_various/clear_glass_potion_bottle_256px_08.png",
+      "sha256": "0ef33681da0803a635f9ce9bba29091179895cff57143907897877674cef89d2",
+      "sale_price": 3,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8
+      },
+      "craft_seconds": 20,
+      "craft_xp": 5,
+      "difficulty": 1,
+      "buff_id": 8,
+      "id": 6,
+      "recompense_id": 28,
+      "recette_id": 7,
+      "ingredient_ids": [
+        {
+          "id": 9,
+          "objet_id": 177,
+          "quantity": 8
+        }
+      ]
+    },
+    {
+      "source_index": 9,
+      "name": "Potion de dextérité — Rosée d’émeraude",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 20,
+      "value": 9,
+      "duration": 600,
+      "description": "+9 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-009.png",
+      "source": "256px/potions_various/cork_stoppered_emerald_stamina_256px_09.png",
+      "sha256": "22b787a81df70fddfafaeb35f64460d633f94956c0e41cf1d5b634df20b56ce4",
+      "sale_price": 5,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8,
+        "herbe-1": 4
+      },
+      "craft_seconds": 60,
+      "craft_xp": 60,
+      "difficulty": 1,
+      "buff_id": 9,
+      "id": 7,
+      "recompense_id": 29,
+      "recette_id": 8,
+      "ingredient_ids": [
+        {
+          "id": 10,
+          "objet_id": 177,
+          "quantity": 8
+        },
+        {
+          "id": 11,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 14,
+      "name": "Potion de concentration — Pendentif de cristal",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 0,
+      "value": 5,
+      "duration": 600,
+      "description": "+5 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-014.png",
+      "source": "256px/potions_various/crystal_pendant_potion_vial_256px_13.png",
+      "sha256": "8beee007e6465407dcc2324a105f5fefe9cac9e2f553b4ddd240ac7fb64a9ede",
+      "sale_price": 3,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8
+      },
+      "craft_seconds": 20,
+      "craft_xp": 5,
+      "difficulty": 1,
+      "buff_id": 10,
+      "id": 8,
+      "recompense_id": 30,
+      "recette_id": 9,
+      "ingredient_ids": [
+        {
+          "id": 12,
+          "objet_id": 177,
+          "quantity": 8
+        }
+      ]
+    },
+    {
+      "source_index": 15,
+      "name": "Potion de concentration — Marche des songes",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 20,
+      "value": 9,
+      "duration": 600,
+      "description": "+9 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-015.png",
+      "source": "256px/potions_various/dream_walking_potion_256px_14.png",
+      "sha256": "f774188deb1efe918b1d821c7aed1b58ac693d78efd26549b17da59553344c1e",
+      "sale_price": 5,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8,
+        "herbe-1": 4
+      },
+      "craft_seconds": 60,
+      "craft_xp": 60,
+      "difficulty": 1,
+      "buff_id": 11,
+      "id": 9,
+      "recompense_id": 31,
+      "recette_id": 10,
+      "ingredient_ids": [
+        {
+          "id": 13,
+          "objet_id": 177,
+          "quantity": 8
+        },
+        {
+          "id": 14,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 16,
+      "name": "Potion de concentration — Rêve incandescent",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 40,
+      "value": 13,
+      "duration": 600,
+      "description": "+13 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-016.png",
+      "source": "256px/potions_various/dream_walking_potion_256px_15.png",
+      "sha256": "3e9f91420e2504f31fd84c277868995888f5965feaaf8d29b3c1a36af4039952",
+      "sale_price": 7,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-2": 4,
+        "herbe-1": 4
+      },
+      "craft_seconds": 100,
+      "craft_xp": 120,
+      "difficulty": 1,
+      "buff_id": 12,
+      "id": 10,
+      "recompense_id": 32,
+      "recette_id": 11,
+      "ingredient_ids": [
+        {
+          "id": 15,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 16,
+          "objet_id": 179,
+          "quantity": 4
+        },
+        {
+          "id": 17,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 17,
+      "name": "Potion de dextérité — Vigueur sylvestre",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 40,
+      "value": 13,
+      "duration": 600,
+      "description": "+13 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-017.png",
+      "source": "256px/potions_various/emerald_green_stamina_potion_256px_16.png",
+      "sha256": "3a2c0cc0912414b12c9004c462b48a668b32118e8953f2b51b06dc2105abbc18",
+      "sale_price": 7,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-2": 4,
+        "herbe-1": 4
+      },
+      "craft_seconds": 100,
+      "craft_xp": 120,
+      "difficulty": 1,
+      "buff_id": 13,
+      "id": 11,
+      "recompense_id": 33,
+      "recette_id": 12,
+      "ingredient_ids": [
+        {
+          "id": 18,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 19,
+          "objet_id": 179,
+          "quantity": 4
+        },
+        {
+          "id": 20,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 23,
+      "name": "Potion de force — Cristal incandescent",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 20,
+      "value": 9,
+      "duration": 600,
+      "description": "+9 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-023.png",
+      "source": "256px/potions_various/glowing_crystal_elixir_256px_22.png",
+      "sha256": "ae1cc11eb8da3df5386d83688adcb56004be19c4f95b56277287fcf51f400cd9",
+      "sale_price": 5,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8,
+        "herbe-1": 4
+      },
+      "craft_seconds": 60,
+      "craft_xp": 60,
+      "difficulty": 1,
+      "buff_id": 14,
+      "id": 12,
+      "recompense_id": 34,
+      "recette_id": 13,
+      "ingredient_ids": [
+        {
+          "id": 21,
+          "objet_id": 177,
+          "quantity": 8
+        },
+        {
+          "id": 22,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 24,
+      "name": "Potion de force — Gourde ambrée",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 40,
+      "value": 13,
+      "duration": 600,
+      "description": "+13 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-024.png",
+      "source": "256px/potions_various/gourd_shaped_potion_bottle_256px_23.png",
+      "sha256": "3788cfe92bf4d578fd52b599d49571c5b382e9fcb80f32b3eb18704f901095ea",
+      "sale_price": 7,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-2": 4,
+        "herbe-1": 4
+      },
+      "craft_seconds": 100,
+      "craft_xp": 120,
+      "difficulty": 1,
+      "buff_id": 15,
+      "id": 13,
+      "recompense_id": 35,
+      "recette_id": 14,
+      "ingredient_ids": [
+        {
+          "id": 23,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 24,
+          "objet_id": 179,
+          "quantity": 4
+        },
+        {
+          "id": 25,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 27,
+      "name": "Potion de mana — Saphir léger",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 20,
+      "value": 65,
+      "duration": 0,
+      "description": "Rend 65 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-027.png",
+      "source": "256px/potions_various/half_empty_sapphire_mana_flask_256px_26.png",
+      "sha256": "622f89463b0acafa5d59bd485605710b0247dc3c49f6b56203a411f0587c35f2",
+      "sale_price": 5,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8,
+        "herbe-1": 4
+      },
+      "craft_seconds": 60,
+      "craft_xp": 60,
+      "difficulty": 1,
+      "buff_id": null,
+      "id": 14,
+      "recompense_id": 36,
+      "recette_id": 15,
+      "ingredient_ids": [
+        {
+          "id": 26,
+          "objet_id": 177,
+          "quantity": 8
+        },
+        {
+          "id": 27,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 28,
+      "name": "Potion de mana — Saphir profond",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 40,
+      "value": 105,
+      "duration": 0,
+      "description": "Rend 105 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-028.png",
+      "source": "256px/potions_various/half_empty_sapphire_mana_flask_256px_27.png",
+      "sha256": "8d1c0a91580a4438d1d924a98eef78626a3fb72b38660319af8d6b42d9199a6e",
+      "sale_price": 7,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-2": 4,
+        "herbe-1": 4
+      },
+      "craft_seconds": 100,
+      "craft_xp": 120,
+      "difficulty": 1,
+      "buff_id": null,
+      "id": 15,
+      "recompense_id": 37,
+      "recette_id": 16,
+      "ingredient_ids": [
+        {
+          "id": 28,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 29,
+          "objet_id": 179,
+          "quantity": 4
+        },
+        {
+          "id": 30,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 29,
+      "name": "Potion de vie — Sang vermeil",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 0,
+      "value": 80,
+      "duration": 0,
+      "description": "Rend 80 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-029.png",
+      "source": "256px/potions_various/half_full_crimson_elixir_bottle_256px_28.png",
+      "sha256": "65976b46b4f5cb623b8a82786c9406396bb02e0c759e2f229e608b37a93943b4",
+      "sale_price": 3,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8
+      },
+      "craft_seconds": 20,
+      "craft_xp": 5,
+      "difficulty": 1,
+      "buff_id": null,
+      "id": 16,
+      "recompense_id": 38,
+      "recette_id": 17,
+      "ingredient_ids": [
+        {
+          "id": 31,
+          "objet_id": 177,
+          "quantity": 8
+        }
+      ]
+    },
+    {
+      "source_index": 30,
+      "name": "Potion d’intelligence — Brume violette",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 20,
+      "value": 9,
+      "duration": 600,
+      "description": "+9 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-030.png",
+      "source": "256px/potions_various/half_full_violet_potion_flask_256px_29.png",
+      "sha256": "66beb235673236651dafd8e3c123e4109dadb11f459b58b7524d8e51e8f8fb2f",
+      "sale_price": 5,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8,
+        "herbe-1": 4
+      },
+      "craft_seconds": 60,
+      "craft_xp": 60,
+      "difficulty": 1,
+      "buff_id": 16,
+      "id": 17,
+      "recompense_id": 39,
+      "recette_id": 18,
+      "ingredient_ids": [
+        {
+          "id": 32,
+          "objet_id": 177,
+          "quantity": 8
+        },
+        {
+          "id": 33,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 31,
+      "name": "Potion de dextérité — Finesse d’émeraude",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 50,
+      "value": 15,
+      "duration": 600,
+      "description": "+15 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-031.png",
+      "source": "256px/potions_various/half_poured_emerald_stamina_vial_256px_30.png",
+      "sha256": "de73da301dcd13b39302671b0d7f31c9f89cdd9689544aa003ec1448e3f0cf2e",
+      "sale_price": 8,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-3": 4,
+        "herbe-2": 4
+      },
+      "craft_seconds": 120,
+      "craft_xp": 150,
+      "difficulty": 2,
+      "buff_id": 17,
+      "id": 18,
+      "recompense_id": 40,
+      "recette_id": 19,
+      "ingredient_ids": [
+        {
+          "id": 34,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 35,
+          "objet_id": 180,
+          "quantity": 4
+        },
+        {
+          "id": 36,
+          "objet_id": 179,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 32,
+      "name": "Potion de force — Ambre hexagonal",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 40,
+      "value": 13,
+      "duration": 600,
+      "description": "+13 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-032.png",
+      "source": "256px/potions_various/hexagonal_apothecary_bottle_256px_31.png",
+      "sha256": "eabf6f33c09aac93c3ca71d82f286e8af44fa5ad85c0ed62619797d6f785b874",
+      "sale_price": 7,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-2": 4,
+        "herbe-1": 4
+      },
+      "craft_seconds": 100,
+      "craft_xp": 120,
+      "difficulty": 1,
+      "buff_id": 15,
+      "id": 19,
+      "recompense_id": 41,
+      "recette_id": 20,
+      "ingredient_ids": [
+        {
+          "id": 37,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 38,
+          "objet_id": 179,
+          "quantity": 4
+        },
+        {
+          "id": 39,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 33,
+      "name": "Potion de mana — Souffle de givre",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 50,
+      "value": 125,
+      "duration": 0,
+      "description": "Rend 125 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-033.png",
+      "source": "256px/potions_various/ice_breath_potion_256px_32.png",
+      "sha256": "347842dd650759ca90e762308c6e6a3fa1644c3d23c36d74835dd56135fb602a",
+      "sale_price": 8,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-3": 4,
+        "herbe-2": 4
+      },
+      "craft_seconds": 120,
+      "craft_xp": 150,
+      "difficulty": 2,
+      "buff_id": null,
+      "id": 20,
+      "recompense_id": 42,
+      "recette_id": 21,
+      "ingredient_ids": [
+        {
+          "id": 40,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 41,
+          "objet_id": 180,
+          "quantity": 4
+        },
+        {
+          "id": 42,
+          "objet_id": 179,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 34,
+      "name": "Potion de force — Flamme élancée",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 50,
+      "value": 15,
+      "duration": 600,
+      "description": "+15 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-034.png",
+      "source": "256px/potions_various/long_necked_alchemy_flask_256px_33.png",
+      "sha256": "f3ca3764e2d89def2a9d76d2a8dac22be0ea73809b83f394aa013b5d6d409379",
+      "sale_price": 8,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-3": 4,
+        "herbe-2": 4
+      },
+      "craft_seconds": 120,
+      "craft_xp": 150,
+      "difficulty": 2,
+      "buff_id": 18,
+      "id": 21,
+      "recompense_id": 43,
+      "recette_id": 22,
+      "ingredient_ids": [
+        {
+          "id": 43,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 44,
+          "objet_id": 180,
+          "quantity": 4
+        },
+        {
+          "id": 45,
+          "objet_id": 179,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 35,
+      "name": "Potion de concentration — Éclat du destin",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 50,
+      "value": 15,
+      "duration": 600,
+      "description": "+15 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-035.png",
+      "source": "256px/potions_various/luck_enhancement_potion_256px_34.png",
+      "sha256": "c8afc31ee4e9419b9df459f641f3a645c23b0ea6d2ba2629705671762775d5b2",
+      "sale_price": 8,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-3": 4,
+        "herbe-2": 4
+      },
+      "craft_seconds": 120,
+      "craft_xp": 150,
+      "difficulty": 2,
+      "buff_id": 19,
+      "id": 22,
+      "recompense_id": 44,
+      "recette_id": 23,
+      "ingredient_ids": [
+        {
+          "id": 46,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 47,
+          "objet_id": 180,
+          "quantity": 4
+        },
+        {
+          "id": 48,
+          "objet_id": 179,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 36,
+      "name": "Potion de mana — Goutte des lagons",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 50,
+      "value": 125,
+      "duration": 0,
+      "description": "Rend 125 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-036.png",
+      "source": "256px/potions_various/nearly_empty_teal_mana_vial_256px_35.png",
+      "sha256": "c3cfdbbc4b91efcb2ba971d1dc2e4c53b2a4f0deeb8723c1b20d8fbdd142bfc5",
+      "sale_price": 8,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-3": 4,
+        "herbe-2": 4
+      },
+      "craft_seconds": 120,
+      "craft_xp": 150,
+      "difficulty": 2,
+      "buff_id": null,
+      "id": 23,
+      "recompense_id": 45,
+      "recette_id": 24,
+      "ingredient_ids": [
+        {
+          "id": 49,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 50,
+          "objet_id": 180,
+          "quantity": 4
+        },
+        {
+          "id": 51,
+          "objet_id": 179,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 37,
+      "name": "Potion de concentration — Reflet d’argent",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 60,
+      "value": 17,
+      "duration": 600,
+      "description": "+17 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-037.png",
+      "source": "256px/potions_various/one_third_full_silver_elixir_256px_36.png",
+      "sha256": "30c239948e9557e0cf5d92620264eab699e5c9eff4aaea12365596ff1896f302",
+      "sale_price": 9,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-4": 4,
+        "herbe-3": 4
+      },
+      "craft_seconds": 140,
+      "craft_xp": 180,
+      "difficulty": 2,
+      "buff_id": 20,
+      "id": 24,
+      "recompense_id": 46,
+      "recette_id": 25,
+      "ingredient_ids": [
+        {
+          "id": 52,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 53,
+          "objet_id": 181,
+          "quantity": 4
+        },
+        {
+          "id": 54,
+          "objet_id": 180,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 38,
+      "name": "Potion de vie — Chaleur du foyer",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 20,
+      "value": 200,
+      "duration": 0,
+      "description": "Rend 200 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-038.png",
+      "source": "256px/potions_various/round_potion_flask_256px_37.png",
+      "sha256": "17739058b905ffefacaba78b6bd6e889ed44503d40987b63e544c9e2ea2d03f7",
+      "sale_price": 5,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 8,
+        "herbe-1": 4
+      },
+      "craft_seconds": 60,
+      "craft_xp": 60,
+      "difficulty": 1,
+      "buff_id": null,
+      "id": 25,
+      "recompense_id": 47,
+      "recette_id": 26,
+      "ingredient_ids": [
+        {
+          "id": 55,
+          "objet_id": 177,
+          "quantity": 8
+        },
+        {
+          "id": 56,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 39,
+      "name": "Potion de vie — Cœur de rubis",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 40,
+      "value": 320,
+      "duration": 0,
+      "description": "Rend 320 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-039.png",
+      "source": "256px/potions_various/ruby_potion_with_floating_heart_256px_38.png",
+      "sha256": "d961acf379016db861717def06ee06a54fa27652080bb92a5408112c9939b98e",
+      "sale_price": 7,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-2": 4,
+        "herbe-1": 4
+      },
+      "craft_seconds": 100,
+      "craft_xp": 120,
+      "difficulty": 1,
+      "buff_id": null,
+      "id": 26,
+      "recompense_id": 48,
+      "recette_id": 27,
+      "ingredient_ids": [
+        {
+          "id": 57,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 58,
+          "objet_id": 179,
+          "quantity": 4
+        },
+        {
+          "id": 59,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 40,
+      "name": "Potion de vie — Rubis vivant",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 50,
+      "value": 380,
+      "duration": 0,
+      "description": "Rend 380 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-040.png",
+      "source": "256px/potions_various/ruby_red_healing_potion_256px_39.png",
+      "sha256": "42689d64c8fbe2fe51b049e3f543d9da27a57d223a6eb4b27cea8e394b5b5bb8",
+      "sale_price": 8,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-3": 4,
+        "herbe-2": 4
+      },
+      "craft_seconds": 120,
+      "craft_xp": 150,
+      "difficulty": 2,
+      "buff_id": null,
+      "id": 27,
+      "recompense_id": 49,
+      "recette_id": 28,
+      "ingredient_ids": [
+        {
+          "id": 60,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 61,
+          "objet_id": 180,
+          "quantity": 4
+        },
+        {
+          "id": 62,
+          "objet_id": 179,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 41,
+      "name": "Potion de force — Tonique d’ambre",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 60,
+      "value": 17,
+      "duration": 600,
+      "description": "+17 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-041.png",
+      "source": "256px/potions_various/sealed_amber_tonic_flask_256px_40.png",
+      "sha256": "20b1e14281a83d180572ed0223b759bbf2ba7a2f45f00182435eab61b3d774e0",
+      "sale_price": 9,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-4": 4,
+        "herbe-3": 4
+      },
+      "craft_seconds": 140,
+      "craft_xp": 180,
+      "difficulty": 2,
+      "buff_id": 21,
+      "id": 28,
+      "recompense_id": 50,
+      "recette_id": 29,
+      "ingredient_ids": [
+        {
+          "id": 63,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 64,
+          "objet_id": 181,
+          "quantity": 4
+        },
+        {
+          "id": 65,
+          "objet_id": 180,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 42,
+      "name": "Potion de force — Écailles ardentes",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 80,
+      "value": 21,
+      "duration": 600,
+      "description": "+21 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-042.png",
+      "source": "256px/potions_various/sealed_dragon_scale_elixir_flask_256px_41.png",
+      "sha256": "4ff3e811423178a06de38e3b491056e422cbe01076ac4aef74a510823add42a7",
+      "sale_price": 11,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-5": 4,
+        "herbe-4": 4
+      },
+      "craft_seconds": 180,
+      "craft_xp": 240,
+      "difficulty": 2,
+      "buff_id": 22,
+      "id": 29,
+      "recompense_id": 51,
+      "recette_id": 30,
+      "ingredient_ids": [
+        {
+          "id": 66,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 67,
+          "objet_id": 182,
+          "quantity": 4
+        },
+        {
+          "id": 68,
+          "objet_id": 181,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 43,
+      "name": "Potion de dextérité — Souplesse du changeforme",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 60,
+      "value": 17,
+      "duration": 600,
+      "description": "+17 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-043.png",
+      "source": "256px/potions_various/shapeshifter_tonic_256px_42.png",
+      "sha256": "be9386a9c6c6fa3e11fb97a6b865ba23f2cca7b904c467b46c8d8e998f88aecb",
+      "sale_price": 9,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-4": 4,
+        "herbe-3": 4
+      },
+      "craft_seconds": 140,
+      "craft_xp": 180,
+      "difficulty": 2,
+      "buff_id": 23,
+      "id": 30,
+      "recompense_id": 52,
+      "recette_id": 31,
+      "ingredient_ids": [
+        {
+          "id": 69,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 70,
+          "objet_id": 181,
+          "quantity": 4
+        },
+        {
+          "id": 71,
+          "objet_id": 180,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 49,
+      "name": "Potion de mana — Clarté lunaire",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 60,
+      "value": 145,
+      "duration": 0,
+      "description": "Rend 145 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-049.png",
+      "source": "256px/potions_various/silver_moonlight_elixir_256px_49.png",
+      "sha256": "1ffa7f6bae8feafa6831b4b753ac6c91a15388d95c7e2d587b6fe9bf3966075d",
+      "sale_price": 9,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-4": 4,
+        "herbe-3": 4
+      },
+      "craft_seconds": 140,
+      "craft_xp": 180,
+      "difficulty": 2,
+      "buff_id": null,
+      "id": 31,
+      "recompense_id": 53,
+      "recette_id": 32,
+      "ingredient_ids": [
+        {
+          "id": 72,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 73,
+          "objet_id": 181,
+          "quantity": 4
+        },
+        {
+          "id": 74,
+          "objet_id": 180,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 54,
+      "name": "Potion de force — Braise carrée",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 100,
+      "value": 25,
+      "duration": 600,
+      "description": "+25 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-054.png",
+      "source": "256px/potions_various/square_apothecary_bottle_256px_54.png",
+      "sha256": "fdb2eebd7fd874b66e63f7d9bcac7b288f8456046f28110a3d5bca8a256b9e39",
+      "sale_price": 13,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-6": 4,
+        "herbe-5": 4
+      },
+      "craft_seconds": 220,
+      "craft_xp": 300,
+      "difficulty": 3,
+      "buff_id": 24,
+      "id": 32,
+      "recompense_id": 54,
+      "recette_id": 33,
+      "ingredient_ids": [
+        {
+          "id": 75,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 76,
+          "objet_id": 5,
+          "quantity": 4
+        },
+        {
+          "id": 77,
+          "objet_id": 182,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 55,
+      "name": "Potion de force — Réserve de l’apothicaire",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 100,
+      "value": 25,
+      "duration": 600,
+      "description": "+25 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-055.png",
+      "source": "256px/potions_various/square_apothecary_bottle_256px_55.png",
+      "sha256": "ac4611336e07eb496be1b6af0418299cb415bc876ab8ce6e544e1c4fb0608c5f",
+      "sale_price": 13,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-6": 4,
+        "herbe-5": 4
+      },
+      "craft_seconds": 220,
+      "craft_xp": 300,
+      "difficulty": 3,
+      "buff_id": 24,
+      "id": 33,
+      "recompense_id": 55,
+      "recette_id": 34,
+      "ingredient_ids": [
+        {
+          "id": 78,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 79,
+          "objet_id": 5,
+          "quantity": 4
+        },
+        {
+          "id": 80,
+          "objet_id": 182,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 56,
+      "name": "Potion de force — Feuille de chêne",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 120,
+      "value": 29,
+      "duration": 600,
+      "description": "+29 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-056.png",
+      "source": "256px/potions_with_an_item/amber_elixir_with_oak_leaf_256px_01.png",
+      "sha256": "8ddcad1c062a7c18f3ef709ecd74a07c5eb63e5df3c05629738f5565d2569612",
+      "sale_price": 15,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-7": 4,
+        "herbe-6": 4
+      },
+      "craft_seconds": 260,
+      "craft_xp": 360,
+      "difficulty": 3,
+      "buff_id": 25,
+      "id": 34,
+      "recompense_id": 56,
+      "recette_id": 35,
+      "ingredient_ids": [
+        {
+          "id": 81,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 82,
+          "objet_id": 183,
+          "quantity": 4
+        },
+        {
+          "id": 83,
+          "objet_id": 5,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 57,
+      "name": "Potion de dextérité — Sève bouillonnante",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 80,
+      "value": 21,
+      "duration": 600,
+      "description": "+21 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-057.png",
+      "source": "256px/potions_with_an_item/bubbling_green_brew_256px_02.png",
+      "sha256": "fe4935f51dd1d0039abcc31de18702889cb1bab426546c2651fe1c13de91ba36",
+      "sale_price": 11,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-5": 4,
+        "herbe-4": 4
+      },
+      "craft_seconds": 180,
+      "craft_xp": 240,
+      "difficulty": 2,
+      "buff_id": 26,
+      "id": 35,
+      "recompense_id": 57,
+      "recette_id": 36,
+      "ingredient_ids": [
+        {
+          "id": 84,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 85,
+          "objet_id": 182,
+          "quantity": 4
+        },
+        {
+          "id": 86,
+          "objet_id": 181,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 58,
+      "name": "Potion de force — Vigueur draconique",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 140,
+      "value": 33,
+      "duration": 600,
+      "description": "+33 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-058.png",
+      "source": "256px/potions_with_an_item/dragon_scale_elixir_256px_03.png",
+      "sha256": "7da27023ca0e513bddd614a6d4d8088fd8ef93955b047daf8ddefd018a27b583",
+      "sale_price": 17,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-8": 4,
+        "herbe-7": 4
+      },
+      "craft_seconds": 300,
+      "craft_xp": 420,
+      "difficulty": 3,
+      "buff_id": 27,
+      "id": 36,
+      "recompense_id": 58,
+      "recette_id": 37,
+      "ingredient_ids": [
+        {
+          "id": 87,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 88,
+          "objet_id": 184,
+          "quantity": 4
+        },
+        {
+          "id": 89,
+          "objet_id": 183,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 60,
+      "name": "Potion de mana — Éclats de glace",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 80,
+      "value": 185,
+      "duration": 0,
+      "description": "Rend 185 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-060.png",
+      "source": "256px/potions_with_an_item/elixir_with_floating_ice_shards_256px_05.png",
+      "sha256": "253da86dc6e744b9f3e8154d7dad07a0eeeba52c761d1fb768f0b7ffe4250f62",
+      "sale_price": 11,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-5": 4,
+        "herbe-4": 4
+      },
+      "craft_seconds": 180,
+      "craft_xp": 240,
+      "difficulty": 2,
+      "buff_id": null,
+      "id": 37,
+      "recompense_id": 59,
+      "recette_id": 38,
+      "ingredient_ids": [
+        {
+          "id": 90,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 91,
+          "objet_id": 182,
+          "quantity": 4
+        },
+        {
+          "id": 92,
+          "objet_id": 181,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 61,
+      "name": "Potion d’intelligence — Fragment de gemme",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 40,
+      "value": 13,
+      "duration": 600,
+      "description": "+13 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-061.png",
+      "source": "256px/potions_with_an_item/elixir_with_gem_fragment_256px_06.png",
+      "sha256": "58ec3fa6b5966a0dd44cd8f4668593b62806fc1799bce7f62ec752930c61156c",
+      "sale_price": 7,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-2": 4,
+        "herbe-1": 4
+      },
+      "craft_seconds": 100,
+      "craft_xp": 120,
+      "difficulty": 1,
+      "buff_id": 28,
+      "id": 38,
+      "recompense_id": 60,
+      "recette_id": 39,
+      "ingredient_ids": [
+        {
+          "id": 93,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 94,
+          "objet_id": 179,
+          "quantity": 4
+        },
+        {
+          "id": 95,
+          "objet_id": 178,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 63,
+      "name": "Potion d’intelligence — Regard démoniaque",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 60,
+      "value": 17,
+      "duration": 600,
+      "description": "+17 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-063.png",
+      "source": "256px/potions_with_an_item/elixir_with_single_demon_eye_256px_08.png",
+      "sha256": "bb43d7f01e6a387e530d00fe7ee305dddd6cbe858ce9e99b593670271ba8d9ab",
+      "sale_price": 9,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-4": 4,
+        "herbe-3": 4
+      },
+      "craft_seconds": 140,
+      "craft_xp": 180,
+      "difficulty": 2,
+      "buff_id": 29,
+      "id": 39,
+      "recompense_id": 61,
+      "recette_id": 40,
+      "ingredient_ids": [
+        {
+          "id": 96,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 97,
+          "objet_id": 181,
+          "quantity": 4
+        },
+        {
+          "id": 98,
+          "objet_id": 180,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 64,
+      "name": "Potion de dextérité — Agilité du têtard",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 120,
+      "value": 29,
+      "duration": 600,
+      "description": "+29 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-064.png",
+      "source": "256px/potions_with_an_item/elixir_with_tiny_tadpole_256px_09.png",
+      "sha256": "72c6fdce35ce75bf897047aae8180fe8c8379cd65ebabf47e038702c5f5b226d",
+      "sale_price": 15,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-7": 4,
+        "herbe-6": 4
+      },
+      "craft_seconds": 260,
+      "craft_xp": 360,
+      "difficulty": 3,
+      "buff_id": 30,
+      "id": 40,
+      "recompense_id": 62,
+      "recette_id": 41,
+      "ingredient_ids": [
+        {
+          "id": 99,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 100,
+          "objet_id": 183,
+          "quantity": 4
+        },
+        {
+          "id": 101,
+          "objet_id": 5,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 68,
+      "name": "Potion de vie — Nectar féerique",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 60,
+      "value": 440,
+      "duration": 0,
+      "description": "Rend 440 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-068.png",
+      "source": "256px/potions_with_an_item/faerie_nectar_bottle_256px_13.png",
+      "sha256": "c04c1b70d47b1bc4f596684f2921331da7c24ae12f4025549bbaba7c060035c0",
+      "sale_price": 9,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-4": 4,
+        "herbe-3": 4
+      },
+      "craft_seconds": 140,
+      "craft_xp": 180,
+      "difficulty": 2,
+      "buff_id": null,
+      "id": 41,
+      "recompense_id": 63,
+      "recette_id": 42,
+      "ingredient_ids": [
+        {
+          "id": 102,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 103,
+          "objet_id": 181,
+          "quantity": 4
+        },
+        {
+          "id": 104,
+          "objet_id": 180,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 69,
+      "name": "Potion de force — Souffle ardent",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 150,
+      "value": 35,
+      "duration": 600,
+      "description": "+35 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-069.png",
+      "source": "256px/potions_with_an_item/fire_breath_potion_256px_14.png",
+      "sha256": "824e4f9b8db73b0962a3f7f19aabb03f69c715dc88a7a265d02674e3aab38e3a",
+      "sale_price": 18,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-9": 4,
+        "herbe-8": 4
+      },
+      "craft_seconds": 320,
+      "craft_xp": 450,
+      "difficulty": 4,
+      "buff_id": 31,
+      "id": 42,
+      "recompense_id": 64,
+      "recette_id": 43,
+      "ingredient_ids": [
+        {
+          "id": 105,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 106,
+          "objet_id": 185,
+          "quantity": 4
+        },
+        {
+          "id": 107,
+          "objet_id": 184,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 70,
+      "name": "Potion de mana — Pointe de givre",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 100,
+      "value": 225,
+      "duration": 0,
+      "description": "Rend 225 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-070.png",
+      "source": "256px/potions_with_an_item/flask_with_jagged_ice_fragment_256px_16.png",
+      "sha256": "9ab992dd83372f17142fddec33548b52b5cd3bf2c664251458c996eb56294659",
+      "sale_price": 13,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-6": 4,
+        "herbe-5": 4
+      },
+      "craft_seconds": 220,
+      "craft_xp": 300,
+      "difficulty": 3,
+      "buff_id": null,
+      "id": 43,
+      "recompense_id": 65,
+      "recette_id": 44,
+      "ingredient_ids": [
+        {
+          "id": 108,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 109,
+          "objet_id": 5,
+          "quantity": 4
+        },
+        {
+          "id": 110,
+          "objet_id": 182,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 71,
+      "name": "Potion de concentration — Gland de sagesse",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 80,
+      "value": 21,
+      "duration": 600,
+      "description": "+21 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-071.png",
+      "source": "256px/potions_with_an_item/flask_with_single_acorn_inside_256px_17.png",
+      "sha256": "869798db3be568e46bfc85e42a877a20bb2514289533ecf57711d267250b6219",
+      "sale_price": 11,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-5": 4,
+        "herbe-4": 4
+      },
+      "craft_seconds": 180,
+      "craft_xp": 240,
+      "difficulty": 2,
+      "buff_id": 32,
+      "id": 44,
+      "recompense_id": 66,
+      "recette_id": 45,
+      "ingredient_ids": [
+        {
+          "id": 111,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 112,
+          "objet_id": 182,
+          "quantity": 4
+        },
+        {
+          "id": 113,
+          "objet_id": 181,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 72,
+      "name": "Potion de concentration — Mémoire du chêne",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 120,
+      "value": 29,
+      "duration": 600,
+      "description": "+29 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-072.png",
+      "source": "256px/potions_with_an_item/flask_with_single_acorn_inside_256px_18.png",
+      "sha256": "452931f8ef80e649f4ac058240ebf87083a55c36218c5d54ab48158c9ead5055",
+      "sale_price": 15,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-7": 4,
+        "herbe-6": 4
+      },
+      "craft_seconds": 260,
+      "craft_xp": 360,
+      "difficulty": 3,
+      "buff_id": 33,
+      "id": 45,
+      "recompense_id": 67,
+      "recette_id": 46,
+      "ingredient_ids": [
+        {
+          "id": 114,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 115,
+          "objet_id": 183,
+          "quantity": 4
+        },
+        {
+          "id": 116,
+          "objet_id": 5,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 73,
+      "name": "Potion de force — Poigne spectrale",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 160,
+      "value": 37,
+      "duration": 600,
+      "description": "+37 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-073.png",
+      "source": "256px/potions_with_an_item/flask_with_skeleton_hand_256px_15.png",
+      "sha256": "8d6ce2157f11bc8a7772a1d21ad72e96f311e5275ce9088a8391f78d46ade082",
+      "sale_price": 19,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-10": 4,
+        "herbe-9": 4
+      },
+      "craft_seconds": 340,
+      "craft_xp": 480,
+      "difficulty": 4,
+      "buff_id": 34,
+      "id": 46,
+      "recompense_id": 68,
+      "recette_id": 47,
+      "ingredient_ids": [
+        {
+          "id": 117,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 118,
+          "objet_id": 186,
+          "quantity": 4
+        },
+        {
+          "id": 119,
+          "objet_id": 185,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 74,
+      "name": "Potion d’intelligence — Vapeur arcanique",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 80,
+      "value": 21,
+      "duration": 600,
+      "description": "+21 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-074.png",
+      "source": "256px/potions_with_an_item/fuming_uncorked_alchemy_flask_256px_19.png",
+      "sha256": "809c33eadd1e4a62458ca9267141b92cc67d3e5d1257b3842280578958f2f87a",
+      "sale_price": 11,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-5": 4,
+        "herbe-4": 4
+      },
+      "craft_seconds": 180,
+      "craft_xp": 240,
+      "difficulty": 2,
+      "buff_id": 35,
+      "id": 47,
+      "recompense_id": 69,
+      "recette_id": 48,
+      "ingredient_ids": [
+        {
+          "id": 120,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 121,
+          "objet_id": 182,
+          "quantity": 4
+        },
+        {
+          "id": 122,
+          "objet_id": 181,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 75,
+      "name": "Potion de force — Cristal d’ambre",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 160,
+      "value": 37,
+      "duration": 600,
+      "description": "+37 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-075.png",
+      "source": "256px/potions_with_an_item/hexagonal_potion_with_amber_crystal_256px_20.png",
+      "sha256": "fd1a2f53063cf7c6af9373695c3554b629c882de1768441e920026d5b88ca823",
+      "sale_price": 19,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-10": 4,
+        "herbe-9": 4
+      },
+      "craft_seconds": 340,
+      "craft_xp": 480,
+      "difficulty": 4,
+      "buff_id": 34,
+      "id": 48,
+      "recompense_id": 70,
+      "recette_id": 49,
+      "ingredient_ids": [
+        {
+          "id": 123,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 124,
+          "objet_id": 186,
+          "quantity": 4
+        },
+        {
+          "id": 125,
+          "objet_id": 185,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 76,
+      "name": "Potion de mana — Gel cristallin",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 120,
+      "value": 265,
+      "duration": 0,
+      "description": "Rend 265 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-076.png",
+      "source": "256px/potions_with_an_item/icy_blue_freeze_tonic_256px_21.png",
+      "sha256": "db81bab5555ac85bfed45d90878847b623e5530988d7740a8a4df7e87dd19646",
+      "sale_price": 15,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-7": 4,
+        "herbe-6": 4
+      },
+      "craft_seconds": 260,
+      "craft_xp": 360,
+      "difficulty": 3,
+      "buff_id": null,
+      "id": 49,
+      "recompense_id": 71,
+      "recette_id": 50,
+      "ingredient_ids": [
+        {
+          "id": 126,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 127,
+          "objet_id": 183,
+          "quantity": 4
+        },
+        {
+          "id": 128,
+          "objet_id": 5,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 77,
+      "name": "Potion de mana — Givre éternel",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 140,
+      "value": 305,
+      "duration": 0,
+      "description": "Rend 305 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-077.png",
+      "source": "256px/potions_with_an_item/icy_blue_freeze_tonic_256px_22.png",
+      "sha256": "032ec3b2c210aa864a5369d012efdd4bc1097f917c87d58ae30b8b5d97f45686",
+      "sale_price": 17,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-8": 4,
+        "herbe-7": 4
+      },
+      "craft_seconds": 300,
+      "craft_xp": 420,
+      "difficulty": 3,
+      "buff_id": null,
+      "id": 50,
+      "recompense_id": 72,
+      "recette_id": 51,
+      "ingredient_ids": [
+        {
+          "id": 129,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 130,
+          "objet_id": 184,
+          "quantity": 4
+        },
+        {
+          "id": 131,
+          "objet_id": 183,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 78,
+      "name": "Potion de dextérité — Vivacité de l’orage",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 140,
+      "value": 33,
+      "duration": 600,
+      "description": "+33 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-078.png",
+      "source": "256px/potions_with_an_item/lightning_storm_potion_256px_23.png",
+      "sha256": "632eb18863763237bf6ea2789a57efb98c7acc4a0a53cfb0414801a3bf1c6307",
+      "sale_price": 17,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-8": 4,
+        "herbe-7": 4
+      },
+      "craft_seconds": 300,
+      "craft_xp": 420,
+      "difficulty": 3,
+      "buff_id": 36,
+      "id": 51,
+      "recompense_id": 73,
+      "recette_id": 52,
+      "ingredient_ids": [
+        {
+          "id": 132,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 133,
+          "objet_id": 184,
+          "quantity": 4
+        },
+        {
+          "id": 134,
+          "objet_id": 183,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 79,
+      "name": "Potion de concentration — Essence élancée",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 140,
+      "value": 33,
+      "duration": 600,
+      "description": "+33 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-079.png",
+      "source": "256px/potions_with_an_item/long_necked_alchemy_flask_256px_24.png",
+      "sha256": "75cd9aad1e362afd5d3910e1ccd1d684ee21a04e04750c037e913231d6c42d68",
+      "sale_price": 17,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-8": 4,
+        "herbe-7": 4
+      },
+      "craft_seconds": 300,
+      "craft_xp": 420,
+      "difficulty": 3,
+      "buff_id": 37,
+      "id": 52,
+      "recompense_id": 74,
+      "recette_id": 53,
+      "ingredient_ids": [
+        {
+          "id": 135,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 136,
+          "objet_id": 184,
+          "quantity": 4
+        },
+        {
+          "id": 137,
+          "objet_id": 183,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 80,
+      "name": "Potion de vie — Cœur enchâssé",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 80,
+      "value": 560,
+      "duration": 0,
+      "description": "Rend 560 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-080.png",
+      "source": "256px/potions_with_an_item/love_charm_vial_256px_25.png",
+      "sha256": "3a869b4a4f4a2edf95af682a24c47e5451ca4f6da2f270ded40df977b1be7416",
+      "sale_price": 11,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-5": 4,
+        "herbe-4": 4
+      },
+      "craft_seconds": 180,
+      "craft_xp": 240,
+      "difficulty": 2,
+      "buff_id": null,
+      "id": 53,
+      "recompense_id": 75,
+      "recette_id": 54,
+      "ingredient_ids": [
+        {
+          "id": 138,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 139,
+          "objet_id": 182,
+          "quantity": 4
+        },
+        {
+          "id": 140,
+          "objet_id": 181,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 81,
+      "name": "Potion de vie — Cœur solaire",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 100,
+      "value": 680,
+      "duration": 0,
+      "description": "Rend 680 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-081.png",
+      "source": "256px/potions_with_an_item/love_charm_vial_256px_26.png",
+      "sha256": "372defe46545548ef7895ce907aa06d65a02a7b9ab2bdf5f31e88b5fd90e28d4",
+      "sale_price": 13,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-6": 4,
+        "herbe-5": 4
+      },
+      "craft_seconds": 220,
+      "craft_xp": 300,
+      "difficulty": 3,
+      "buff_id": null,
+      "id": 54,
+      "recompense_id": 76,
+      "recette_id": 55,
+      "ingredient_ids": [
+        {
+          "id": 141,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 142,
+          "objet_id": 5,
+          "quantity": 4
+        },
+        {
+          "id": 143,
+          "objet_id": 182,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 82,
+      "name": "Potion de mana — Larmes des sirènes",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 150,
+      "value": 325,
+      "duration": 0,
+      "description": "Rend 325 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-082.png",
+      "source": "256px/potions_with_an_item/mermaid_tears_vial_256px_27.png",
+      "sha256": "522d5e189abcbee21eaf066d864a4b49511301ff904628397b8938cc145fc909",
+      "sale_price": 18,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-9": 4,
+        "herbe-8": 4
+      },
+      "craft_seconds": 320,
+      "craft_xp": 450,
+      "difficulty": 4,
+      "buff_id": null,
+      "id": 55,
+      "recompense_id": 77,
+      "recette_id": 56,
+      "ingredient_ids": [
+        {
+          "id": 144,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 145,
+          "objet_id": 185,
+          "quantity": 4
+        },
+        {
+          "id": 146,
+          "objet_id": 184,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 83,
+      "name": "Potion de concentration — Lueur argentée",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 150,
+      "value": 35,
+      "duration": 600,
+      "description": "+35 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-083.png",
+      "source": "256px/potions_with_an_item/one_third_full_silver_elixir_256px_28.png",
+      "sha256": "a36b5b0f890e23846e7066dbb8a98f47a4a65891f6b59852e53a710e8c3edcb2",
+      "sale_price": 18,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-9": 4,
+        "herbe-8": 4
+      },
+      "craft_seconds": 320,
+      "craft_xp": 450,
+      "difficulty": 4,
+      "buff_id": 38,
+      "id": 56,
+      "recompense_id": 78,
+      "recette_id": 57,
+      "ingredient_ids": [
+        {
+          "id": 147,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 148,
+          "objet_id": 185,
+          "quantity": 4
+        },
+        {
+          "id": 149,
+          "objet_id": 184,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 84,
+      "name": "Potion de dextérité — Émeraude ouverte",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 150,
+      "value": 35,
+      "duration": 600,
+      "description": "+35 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-084.png",
+      "source": "256px/potions_with_an_item/open_emerald_stamina_vial_256px_29.png",
+      "sha256": "e4ebcdb55d27a7f8a24578f1f845dcf7f61b68bbd511ea3b3da5a912981166d3",
+      "sale_price": 18,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-9": 4,
+        "herbe-8": 4
+      },
+      "craft_seconds": 320,
+      "craft_xp": 450,
+      "difficulty": 4,
+      "buff_id": 39,
+      "id": 57,
+      "recompense_id": 79,
+      "recette_id": 58,
+      "ingredient_ids": [
+        {
+          "id": 150,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 151,
+          "objet_id": 185,
+          "quantity": 4
+        },
+        {
+          "id": 152,
+          "objet_id": 184,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 85,
+      "name": "Potion de vie — Larmes du phénix",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 120,
+      "value": 800,
+      "duration": 0,
+      "description": "Rend 800 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-085.png",
+      "source": "256px/potions_with_an_item/phoenix_tears_vial_256px_30.png",
+      "sha256": "8c4f5fee6d3cd5ab383900714921c96af06add42408d1ad18d2c0f1c6b79d03a",
+      "sale_price": 15,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-7": 4,
+        "herbe-6": 4
+      },
+      "craft_seconds": 260,
+      "craft_xp": 360,
+      "difficulty": 3,
+      "buff_id": null,
+      "id": 58,
+      "recompense_id": 80,
+      "recette_id": 59,
+      "ingredient_ids": [
+        {
+          "id": 153,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 154,
+          "objet_id": 183,
+          "quantity": 4
+        },
+        {
+          "id": 155,
+          "objet_id": 5,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 86,
+      "name": "Potion d’intelligence — Œil vigilant",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 100,
+      "value": 25,
+      "duration": 600,
+      "description": "+25 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-086.png",
+      "source": "256px/potions_with_an_item/potion_bottle_with_glowing_eye_256px_31.png",
+      "sha256": "6d5660ee5fece3ddac16495688df516717aa22e9d16b4a1fd0765eca0dacc304",
+      "sale_price": 13,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-6": 4,
+        "herbe-5": 4
+      },
+      "craft_seconds": 220,
+      "craft_xp": 300,
+      "difficulty": 3,
+      "buff_id": 40,
+      "id": 59,
+      "recompense_id": 81,
+      "recette_id": 60,
+      "ingredient_ids": [
+        {
+          "id": 156,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 157,
+          "objet_id": 5,
+          "quantity": 4
+        },
+        {
+          "id": 158,
+          "objet_id": 182,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 87,
+      "name": "Potion de mana — Glacier miniature",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 150,
+      "value": 325,
+      "duration": 0,
+      "description": "Rend 325 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-087.png",
+      "source": "256px/potions_with_an_item/potion_with_miniature_glacier_256px_32.png",
+      "sha256": "6473d389cc8275d1f815cd78c786187846e8999778de41668338a65564f364b4",
+      "sale_price": 18,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-9": 4,
+        "herbe-8": 4
+      },
+      "craft_seconds": 320,
+      "craft_xp": 450,
+      "difficulty": 4,
+      "buff_id": null,
+      "id": 60,
+      "recompense_id": 82,
+      "recette_id": 61,
+      "ingredient_ids": [
+        {
+          "id": 159,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 160,
+          "objet_id": 185,
+          "quantity": 4
+        },
+        {
+          "id": 161,
+          "objet_id": 184,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 88,
+      "name": "Potion de concentration — Arc-en-ciel intérieur",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 160,
+      "value": 37,
+      "duration": 600,
+      "description": "+37 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-088.png",
+      "source": "256px/potions_with_an_item/potion_with_rainbow_arc_inside_256px_33.png",
+      "sha256": "2912c7cdd39116c2f5c254a0503745478c01d9b2d90bd5b275ae1529282037a5",
+      "sale_price": 19,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-10": 4,
+        "herbe-9": 4
+      },
+      "craft_seconds": 340,
+      "craft_xp": 480,
+      "difficulty": 4,
+      "buff_id": 41,
+      "id": 61,
+      "recompense_id": 83,
+      "recette_id": 62,
+      "ingredient_ids": [
+        {
+          "id": 162,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 163,
+          "objet_id": 186,
+          "quantity": 4
+        },
+        {
+          "id": 164,
+          "objet_id": 185,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 89,
+      "name": "Potion de force — Écailles de braise",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 180,
+      "value": 41,
+      "duration": 600,
+      "description": "+41 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-089.png",
+      "source": "256px/potions_with_an_item/sealed_dragon_scale_elixir_flask_256px_34.png",
+      "sha256": "180ddd7155a24ce6ae6bbdbabd788623d1a9bf6b9b0d62029a53ae93ab6e3cc8",
+      "sale_price": 21,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-11": 4,
+        "herbe-10": 4
+      },
+      "craft_seconds": 380,
+      "craft_xp": 540,
+      "difficulty": 4,
+      "buff_id": 42,
+      "id": 62,
+      "recompense_id": 84,
+      "recette_id": 63,
+      "ingredient_ids": [
+        {
+          "id": 165,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 166,
+          "objet_id": 187,
+          "quantity": 4
+        },
+        {
+          "id": 167,
+          "objet_id": 186,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 90,
+      "name": "Potion d’intelligence — Mémoire des anciens",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 120,
+      "value": 29,
+      "duration": 600,
+      "description": "+29 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-090.png",
+      "source": "256px/potions_with_an_item/skull_shaped_potion_bottle_256px_35.png",
+      "sha256": "501a3813880c6521ae1b8df01733a97a79295ebae2f574ce5207a23dc1e47f51",
+      "sale_price": 15,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-7": 4,
+        "herbe-6": 4
+      },
+      "craft_seconds": 260,
+      "craft_xp": 360,
+      "difficulty": 3,
+      "buff_id": 43,
+      "id": 63,
+      "recompense_id": 85,
+      "recette_id": 64,
+      "ingredient_ids": [
+        {
+          "id": 168,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 169,
+          "objet_id": 183,
+          "quantity": 4
+        },
+        {
+          "id": 170,
+          "objet_id": 5,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 91,
+      "name": "Potion d’intelligence — Savoir des ombres",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 140,
+      "value": 33,
+      "duration": 600,
+      "description": "+33 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-091.png",
+      "source": "256px/potions_with_an_item/skull_shaped_potion_bottle_256px_36.png",
+      "sha256": "3b0b25edbec11facfa24a68a4ab317a713c3f4498cd15009ed809d03df9507f7",
+      "sale_price": 17,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-8": 4,
+        "herbe-7": 4
+      },
+      "craft_seconds": 300,
+      "craft_xp": 420,
+      "difficulty": 3,
+      "buff_id": 44,
+      "id": 64,
+      "recompense_id": 86,
+      "recette_id": 65,
+      "ingredient_ids": [
+        {
+          "id": 171,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 172,
+          "objet_id": 184,
+          "quantity": 4
+        },
+        {
+          "id": 173,
+          "objet_id": 183,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 92,
+      "name": "Potion de vie — Chaleur fumante",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 140,
+      "value": 920,
+      "duration": 0,
+      "description": "Rend 920 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-092.png",
+      "source": "256px/potions_with_an_item/steaming_open_potion_bottle_256px_37.png",
+      "sha256": "351f8b0c54d10e0cbb7f8b3ae7f11c66568c44c9ce292467e222fc6f0546370a",
+      "sale_price": 17,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-8": 4,
+        "herbe-7": 4
+      },
+      "craft_seconds": 300,
+      "craft_xp": 420,
+      "difficulty": 3,
+      "buff_id": null,
+      "id": 65,
+      "recompense_id": 87,
+      "recette_id": 66,
+      "ingredient_ids": [
+        {
+          "id": 174,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 175,
+          "objet_id": 184,
+          "quantity": 4
+        },
+        {
+          "id": 176,
+          "objet_id": 183,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 93,
+      "name": "Potion de vie — Rosée du phénix",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 150,
+      "value": 980,
+      "duration": 0,
+      "description": "Rend 980 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-093.png",
+      "source": "256px/potions_with_an_item/stoppered_phoenix_tears_vial_256px_38.png",
+      "sha256": "c97c7f1190e761f1c5fc7b33f38983159a79f3cb6aeea6872558d52fb1e11a57",
+      "sale_price": 18,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-9": 4,
+        "herbe-8": 4
+      },
+      "craft_seconds": 320,
+      "craft_xp": 450,
+      "difficulty": 4,
+      "buff_id": null,
+      "id": 66,
+      "recompense_id": 88,
+      "recette_id": 67,
+      "ingredient_ids": [
+        {
+          "id": 177,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 178,
+          "objet_id": 185,
+          "quantity": 4
+        },
+        {
+          "id": 179,
+          "objet_id": 184,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 94,
+      "name": "Potion d’intelligence — Galaxie tourbillonnante",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 160,
+      "value": 37,
+      "duration": 600,
+      "description": "+37 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-094.png",
+      "source": "256px/potions_with_an_item/swirling_galaxy_potion_256px_39.png",
+      "sha256": "07a93a2f76aa7cb9567eed1f4c66defba1e37bd66a4a5fa90ebbcec8f33a0c7d",
+      "sale_price": 19,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-10": 4,
+        "herbe-9": 4
+      },
+      "craft_seconds": 340,
+      "craft_xp": 480,
+      "difficulty": 4,
+      "buff_id": 45,
+      "id": 67,
+      "recompense_id": 89,
+      "recette_id": 68,
+      "ingredient_ids": [
+        {
+          "id": 180,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 181,
+          "objet_id": 186,
+          "quantity": 4
+        },
+        {
+          "id": 182,
+          "objet_id": 185,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 95,
+      "name": "Potion de mana — Vague des marées",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 160,
+      "value": 345,
+      "duration": 0,
+      "description": "Rend 345 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-095.png",
+      "source": "256px/potions_with_an_item/tidal_wave_potion_256px_40.png",
+      "sha256": "4c1f1459d90b5e922d98e963855f97a0236618d26f7446c45f009fc46a5cea09",
+      "sale_price": 19,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-10": 4,
+        "herbe-9": 4
+      },
+      "craft_seconds": 340,
+      "craft_xp": 480,
+      "difficulty": 4,
+      "buff_id": null,
+      "id": 68,
+      "recompense_id": 90,
+      "recette_id": 69,
+      "ingredient_ids": [
+        {
+          "id": 183,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 184,
+          "objet_id": 186,
+          "quantity": 4
+        },
+        {
+          "id": 185,
+          "objet_id": 185,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 96,
+      "name": "Potion de vie — Essence de licorne",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 160,
+      "value": 1040,
+      "duration": 0,
+      "description": "Rend 1040 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-096.png",
+      "source": "256px/potions_with_an_item/unicorn_essence_flask_256px_41.png",
+      "sha256": "58869479112956cd41636915ff4ea4cbde4f1b8d0eeb6e665c20fedf1c80cc4e",
+      "sale_price": 19,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-10": 4,
+        "herbe-9": 4
+      },
+      "craft_seconds": 340,
+      "craft_xp": 480,
+      "difficulty": 4,
+      "buff_id": null,
+      "id": 69,
+      "recompense_id": 91,
+      "recette_id": 70,
+      "ingredient_ids": [
+        {
+          "id": 186,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 187,
+          "objet_id": 186,
+          "quantity": 4
+        },
+        {
+          "id": 188,
+          "objet_id": 185,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 97,
+      "name": "Potion de vie — Grâce de licorne",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 180,
+      "value": 1160,
+      "duration": 0,
+      "description": "Rend 1160 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-097.png",
+      "source": "256px/potions_with_an_item/unicorn_essence_flask_256px_42.png",
+      "sha256": "53eb63d501fa63bdc7d508def2d7a3827eca550eb35161368b486d8e1849308f",
+      "sale_price": 21,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-11": 4,
+        "herbe-10": 4
+      },
+      "craft_seconds": 380,
+      "craft_xp": 540,
+      "difficulty": 4,
+      "buff_id": null,
+      "id": 70,
+      "recompense_id": 92,
+      "recette_id": 71,
+      "ingredient_ids": [
+        {
+          "id": 189,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 190,
+          "objet_id": 187,
+          "quantity": 4
+        },
+        {
+          "id": 191,
+          "objet_id": 186,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 98,
+      "name": "Potion de mana — Cœur de glace",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 180,
+      "value": 385,
+      "duration": 0,
+      "description": "Rend 385 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-098.png",
+      "source": "256px/potions_with_an_item/vial_with_crystalline_ice_cube_256px_43.png",
+      "sha256": "7ee5970da98d923183ec9a611230834efb9e298ee34a6f0a007fe9dd525bf8f5",
+      "sale_price": 21,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-11": 4,
+        "herbe-10": 4
+      },
+      "craft_seconds": 380,
+      "craft_xp": 540,
+      "difficulty": 4,
+      "buff_id": null,
+      "id": 71,
+      "recompense_id": 93,
+      "recette_id": 72,
+      "ingredient_ids": [
+        {
+          "id": 192,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 193,
+          "objet_id": 187,
+          "quantity": 4
+        },
+        {
+          "id": 194,
+          "objet_id": 186,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 99,
+      "name": "Potion de concentration — Champignon infusé",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 180,
+      "value": 41,
+      "duration": 600,
+      "description": "+41 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-099.png",
+      "source": "256px/potions_with_an_item/vial_with_dried_mushroom_256px_44.png",
+      "sha256": "d27e886e8ec0179f265a665e3ba8b9b13e52827e7072c04fcf9b737e68a19f34",
+      "sale_price": 21,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-11": 4,
+        "herbe-10": 4
+      },
+      "craft_seconds": 380,
+      "craft_xp": 540,
+      "difficulty": 4,
+      "buff_id": 46,
+      "id": 72,
+      "recompense_id": 94,
+      "recette_id": 73,
+      "ingredient_ids": [
+        {
+          "id": 195,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 196,
+          "objet_id": 187,
+          "quantity": 4
+        },
+        {
+          "id": 197,
+          "objet_id": 186,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 101,
+      "name": "Potion de mana — Flocons suspendus",
+      "type": "mana",
+      "caracteristique": null,
+      "level": 200,
+      "value": 425,
+      "duration": 0,
+      "description": "Rend 425 points de mana, sans dépasser le maximum.",
+      "image": "alchimie-001-101.png",
+      "source": "256px/potions_with_an_item/vial_with_falling_snowflakes_256px_46.png",
+      "sha256": "d9784592215b0c65fa09a17a77eaa38271071831142e87ba9b363f8cf6197972",
+      "sale_price": 23,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-12": 4,
+        "herbe-11": 4
+      },
+      "craft_seconds": 420,
+      "craft_xp": 600,
+      "difficulty": 5,
+      "buff_id": null,
+      "id": 73,
+      "recompense_id": 95,
+      "recette_id": 74,
+      "ingredient_ids": [
+        {
+          "id": 198,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 199,
+          "objet_id": 188,
+          "quantity": 4
+        },
+        {
+          "id": 200,
+          "objet_id": 187,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 102,
+      "name": "Potion de dextérité — Lueur de larve",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 160,
+      "value": 37,
+      "duration": 600,
+      "description": "+37 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-102.png",
+      "source": "256px/potions_with_an_item/vial_with_glowing_larva_256px_47.png",
+      "sha256": "864e088467514cf87e88fab50bf50459a0a294b1573f1182a9bf71f8df429f7b",
+      "sale_price": 19,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-10": 4,
+        "herbe-9": 4
+      },
+      "craft_seconds": 340,
+      "craft_xp": 480,
+      "difficulty": 4,
+      "buff_id": 47,
+      "id": 74,
+      "recompense_id": 96,
+      "recette_id": 75,
+      "ingredient_ids": [
+        {
+          "id": 201,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 202,
+          "objet_id": 186,
+          "quantity": 4
+        },
+        {
+          "id": 203,
+          "objet_id": 185,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 103,
+      "name": "Potion d’intelligence — Souffle des âmes",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 180,
+      "value": 41,
+      "duration": 600,
+      "description": "+41 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-103.png",
+      "source": "256px/potions_with_an_item/vial_with_glowing_soul_wisp_256px_48.png",
+      "sha256": "d59b0a1f4e03b30331ea4530e4feb68afa37fc55d3af2236b14afa540a4477b1",
+      "sale_price": 21,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-11": 4,
+        "herbe-10": 4
+      },
+      "craft_seconds": 380,
+      "craft_xp": 540,
+      "difficulty": 4,
+      "buff_id": 48,
+      "id": 75,
+      "recompense_id": 97,
+      "recette_id": 76,
+      "ingredient_ids": [
+        {
+          "id": 204,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 205,
+          "objet_id": 187,
+          "quantity": 4
+        },
+        {
+          "id": 206,
+          "objet_id": 186,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 104,
+      "name": "Potion d’intelligence — Feu follet captif",
+      "type": "buff",
+      "caracteristique": "intelligence",
+      "level": 200,
+      "value": 45,
+      "duration": 600,
+      "description": "+45 intelligence pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-104.png",
+      "source": "256px/potions_with_an_item/vial_with_glowing_soul_wisp_256px_49.png",
+      "sha256": "7b8c1a99c05d894411a192a61a6a4a3a80c7a1f132e51f8b74792b50409a090d",
+      "sale_price": 23,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-12": 4,
+        "herbe-11": 4
+      },
+      "craft_seconds": 420,
+      "craft_xp": 600,
+      "difficulty": 5,
+      "buff_id": 49,
+      "id": 76,
+      "recompense_id": 98,
+      "recette_id": 77,
+      "ingredient_ids": [
+        {
+          "id": 207,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 208,
+          "objet_id": 188,
+          "quantity": 4
+        },
+        {
+          "id": 209,
+          "objet_id": 187,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 105,
+      "name": "Potion de dextérité — Éclair miniature",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 180,
+      "value": 41,
+      "duration": 600,
+      "description": "+41 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-105.png",
+      "source": "256px/potions_with_an_item/vial_with_miniature_lightning_256px_50.png",
+      "sha256": "99ab1ee90ace44af66937bd7275d8233ce13d5af85c325bbe747effb5696ccf7",
+      "sale_price": 21,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-11": 4,
+        "herbe-10": 4
+      },
+      "craft_seconds": 380,
+      "craft_xp": 540,
+      "difficulty": 4,
+      "buff_id": 50,
+      "id": 77,
+      "recompense_id": 99,
+      "recette_id": 78,
+      "ingredient_ids": [
+        {
+          "id": 210,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 211,
+          "objet_id": 187,
+          "quantity": 4
+        },
+        {
+          "id": 212,
+          "objet_id": 186,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 106,
+      "name": "Potion de force — Croc de dragon",
+      "type": "buff",
+      "caracteristique": "force",
+      "level": 200,
+      "value": 45,
+      "duration": 600,
+      "description": "+45 force pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-106.png",
+      "source": "256px/potions_with_an_item/vial_with_single_dragon_tooth_256px_51.png",
+      "sha256": "9021fe130bc3d74a665506e19b80b48311569f89611ffb8913950fac16e2c068",
+      "sale_price": 23,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-12": 4,
+        "herbe-11": 4
+      },
+      "craft_seconds": 420,
+      "craft_xp": 600,
+      "difficulty": 5,
+      "buff_id": 51,
+      "id": 78,
+      "recompense_id": 100,
+      "recette_id": 79,
+      "ingredient_ids": [
+        {
+          "id": 213,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 214,
+          "objet_id": 188,
+          "quantity": 4
+        },
+        {
+          "id": 215,
+          "objet_id": 187,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 107,
+      "name": "Potion de concentration — Reflets scintillants",
+      "type": "buff",
+      "caracteristique": "concentration",
+      "level": 200,
+      "value": 45,
+      "duration": 600,
+      "description": "+45 concentration pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-107.png",
+      "source": "256px/potions_with_an_item/vial_with_sparkle_reflections_256px_52.png",
+      "sha256": "b8db23cdfdd698938b2015eefa11691c8ffd939b79649293928aa4b35bc1f27d",
+      "sale_price": 23,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-12": 4,
+        "herbe-11": 4
+      },
+      "craft_seconds": 420,
+      "craft_xp": 600,
+      "difficulty": 5,
+      "buff_id": 52,
+      "id": 79,
+      "recompense_id": 101,
+      "recette_id": 80,
+      "ingredient_ids": [
+        {
+          "id": 216,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 217,
+          "objet_id": 188,
+          "quantity": 4
+        },
+        {
+          "id": 218,
+          "objet_id": 187,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 108,
+      "name": "Potion de vie — Germe de renouveau",
+      "type": "vie",
+      "caracteristique": null,
+      "level": 200,
+      "value": 1280,
+      "duration": 0,
+      "description": "Rend 1280 points de vie, sans dépasser le maximum.",
+      "image": "alchimie-001-108.png",
+      "source": "256px/potions_with_an_item/vial_with_tiny_seedling_256px_53.png",
+      "sha256": "1f26e09aa684435754c320156e52626dbc2f213d201398e563f6069d27dfc8df",
+      "sale_price": 23,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-12": 4,
+        "herbe-11": 4
+      },
+      "craft_seconds": 420,
+      "craft_xp": 600,
+      "difficulty": 5,
+      "buff_id": null,
+      "id": 80,
+      "recompense_id": 102,
+      "recette_id": 81,
+      "ingredient_ids": [
+        {
+          "id": 219,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 220,
+          "objet_id": 188,
+          "quantity": 4
+        },
+        {
+          "id": 221,
+          "objet_id": 187,
+          "quantity": 4
+        }
+      ]
+    },
+    {
+      "source_index": 109,
+      "name": "Potion de dextérité — Souplesse du ver",
+      "type": "buff",
+      "caracteristique": "dexterite",
+      "level": 200,
+      "value": 45,
+      "duration": 600,
+      "description": "+45 dextérité pendant 10 minutes. Une seule potion de caractéristiques active à la fois.",
+      "image": "alchimie-001-109.png",
+      "source": "256px/potions_with_an_item/vial_with_worm_coiled_inside_256px_54.png",
+      "sha256": "391769b5e0f42a9e4edae66bca1c85be4cba11c687632d49408651b399d4f9f1",
+      "sale_price": 23,
+      "cooldown": 3,
+      "ingredients": {
+        "herbe-0": 4,
+        "herbe-12": 4,
+        "herbe-11": 4
+      },
+      "craft_seconds": 420,
+      "craft_xp": 600,
+      "difficulty": 5,
+      "buff_id": 53,
+      "id": 81,
+      "recompense_id": 103,
+      "recette_id": 82,
+      "ingredient_ids": [
+        {
+          "id": 222,
+          "objet_id": 177,
+          "quantity": 4
+        },
+        {
+          "id": 223,
+          "objet_id": 188,
+          "quantity": 4
+        },
+        {
+          "id": 224,
+          "objet_id": 187,
+          "quantity": 4
+        }
+      ]
+    }
+  ],
+  "excluded_potion_sources": [
+    "256px/potions_various/broken_sapphire_mana_flask_256px_02.png",
+    "256px/potions_various/chipped_golden_xp_potion_bottle_256px_04.png",
+    "256px/potions_various/chipped_golden_xp_potion_bottle_256px_05.png",
+    "256px/potions_various/chipped_rim_crimson_elixir_256px_06.png",
+    "256px/potions_various/cracked_amber_tonic_flask_256px_10.png",
+    "256px/potions_various/cracked_amber_tonic_flask_256px_11.png",
+    "256px/potions_various/cracked_ruby_healing_potion_256px_12.png",
+    "256px/potions_various/cracked_sapphire_potion_bottle_256px_45.png",
+    "256px/potions_various/empty_conical_alchemy_flask_256px_17.png",
+    "256px/potions_various/empty_swan_neck_flask_256px_18.png",
+    "256px/potions_various/empty_teardrop_crystal_vial_256px_19.png",
+    "256px/potions_various/empty_uncorked_glass_vial_256px_20.png",
+    "256px/potions_various/fractured_neck_violet_poison_256px_21.png",
+    "256px/potions_various/hairline_crack_on_emerald_flask_256px_24.png",
+    "256px/potions_various/hairline_crack_on_emerald_flask_256px_25.png",
+    "256px/potions_various/shattered_crystal_potion_bottle_256px_43.png",
+    "256px/potions_various/shattered_crystal_potion_bottle_256px_44.png",
+    "256px/potions_various/shattered_ruby_healing_potion_256px_46.png",
+    "256px/potions_various/shattered_ruby_healing_potion_256px_47.png",
+    "256px/potions_various/shattered_ruby_healing_potion_256px_48.png",
+    "256px/potions_various/smashed_amber_alchemy_flask_256px_50.png",
+    "256px/potions_various/smashed_emerald_stamina_vial_256px_51.png",
+    "256px/potions_various/spilled_golden_xp_potion_256px_52.png",
+    "256px/potions_various/splashing_violet_poison_vial_256px_53.png",
+    "256px/potions_with_an_item/dry_potion_bottle_with_sand_256px_04.png",
+    "256px/potions_with_an_item/elixir_with_rifle_bullet_256px_07.png",
+    "256px/potions_with_an_item/empty_skull_shaped_potion_bottle_256px_10.png",
+    "256px/potions_with_an_item/empty_skull_shaped_potion_bottle_256px_11.png",
+    "256px/potions_with_an_item/empty_teardrop_crystal_vial_256px_12.png",
+    "256px/potions_with_an_item/vial_with_falling_sand_grains_256px_45.png"
+  ],
+  "notes": [
+    "Les nouvelles ressources ne sont pas placées sur les cartes.",
+    "Les plantes sont sans image.",
+    "Fer, argent et sauge réutilisent les objets existants.",
+    "La recette historique de potion de vie mineure utilisera l’ortie au lieu de la sauge devenue niveau 100."
+  ],
+  "legacy_recipe_changes": [
+    {
+      "id": 1,
+      "recette_id": 1,
+      "objet_id": 5,
+      "equipement_id": null,
+      "consommable_id": null,
+      "quantite": 2
+    }
+  ],
+  "buff_ids": {
+    "intelligence:5": 6,
+    "dexterite:5": 7,
+    "force:5": 8,
+    "dexterite:9": 9,
+    "concentration:5": 10,
+    "concentration:9": 11,
+    "concentration:13": 12,
+    "dexterite:13": 13,
+    "force:9": 14,
+    "force:13": 15,
+    "intelligence:9": 16,
+    "dexterite:15": 17,
+    "force:15": 18,
+    "concentration:15": 19,
+    "concentration:17": 20,
+    "force:17": 21,
+    "force:21": 22,
+    "dexterite:17": 23,
+    "force:25": 24,
+    "force:29": 25,
+    "dexterite:21": 26,
+    "force:33": 27,
+    "intelligence:13": 28,
+    "intelligence:17": 29,
+    "dexterite:29": 30,
+    "force:35": 31,
+    "concentration:21": 32,
+    "concentration:29": 33,
+    "force:37": 34,
+    "intelligence:21": 35,
+    "dexterite:33": 36,
+    "concentration:33": 37,
+    "concentration:35": 38,
+    "dexterite:35": 39,
+    "intelligence:25": 40,
+    "concentration:37": 41,
+    "force:41": 42,
+    "intelligence:29": 43,
+    "intelligence:33": 44,
+    "intelligence:37": 45,
+    "concentration:41": 46,
+    "dexterite:37": 47,
+    "intelligence:41": 48,
+    "intelligence:45": 49,
+    "dexterite:41": 50,
+    "force:45": 51,
+    "concentration:45": 52,
+    "dexterite:45": 53
+  }
+}

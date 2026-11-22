@@ -1,0 +1,324 @@
+{
+  "lot": "metiers-002",
+  "archive": "background-20261118T212445Z-1-001.zip",
+  "archive_sha256": "82768f8a663bbf91a8e3e65f915cd4ac44d348a47403f58ceb86bca19bd6be1e",
+  "resources": [
+    {
+      "name": "Bois de frêne",
+      "metier": "Bûcheron",
+      "level": 0,
+      "description": "Bois récoltable par un bûcheron de niveau 0, destiné à l’artisanat.",
+      "sale_price": 3,
+      "reuse_id": null,
+      "image": "metiers-002-079.png",
+      "source": "background/79.png",
+      "sha256": "da205216740aed23d95b37d8c5a5602590c4d8989c6c6244da64a3911be7c427",
+      "id": 189
+    },
+    {
+      "name": "Bois de châtaignier",
+      "metier": "Bûcheron",
+      "level": 20,
+      "description": "Bois récoltable par un bûcheron de niveau 20, destiné à l’artisanat.",
+      "sale_price": 5,
+      "reuse_id": null,
+      "image": null,
+      "id": 190
+    },
+    {
+      "name": "Bûche de chêne",
+      "metier": "Bûcheron",
+      "level": 40,
+      "description": "Bois récoltable par un bûcheron de niveau 40, destiné à l’artisanat.",
+      "sale_price": 7,
+      "reuse_id": 8,
+      "image": "bois.png",
+      "preserve_image": true,
+      "previous": {
+        "id": 8,
+        "name": "Bûche de chêne",
+        "description": "Un billot dense, lourd à porter.",
+        "prix_vente": 7,
+        "image": "bois.png",
+        "metier_id": 3,
+        "niveau_ressource": 1,
+        "image_carte": "chene-carte"
+      },
+      "id": 8
+    },
+    {
+      "name": "Bois de bouleau",
+      "metier": "Bûcheron",
+      "level": 50,
+      "description": "Bois récoltable par un bûcheron de niveau 50, destiné à l’artisanat.",
+      "sale_price": 9,
+      "reuse_id": null,
+      "image": null,
+      "id": 191
+    },
+    {
+      "name": "Bois d’érable",
+      "metier": "Bûcheron",
+      "level": 60,
+      "description": "Bois récoltable par un bûcheron de niveau 60, destiné à l’artisanat.",
+      "sale_price": 10,
+      "reuse_id": null,
+      "image": null,
+      "id": 192
+    },
+    {
+      "name": "Bois corrompu",
+      "metier": "Bûcheron",
+      "level": 80,
+      "description": "Bois récoltable par un bûcheron de niveau 80, destiné à l’artisanat.",
+      "sale_price": 13,
+      "reuse_id": null,
+      "image": null,
+      "id": 193
+    },
+    {
+      "name": "Bois de noyer",
+      "metier": "Bûcheron",
+      "level": 100,
+      "description": "Bois récoltable par un bûcheron de niveau 100, destiné à l’artisanat.",
+      "sale_price": 15,
+      "reuse_id": null,
+      "image": null,
+      "id": 194
+    },
+    {
+      "name": "Bois enchanté",
+      "metier": "Bûcheron",
+      "level": 120,
+      "description": "Bois récoltable par un bûcheron de niveau 120, destiné à l’artisanat.",
+      "sale_price": 18,
+      "reuse_id": null,
+      "image": "metiers-002-049.png",
+      "source": "background/49.png",
+      "sha256": "baeac12f2eaa1e15e429ab9b230c2195387219b41c41b53b6d7173135e8d9a79",
+      "id": 195
+    },
+    {
+      "name": "Bois d’if",
+      "metier": "Bûcheron",
+      "level": 140,
+      "description": "Bois récoltable par un bûcheron de niveau 140, destiné à l’artisanat.",
+      "sale_price": 20,
+      "reuse_id": null,
+      "image": null,
+      "id": 196
+    },
+    {
+      "name": "Bois d’ébène",
+      "metier": "Bûcheron",
+      "level": 150,
+      "description": "Bois récoltable par un bûcheron de niveau 150, destiné à l’artisanat.",
+      "sale_price": 21,
+      "reuse_id": null,
+      "image": null,
+      "id": 197
+    },
+    {
+      "name": "Bois de fer",
+      "metier": "Bûcheron",
+      "level": 160,
+      "description": "Bois récoltable par un bûcheron de niveau 160, destiné à l’artisanat.",
+      "sale_price": 23,
+      "reuse_id": null,
+      "image": null,
+      "id": 198
+    },
+    {
+      "name": "Bois ancestral",
+      "metier": "Bûcheron",
+      "level": 180,
+      "description": "Bois récoltable par un bûcheron de niveau 180, destiné à l’artisanat.",
+      "sale_price": 25,
+      "reuse_id": null,
+      "image": null,
+      "id": 199
+    },
+    {
+      "name": "Bois d’arbre-monde",
+      "metier": "Bûcheron",
+      "level": 200,
+      "description": "Bois récoltable par un bûcheron de niveau 200, destiné à l’artisanat.",
+      "sale_price": 28,
+      "reuse_id": null,
+      "image": null,
+      "id": 200
+    },
+    {
+      "name": "Peau souple",
+      "metier": "Dépeceur",
+      "level": 0,
+      "description": "Matière brute de dépeçage de niveau 0, destinée au travail du tanneur.",
+      "sale_price": 3,
+      "reuse_id": null,
+      "image": null,
+      "id": 201
+    },
+    {
+      "name": "Peau épaisse",
+      "metier": "Dépeceur",
+      "level": 20,
+      "description": "Matière brute de dépeçage de niveau 20, destinée au travail du tanneur.",
+      "sale_price": 5,
+      "reuse_id": null,
+      "image": null,
+      "id": 202
+    },
+    {
+      "name": "Fourrure dense",
+      "metier": "Dépeceur",
+      "level": 40,
+      "description": "Matière brute de dépeçage de niveau 40, destinée au travail du tanneur.",
+      "sale_price": 8,
+      "reuse_id": null,
+      "image": "metiers-002-054.png",
+      "source": "background/54.png",
+      "sha256": "8601e5490ae9698fb039c695e6c3158d9eefee11883fbee85c4c1dbff8d635f2",
+      "id": 203
+    },
+    {
+      "name": "Peau écailleuse",
+      "metier": "Dépeceur",
+      "level": 50,
+      "description": "Matière brute de dépeçage de niveau 50, destinée au travail du tanneur.",
+      "sale_price": 9,
+      "reuse_id": null,
+      "image": null,
+      "id": 204
+    },
+    {
+      "name": "Peau rugueuse",
+      "metier": "Dépeceur",
+      "level": 60,
+      "description": "Matière brute de dépeçage de niveau 60, destinée au travail du tanneur.",
+      "sale_price": 10,
+      "reuse_id": null,
+      "image": null,
+      "id": 205
+    },
+    {
+      "name": "Peau corrompue",
+      "metier": "Dépeceur",
+      "level": 80,
+      "description": "Matière brute de dépeçage de niveau 80, destinée au travail du tanneur.",
+      "sale_price": 13,
+      "reuse_id": null,
+      "image": null,
+      "id": 206
+    },
+    {
+      "name": "Fourrure soyeuse",
+      "metier": "Dépeceur",
+      "level": 100,
+      "description": "Matière brute de dépeçage de niveau 100, destinée au travail du tanneur.",
+      "sale_price": 15,
+      "reuse_id": null,
+      "image": null,
+      "id": 207
+    },
+    {
+      "name": "Peau enchantée",
+      "metier": "Dépeceur",
+      "level": 120,
+      "description": "Matière brute de dépeçage de niveau 120, destinée au travail du tanneur.",
+      "sale_price": 18,
+      "reuse_id": null,
+      "image": null,
+      "id": 208
+    },
+    {
+      "name": "Peau chitineuse",
+      "metier": "Dépeceur",
+      "level": 140,
+      "description": "Matière brute de dépeçage de niveau 140, destinée au travail du tanneur.",
+      "sale_price": 20,
+      "reuse_id": null,
+      "image": null,
+      "id": 209
+    },
+    {
+      "name": "Fourrure de givre",
+      "metier": "Dépeceur",
+      "level": 150,
+      "description": "Matière brute de dépeçage de niveau 150, destinée au travail du tanneur.",
+      "sale_price": 21,
+      "reuse_id": null,
+      "image": null,
+      "id": 210
+    },
+    {
+      "name": "Peau de pierre",
+      "metier": "Dépeceur",
+      "level": 160,
+      "description": "Matière brute de dépeçage de niveau 160, destinée au travail du tanneur.",
+      "sale_price": 23,
+      "reuse_id": null,
+      "image": null,
+      "id": 211
+    },
+    {
+      "name": "Peau ancestrale",
+      "metier": "Dépeceur",
+      "level": 180,
+      "description": "Matière brute de dépeçage de niveau 180, destinée au travail du tanneur.",
+      "sale_price": 25,
+      "reuse_id": null,
+      "image": null,
+      "id": 212
+    },
+    {
+      "name": "Peau primordiale",
+      "metier": "Dépeceur",
+      "level": 200,
+      "description": "Matière brute de dépeçage de niveau 200, destinée au travail du tanneur.",
+      "sale_price": 28,
+      "reuse_id": null,
+      "image": null,
+      "id": 213
+    }
+  ],
+  "image_updates": [
+    {
+      "id": 176,
+      "name": "Cristal pur",
+      "image": "metiers-002-043.png",
+      "source": "background/43.png",
+      "sha256": "7602af3aa83aac8e2b634b63c858d129c61812bb2a3b0fabc5f21dc58aa1e366",
+      "previous_image": null
+    },
+    {
+      "id": 180,
+      "name": "Menthe sauvage",
+      "image": "metiers-002-023.png",
+      "source": "background/23.png",
+      "sha256": "9833114b56f8562a3cd927880a802bb9df9141d548c9aa2820c92ee6272ecfa4",
+      "previous_image": null
+    },
+    {
+      "id": 183,
+      "name": "Fleur enchantée",
+      "image": "metiers-002-006.png",
+      "source": "background/6.png",
+      "sha256": "0163795c4b784db345d4c4fbd9e242539fcf290fa83186e9a9fa5899dd02f0fb",
+      "previous_image": null
+    },
+    {
+      "id": 188,
+      "name": "Fleur de l’arbre-monde",
+      "image": "metiers-002-040.png",
+      "source": "background/40.png",
+      "sha256": "3d2b6397caecd4b8af3d485d37516642390953ebf3d5bb641978cf648800b593",
+      "previous_image": null
+    }
+  ],
+  "notes": [
+    "Icônes conservées telles que fournies, avec leur fond.",
+    "Aucune recette, aucun drop ni point de récolte ajouté par ce lot.",
+    "Les images sans correspondance assez claire sont laissées inutilisées.",
+    "Progression Dépeceur créée avec autorisation explicite sur les 13 paliers ; la Peau de bête coriace historique reste distincte."
+  ]
+}

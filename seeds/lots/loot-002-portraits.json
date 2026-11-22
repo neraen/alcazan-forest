@@ -1,0 +1,61 @@
+{
+  "tool": "image_gen (outil intégré)",
+  "transparent_background": false,
+  "portraits": [
+    {
+      "key": "crabe",
+      "name": "Crabe des nacres",
+      "skin": "loot-002-crabe-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-5a1eeeaa-980f-46dc-aff9-9c30ebef9aec.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One giant orange hermit crab with a magnificent pink-orange spiral shell encrusted with smaller blue and pearly shells, lustrous pearl nestled in shell opening, broad pincers. Shallow turquoise tide pool, gentle coastal light.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-002-crabe-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 17
+    },
+    {
+      "key": "corsaire",
+      "name": "Corsaire des épaves",
+      "skin": "loot-002-corsaire-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-57b01769-2bc8-4308-856b-ddc3ce45f163.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One undead pirate captain with seaweed-covered ivory skull, tattered dark teal coat, rusty curved cutlass, old keys and gold coins at belt, pearl necklace and amber signet ring, barnacle-covered tricorn. Sunken shipwreck background, underwater teal light, no readable writing, no gore.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-002-corsaire-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 18
+    },
+    {
+      "key": "corallien",
+      "name": "Gardien des récifs",
+      "skin": "loot-002-corallien-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-c5ac52a5-2b9b-4066-a4d4-f89b856f0cca.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One humanoid reef golem made of branching orange-red coral, purple tube sponges and green coral, eyes glowing turquoise, seaweed draping heavy arms. Full body standing amid luminous underwater reefs, bright marine fantasy.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-002-corallien-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 19
+    },
+    {
+      "key": "meduse",
+      "name": "Méduse des astéries",
+      "skin": "loot-002-meduse-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-ded48f11-d570-4f76-bd8d-7df69138486e.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One huge magical rose-pink jellyfish with translucent glowing bell, curling purple tentacles and several red and violet starfish clinging to its bell. Floating in deep blue water, small golden droplets of luminous jelly, graceful but dangerous.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-002-meduse-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 20
+    },
+    {
+      "key": "requin",
+      "name": "Requin aux écailles de jade",
+      "skin": "loot-002-requin-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-5b372f9b-8015-42c1-aa5b-9aef67a0be0d.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One powerful fantasy shark with sleek blue-grey body and patches of overlapping emerald-green scales, broad fins and long curved tail, sharp teeth, amber eyes. Swimming diagonally in turquoise sea with small orange fish in distant background. No gore.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-002-requin-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 21
+    }
+  ]
+}

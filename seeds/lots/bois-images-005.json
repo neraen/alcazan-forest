@@ -1,0 +1,155 @@
+{
+  "lot": "bois-images-005",
+  "date": "2026-11-19",
+  "method": "builtin-imagegen",
+  "references": [
+    "output/imagegen/bois-v1/references/pack-buche.png",
+    "output/imagegen/bois-v1/references/pack-feuilles.png",
+    "output/imagegen/bois-v1/references/pack-champignon.png"
+  ],
+  "items": [
+    {
+      "id": 189,
+      "slug": "frene",
+      "image": "bois-generes-v1-frene.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Ash wood: warm gray-tan bark, smooth pale ivory cut wood with simple concentric grain, muted honey highlights. Ordinary nonmagical wood.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-16b4f876-cad7-40d8-8aa6-b21fc2b003bb.png",
+      "sha256": "263defae25874a3482b255762cef8d5efc53f615f486f9eb25f39d7a45c28d22",
+      "name": "Bois de frêne",
+      "level": 0,
+      "previous_image": "metiers-002-079.png"
+    },
+    {
+      "id": 190,
+      "slug": "chataignier",
+      "image": "bois-generes-v1-chataignier.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Chestnut wood: reddish warm brown bark with deep diagonal grooves, golden honey cut face, one small serrated chestnut leaf at the branch nub. Ordinary wood.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-245f8e85-2ed3-4db1-a294-971294444d8d.png",
+      "sha256": "1627562c09519c2faa0fee92de0291ef9598895bbd73e2de335069b61e39294a",
+      "name": "Bois de châtaignier",
+      "level": 20,
+      "previous_image": null
+    },
+    {
+      "id": 8,
+      "slug": "chene",
+      "image": "bois-generes-v1-chene.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Oak wood: thick deeply ridged rugged brown bark, warm ochre heartwood with bold visible growth rings, sturdy broad log, one small lobed oak leaf. Ordinary wood.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-65efc3af-d302-49dd-89db-62f78aed5d1a.png",
+      "sha256": "2a372e77645ea0190177c00b74d779e8bc433648d49050850cd848780026b889",
+      "name": "Bûche de chêne",
+      "level": 40,
+      "previous_image": "bois.png"
+    },
+    {
+      "id": 191,
+      "slug": "bouleau",
+      "image": "bois-generes-v1-bouleau.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Birch wood: distinctive ivory white peeling bark with charcoal horizontal marks and curled papery edge, pale yellow cut face. Ordinary wood.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-d1e5311d-08ee-42d5-8918-ace6150b0f65.png",
+      "sha256": "551558a10ccd8ba4cb6babb022739b3d0971acf5b92ff0d72aa3e0a65f65d382",
+      "name": "Bois de bouleau",
+      "level": 50,
+      "previous_image": null
+    },
+    {
+      "id": 192,
+      "slug": "erable",
+      "image": "bois-generes-v1-erable.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Maple wood: warm russet smooth bark, creamy peach cut face, single small vivid amber-red maple leaf attached near branch nub. Ordinary wood.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-515afa06-6fdc-4a4b-9488-713548f16ce8.png",
+      "sha256": "5593beca9157d3e1552d9b6b986c7741fb7e878f233335098bd3f0c4a99a5af4",
+      "name": "Bois d’érable",
+      "level": 60,
+      "previous_image": null
+    },
+    {
+      "id": 193,
+      "slug": "corrompu",
+      "image": "bois-generes-v1-corrompu.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Corrupted wood: gnarled charcoal-purple bark with luminous violet fissures, plum dark cut face and magenta swirling rings; eerie magical purple glow, still unmistakably a harvested log.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-9736f4ed-78b2-4098-9cb2-dceb3a70c289.png",
+      "sha256": "1c2881c75e4a9af494a6ec8474be21b2f96683436aa41c44cd227fccf5a79d97",
+      "name": "Bois corrompu",
+      "level": 80,
+      "previous_image": null
+    },
+    {
+      "id": 194,
+      "slug": "noyer",
+      "image": "bois-generes-v1-noyer.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Walnut wood: rich chocolate brown bark and dark warm reddish heartwood, creamy thin outer ring, elegant bold grain, restrained honey highlights. Ordinary wood.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-1e2c9afb-7b9b-4256-bebb-6261895c5bd2.png",
+      "sha256": "2f85fa8bdb5efe3e77e07329fced12e559c3b0d9a65e46b919301c9eef3a3b3c",
+      "name": "Bois de noyer",
+      "level": 100,
+      "previous_image": null
+    },
+    {
+      "id": 195,
+      "slug": "enchante",
+      "image": "bois-generes-v1-enchante.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Enchanted wood: deep blue teal bark with luminous turquoise flowing grain, pale aqua heartwood, a little curled sprout with glowing emerald leaves. Restrained magical cyan glow.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-f7b20f54-54b4-48a8-9ba7-70589103cd93.png",
+      "sha256": "e776f85aba1bc7bd27d7d52b54e09b18d31c4a84dfc6deba0b81fb1b06b00309",
+      "name": "Bois enchanté",
+      "level": 120,
+      "previous_image": "metiers-002-049.png"
+    },
+    {
+      "id": 196,
+      "slug": "if",
+      "image": "bois-generes-v1-if.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Yew wood: slim slightly twisted log with reddish cinnamon peeling bark, striking orange red heartwood and thin ivory sapwood, a small short twig with dark green needles and two red berries.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-05c4baf0-6bbf-4a82-9578-d1e07d986d3b.png",
+      "sha256": "f3ce174cce7fd25d575057645475f5c495d6503c48ca9e8e87eb4bd5d433a8a1",
+      "name": "Bois d’if",
+      "level": 140,
+      "previous_image": null
+    },
+    {
+      "id": 197,
+      "slug": "ebene",
+      "image": "bois-generes-v1-ebene.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Ebony wood: nearly black plum smooth dense wood, polished dark cut face with subtle visible rings, purple silver edge highlights, warm thin brown bark. Readable dark silhouette on charcoal background.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-2db93423-bf34-441d-b393-25294cdf3d73.png",
+      "sha256": "f436ef929a0c0e9add735a360d3349663594fbadcbf4486d5e70cb44d6d521c8",
+      "name": "Bois d’ébène",
+      "level": 150,
+      "previous_image": null
+    },
+    {
+      "id": 198,
+      "slug": "fer",
+      "image": "bois-generes-v1-fer.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Ironwood fantasy wood: dense steel-gray bark with broad angular ridges, dark charcoal heartwood and cool silver gray rings, subtle cool highlights; entirely natural wood, NOT metal, no bolts, no iron bands.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-39adf31c-bc03-41f8-baa7-2a246c1a9859.png",
+      "sha256": "1449acbfae6ed7b19650b54f6359e456d3fbb19d10477225e35e235f37287deb",
+      "name": "Bois de fer",
+      "level": 160,
+      "previous_image": null
+    },
+    {
+      "id": 199,
+      "slug": "ancestral",
+      "image": "bois-generes-v1-ancestral.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. Ancient ancestral wood: massive-looking short weathered log, rich bronze-brown bark, intricate broad twisting grain, moss touches, amber golden concentric heartwood rings with soft magical warmth. No face.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-dcf47721-8c79-4d2b-870e-bd096210ada1.png",
+      "sha256": "2bf45cffd987f40048a43691bec6c048e3c08e7d8f83ef0e3ad982769acbd8cd",
+      "name": "Bois ancestral",
+      "level": 180,
+      "previous_image": null
+    },
+    {
+      "id": 200,
+      "slug": "arbre-monde",
+      "image": "bois-generes-v1-arbre-monde.png",
+      "prompt": "Use case: stylized-concept. Create ONE square inventory resource icon for a fantasy RPG, closely matching the supplied reference pack's rendering. References are STYLE references only. Original new wood artwork. Hand-painted 2D casual RPG icon, chunky clean silhouettes, broad smoothly blended painterly planes, saturated jewel colors, golden highlights from upper left, strong dark edge shadows, small restrained glossy highlights, readable at 48px. NOT photoreal, not 3D render, not vector flat art. Single short harvested log diagonally from lower left (visible cut face) to upper right, short broken branch nub, occupies 80% of square, fully within frame, 8% margins. Plain near-black warm charcoal background with subtle soft halo behind object, no scenery, no ground, no border, no letters, no UI, no watermark. Consistent series composition. World-tree wood: majestic short harvested log, ivory gold bark with luminous emerald veins, honey-white cut face with golden concentric rings, a small emerald sprout and three tiny golden light motes, restrained green-gold halo. Most precious magical wood. No entire tree.",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-cd832dcb-455c-40d6-b7ac-9ccc5b35801c.png",
+      "sha256": "390252d46522677dd1b0fc01d9a2255d0b60eb916136f5b25762a5b54cc751c6",
+      "name": "Bois d’arbre-monde",
+      "level": 200,
+      "previous_image": null
+    }
+  ]
+}

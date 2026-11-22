@@ -1,0 +1,44 @@
+{
+  "lot": "coffres-placables-011",
+  "modele_interaction_id": 10,
+  "cout_pa": 0,
+  "cooldown_secondes": 7200,
+  "portee_recharge": "monde",
+  "butin_initial": {
+    "money": 500,
+    "experience": 200
+  },
+  "notes": "Récompenses indépendantes par rareté, copiées du coffre de Hal et éditables. Aucun nouveau placement.",
+  "items": [
+    {
+      "id": 13,
+      "nom": "Coffre classique",
+      "skin": "coffre-classique-carte-v1",
+      "recompense_id": 104
+    },
+    {
+      "id": 14,
+      "nom": "Coffre non commun",
+      "skin": "coffre-non-commun-carte-v1",
+      "recompense_id": 105
+    },
+    {
+      "id": 15,
+      "nom": "Coffre rare",
+      "skin": "coffre-rare-carte-v1",
+      "recompense_id": 106
+    },
+    {
+      "id": 16,
+      "nom": "Coffre épique",
+      "skin": "coffre-epique-carte-v1",
+      "recompense_id": 107
+    },
+    {
+      "id": 17,
+      "nom": "Coffre légendaire",
+      "skin": "coffre-legendaire-carte-v1",
+      "recompense_id": 108
+    }
+  ]
+}

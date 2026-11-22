@@ -1,0 +1,633 @@
+{
+  "lot": "recolte-complete-images-010",
+  "method": "builtin-imagegen",
+  "status": "integrated",
+  "items": [
+    {
+      "id": 164,
+      "group": "mine",
+      "skin": "mine-cuivre-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Copper ore outcrop, muted reddish copper seams in weathered gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-5cfa9ffd-c680-4ea6-bf3c-43221afed1cc.png",
+      "sha256": "b5156a71ee636df3dc561764b488e6ac7821830951ca8a8532b5e697905a390e",
+      "name": "Minerai de cuivre",
+      "level": 20,
+      "previous_skin": null
+    },
+    {
+      "id": 165,
+      "group": "mine",
+      "skin": "mine-etain-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Tin ore outcrop, small dull silver-white inclusions in pale gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-997d420a-974b-4df0-87ad-fc8c5003fcc3.png",
+      "sha256": "680d705d911a84da7975dc955504f7211a2adbbbc54e45bc0f71ac941fe50fc5",
+      "name": "Minerai d’étain",
+      "level": 40,
+      "previous_skin": null
+    },
+    {
+      "id": 166,
+      "group": "mine",
+      "skin": "mine-charbon-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Coal outcrop, dark charcoal layered chunks with restrained gray highlights",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-8a995bcd-a45d-4f5f-8889-3fe870e1747a.png",
+      "sha256": "3c00f244a4d1df50aa96f27ce7f5b827fc052949323268aea1590375fb08a451",
+      "name": "Charbon",
+      "level": 50,
+      "previous_skin": null
+    },
+    {
+      "id": 167,
+      "group": "mine",
+      "skin": "mine-cobalt-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Cobalt ore outcrop, subdued dusty blue mineral seams in gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-5bd0d251-aabe-4e2b-a21a-d79f1d0723d7.png",
+      "sha256": "931b96301edd1bd5ab259dda14cf93578084d02acc0bf9292a96e2a87cae8078",
+      "name": "Minerai de cobalt",
+      "level": 60,
+      "previous_skin": null
+    },
+    {
+      "id": 168,
+      "group": "mine",
+      "skin": "mine-corrompu-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Corrupted ore outcrop, dark weathered rock with muted plum mineral cracks, no glow",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-d9ee5dc6-d00f-4fb0-8066-587a0566960f.png",
+      "sha256": "502adae438c508ad19f73f4fd21eae4f207449795787b84b936a431a12169f0b",
+      "name": "Minerai corrompu",
+      "level": 80,
+      "previous_skin": null
+    },
+    {
+      "id": 7,
+      "group": "mine",
+      "skin": "mine-argent-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Silver ore outcrop with pale silver veins in cool gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-404bacf2-cdd9-4670-8d3b-5eac3d48bfff.png",
+      "sha256": "da1b5f84f8e7d76242855145b7efff64d8fa8899b5f7a8b552d8ee63640d790d",
+      "name": "Minerai d’argent",
+      "level": 100,
+      "previous_skin": "minerai-argent-carte"
+    },
+    {
+      "id": 169,
+      "group": "mine",
+      "skin": "mine-enchante-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Enchanted ore outcrop with subtle pale lavender mineral inclusions, no glow",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-21e606ea-7e8b-4c4f-a83c-b922bd656266.png",
+      "sha256": "73cfc7cd004f2f39bd9737e3f8faee68458a384a456f8f1a515cfdc683532b99",
+      "name": "Minerai enchanté",
+      "level": 120,
+      "previous_skin": null
+    },
+    {
+      "id": 170,
+      "group": "mine",
+      "skin": "mine-quartz-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Quartz deposit, short milky white rough crystal points embedded in gray stone",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-49347dc8-e66c-4218-8f1c-e68600f4c241.png",
+      "sha256": "0dd1bd86219fc7d8c5f3577d21b9c656c86ee1511354751fd0e1d53b2565f366",
+      "name": "Quartz",
+      "level": 140,
+      "previous_skin": null
+    },
+    {
+      "id": 171,
+      "group": "mine",
+      "skin": "mine-amethyste-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Amethyst deposit, small dusty violet crystal cluster embedded in gray stone",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-0bb724a8-a2a2-4940-8c39-147aea95fd81.png",
+      "sha256": "fd8147e8005f42aaf3e2b0df74c47fa3be9af0a84dbf595601bc3162ad397ad4",
+      "name": "Améthyste",
+      "level": 150,
+      "previous_skin": null
+    },
+    {
+      "id": 172,
+      "group": "mine",
+      "skin": "mine-serpentine-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Serpentine deposit, subdued moss green mineral veins in gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-586b3f3b-982c-48a9-9d5b-4027f6721125.png",
+      "sha256": "67b8b7911fac2dc6b315ae7ebb0efe3ac376859ae1a9c07ef6d372832e128890",
+      "name": "Serpentine",
+      "level": 160,
+      "previous_skin": null
+    },
+    {
+      "id": 173,
+      "group": "mine",
+      "skin": "mine-or-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Gold deposit, muted ochre golden veins in gray rock, modest metallic highlights",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-2e17c905-bf47-4b1a-80de-72b194815bed.png",
+      "sha256": "e1fc69b2298acd6198ca44f72198aa98a4e90bb6710fdca5194b43a787b8eb5b",
+      "name": "Minerai d’or",
+      "level": 180,
+      "previous_skin": null
+    },
+    {
+      "id": 174,
+      "group": "mine",
+      "skin": "mine-rubis-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Ruby deposit, small uncut dusty burgundy crystals embedded in gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-35476467-9225-4f7e-b6ba-90c5cd1a133e.png",
+      "sha256": "d5908f69040489758614b17f384f209674a2d36fb2f3bf13ffff11b3c674e454",
+      "name": "Rubis",
+      "level": 200,
+      "previous_skin": null
+    },
+    {
+      "id": 175,
+      "group": "mine",
+      "skin": "mine-saphir-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Sapphire deposit, small uncut slate blue crystals embedded in gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-1486c463-e1ac-42af-afac-5f5158692b34.png",
+      "sha256": "b8a6a0877e549e1a2c9ddd5e3138d89c55ef157f372caf698733eb61ab993fd9",
+      "name": "Saphir",
+      "level": 200,
+      "previous_skin": null
+    },
+    {
+      "id": 176,
+      "group": "mine",
+      "skin": "mine-cristal-pur-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Pure crystal deposit, modest clear off-white crystal points in gray rock",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/recolte-fer-niv0-v2.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-0e2ad35c-236f-47dc-8151-125e59c09c48.png",
+      "sha256": "76936b8491c8c5f032bacfe91acdd450cfa31ac1b7db1ba76c1256d096c4d907",
+      "name": "Cristal pur",
+      "level": 200,
+      "previous_skin": null
+    },
+    {
+      "id": 189,
+      "group": "arbre",
+      "skin": "arbre-frene-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living ash tree, airy rounded crown of fine olive green foliage, gray brown branching trunk",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-1ce85168-52c8-4c3d-bd96-d532d656202b.png",
+      "sha256": "09bec280752df09b1c325ffa7d356e8d362d2942bdd4bbe6c8f056ce1d723a9f",
+      "name": "Bois de frêne",
+      "level": 0,
+      "previous_skin": "recolte-frene-niv0-v2"
+    },
+    {
+      "id": 190,
+      "group": "arbre",
+      "skin": "arbre-chataignier-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living chestnut tree, broad dense crown of elongated olive leaves, stout brown trunk",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-acc1e4fa-dc7f-4738-99d6-8a289dfc7dd0.png",
+      "sha256": "414d2c9f3dff641b0a9eed511400970f88a62a262a0097f70f9654ccdf72ae93",
+      "name": "Bois de châtaignier",
+      "level": 20,
+      "previous_skin": null
+    },
+    {
+      "id": 191,
+      "group": "arbre",
+      "skin": "arbre-bouleau-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living birch tree, slender white bark with dark marks, light green airy crown",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-cab40dfe-c84e-4c18-a89d-256b724f1270.png",
+      "sha256": "47d95379eb97087304c3d571d035d25a903d720f3a1bc611ad14a50a0521ebc5",
+      "name": "Bois de bouleau",
+      "level": 50,
+      "previous_skin": null
+    },
+    {
+      "id": 192,
+      "group": "arbre",
+      "skin": "arbre-erable-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living maple tree, rounded crown of muted ochre and olive lobed leaves, brown trunk",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-ea82628d-e04e-4ce1-8276-36e6e1e1649a.png",
+      "sha256": "a6d929824f6ad47b0a5d497783cbf5066a6a31818dadb6f55928cd30789013d0",
+      "name": "Bois d’érable",
+      "level": 60,
+      "previous_skin": null
+    },
+    {
+      "id": 193,
+      "group": "arbre",
+      "skin": "arbre-corrompu-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living corrupted tree, crooked dark trunk, sparse muted olive and dusty plum foliage, no face or glow",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-10124734-29e0-4324-b3ea-d54f91cd74cb.png",
+      "sha256": "3adb9654abb204d0b60e284477bf6b62ac8d151ee00b64f093cc3688dc6ccec6",
+      "name": "Bois corrompu",
+      "level": 80,
+      "previous_skin": null
+    },
+    {
+      "id": 194,
+      "group": "arbre",
+      "skin": "arbre-noyer-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living walnut tree, broad dark olive crown with layered leaf clusters and sturdy brown trunk",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-dc82d909-8ccb-46ad-bb77-3341f3dff873.png",
+      "sha256": "f605d9700fd4983df998122b9f7226c23b55802b7ab063c518a444542196795e",
+      "name": "Bois de noyer",
+      "level": 100,
+      "previous_skin": null
+    },
+    {
+      "id": 195,
+      "group": "arbre",
+      "skin": "arbre-enchante-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living enchanted tree, graceful trunk and subdued sage green canopy with a few pale mauve leaves, no glow",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-e8189815-b082-4b6c-ad99-604b9db3d429.png",
+      "sha256": "9a7a069881ec301165d8742cf2f5b3a4f827c558ed08883f8961b395b8503ccd",
+      "name": "Bois enchanté",
+      "level": 120,
+      "previous_skin": null
+    },
+    {
+      "id": 196,
+      "group": "arbre",
+      "skin": "arbre-if-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living yew tree, dense dark moss green needle foliage in rounded tiers and reddish brown trunk",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-104ee38a-c6af-4cab-b00a-41d6732c1dc3.png",
+      "sha256": "ea0a25f57bfc5976d4a8cf6ea3f3f80b9dc06aad169de8a4866f40b1ccee2981",
+      "name": "Bois d’if",
+      "level": 140,
+      "previous_skin": null
+    },
+    {
+      "id": 197,
+      "group": "arbre",
+      "skin": "arbre-ebene-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living ebony tree, very dark brown trunk and compact deep olive foliage",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-7b831529-85a4-4d0e-9aaa-529b042569ed.png",
+      "sha256": "47b418d181a4f2d0192fa98b9f337b12abc662d485a088cdc67a95893278b7ca",
+      "name": "Bois d’ébène",
+      "level": 150,
+      "previous_skin": null
+    },
+    {
+      "id": 198,
+      "group": "arbre",
+      "skin": "arbre-fer-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Living ironwood tree, stout weathered gray bark, dense restrained gray green crown",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-535629d5-821b-48a6-b985-d016549a0557.png",
+      "sha256": "3b88ec39635731a4a2659ecef56ce3d3c07d6ca6b0013eb4a9dd508a3640f102",
+      "name": "Bois de fer",
+      "level": 160,
+      "previous_skin": null
+    },
+    {
+      "id": 199,
+      "group": "arbre",
+      "skin": "arbre-ancestral-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Ancient living tree, broad gnarled trunk with roots, dense moss green crown, compact one-cell form",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-246468df-94b5-4ef0-9fab-243a8d0f7875.png",
+      "sha256": "456f4b74653a693a2e699801c1d700a7c53ea6cd03244651603db03e1f92eaea",
+      "name": "Bois ancestral",
+      "level": 180,
+      "previous_skin": null
+    },
+    {
+      "id": 200,
+      "group": "arbre",
+      "skin": "arbre-arbre-monde-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: World-tree sapling, graceful thick intertwined trunk, layered olive crown and tiny cream buds, humble magical appearance, one-cell tree",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/chene-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-3c3dbb35-da7b-425d-a3e2-1a7bdf648df8.png",
+      "sha256": "762c3fa99979fc564942186e555fc511dbac91cce44b1d6b57d3e293f00bfd9a",
+      "name": "Bois d’arbre-monde",
+      "level": 200,
+      "previous_skin": null
+    },
+    {
+      "id": 177,
+      "group": "herbe",
+      "skin": "herbe-ortie-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted nettle patch, serrated muted olive green leaves, low dense clump",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-215d2069-9703-48c9-85ea-e78e09a32731.png",
+      "sha256": "9a54d62fbed13707e0195663d083d7ec231d75f85737f94e09ca7cf9aeb23660",
+      "name": "Ortie",
+      "level": 0,
+      "previous_skin": "recolte-ortie-niv0-v2"
+    },
+    {
+      "id": 178,
+      "group": "herbe",
+      "skin": "herbe-camomille-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted chamomile patch, small cream daisies with muted yellow centers among fine green leaves",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-fdb23fc2-ff2d-42f7-a8c1-37f7d8452bc8.png",
+      "sha256": "5464cfa3648f829f5675a4b509332359cb684380a0d5ffaa21ede1a65e10fb89",
+      "name": "Camomille",
+      "level": 20,
+      "previous_skin": null
+    },
+    {
+      "id": 179,
+      "group": "herbe",
+      "skin": "herbe-bolet-luisant-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Low compact group of three luminous boletes, muted tan olive caps with tiny pale speckles suggesting magic, short beige stems, no emitted glow. Mushroom occupies 80% width and 65% height",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-56852429-7589-4f97-a666-cbbde0af5a93.png",
+      "sha256": "c742b7d5baa72a9f26105d7cda163e8c5bca301140be89fc8ba1483405445661",
+      "name": "Bolet luisant",
+      "level": 40,
+      "previous_skin": null
+    },
+    {
+      "id": 180,
+      "group": "herbe",
+      "skin": "herbe-menthe-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted wild mint patch, textured rounded serrated sage green leaves",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-3c89f143-a393-4141-86cc-915f071da126.png",
+      "sha256": "7e16510b337ef9446bf64e2a3c3ad12a89e71e5f88b9d27ae265a685d7c40632",
+      "name": "Menthe sauvage",
+      "level": 50,
+      "previous_skin": null
+    },
+    {
+      "id": 181,
+      "group": "herbe",
+      "skin": "herbe-lavande-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted lavender patch, narrow gray green leaves and short dusty mauve flower spikes",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-15466858-34ea-4ec5-8532-41ab48f813b7.png",
+      "sha256": "0c6f7f302f569ca2f24eb345523863521b0ad1215816ff5d2c122fe8ffcf156b",
+      "name": "Lavande",
+      "level": 60,
+      "previous_skin": null
+    },
+    {
+      "id": 182,
+      "group": "herbe",
+      "skin": "herbe-champignon-corrompu-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Low compact group of three corrupted mushrooms, muted dark plum brown caps, short beige stems, no glow. Mushroom occupies 80% width and 65% height",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-d2c24603-a1ee-46ef-be4f-10f637e7ddb4.png",
+      "sha256": "7349a8447893d2eaed254e8f1465c2981835cf17c229e29d92cd10e8559d19e1",
+      "name": "Champignon corrompu",
+      "level": 80,
+      "previous_skin": null
+    },
+    {
+      "id": 183,
+      "group": "herbe",
+      "skin": "herbe-fleur-enchantee-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted enchanted flower patch, three modest dusty mauve star shaped blossoms and olive foliage, no glow",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-1cce4e1c-de2b-4c4c-a3b3-5b43c58b81b4.png",
+      "sha256": "bc6a90ec6affac8dfcefe98ceeebc5d966c415dce02bde5bc9bb8c25be6f4cb7",
+      "name": "Fleur enchantée",
+      "level": 120,
+      "previous_skin": null
+    },
+    {
+      "id": 184,
+      "group": "herbe",
+      "skin": "herbe-morille-songes-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Low compact group of three dream morels, pale taupe honeycomb caps with subtle dusty lilac undertones and short stems. Mushroom occupies 80% width and 65% height",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-cebad3c5-4a58-485d-85a0-451e6333e938.png",
+      "sha256": "2f8508273fab08bf9465fe6d25ada9f1dc0eff430dd6e31454e02b59f6d63212",
+      "name": "Morille des songes",
+      "level": 140,
+      "previous_skin": null
+    },
+    {
+      "id": 185,
+      "group": "herbe",
+      "skin": "herbe-trefle-astral-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted astral clover patch, muted green clover leaves with a few tiny cream star flowers, no glow",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-950a2f6d-3b74-4026-87e8-8920406eb83f.png",
+      "sha256": "608c3b8a72ea8be136c50147af1f4ad9ccbc7b4123e5ffdd7e7c5770d35d722c",
+      "name": "Trèfle astral",
+      "level": 150,
+      "previous_skin": null
+    },
+    {
+      "id": 186,
+      "group": "herbe",
+      "skin": "herbe-orchidee-lunaire-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted moon orchid patch, two small ivory blossoms with pale lilac centers and sage green leaves",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-6de1d38c-f087-4e0b-8b15-b3b11d7bf1d0.png",
+      "sha256": "4c2a51d19407d6c6eb7db77b6dade279d0aa0cd2415066ae122cd1178f8fa833",
+      "name": "Orchidée lunaire",
+      "level": 160,
+      "previous_skin": null
+    },
+    {
+      "id": 187,
+      "group": "herbe",
+      "skin": "herbe-amanite-spectrale-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Low compact group of three spectral amanitas, pale gray caps with tiny ivory spots, short taupe stems, subtle blue gray shadows, no glow. Mushroom occupies 80% width and 65% height",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-bae14f01-043f-4923-94ce-e6cae5a9e2a2.png",
+      "sha256": "749a591c89b1179e37cdc87652fe74b42f1b23ac1b0188d2b4ae496a76b3b793",
+      "initial_generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-3e45c897-6e0d-45bd-a408-00e00772154e.png",
+      "refinement_prompt": "Edit this sprite ONLY to completely REMOVE the entire large white gray luminous cloud, halo, aura and mist surrounding the mushrooms. Replace every part of that cloudy backdrop with fully transparent pixels. Keep exactly the same three mushrooms and little plants, their size, position, colors, fine pixel-art texture and composition. The mushrooms themselves remain solid and opaque. Background must be truly transparent right up to the clean silhouette of mushrooms and leaves. No glow, no mist, no cloud, no border, no background disk.",
+      "name": "Amanite spectrale",
+      "level": 180,
+      "previous_skin": null
+    },
+    {
+      "id": 188,
+      "group": "herbe",
+      "skin": "herbe-fleur-arbre-monde-carte-sobre-v4",
+      "prompt": "Use case: stylized-concept. Create ONE transparent harvestable MAP prop sprite, original sibling of the supplied approved reference. Match its classic top-down 2D JRPG map rendering, slightly elevated camera, softly shaded fine pixel texture, natural volume and subdued earthy palette. NOT an inventory icon. No thick black outline, no sticker border, no neon, no bloom, no sparkles, no symbols, no text. Transparent background without tile or ground disk; tiny contact shadow only. Compact one-cell footprint, centered, fully inside square frame. Match reference scale and texture: trees occupy about 80% width and height, rock outcrops about 90%, rooted plant clumps about 85%. Keep small silhouettes readable at 64px. Subject: Rooted world-tree flower patch, modest ivory flowers with muted gold centers, rich olive green leaves and small curled roots, no glow",
+      "reference": "/Users/clement/Documents/dev/alcazan-forest/alcazan-docker/alcazan-front-prod/public/img/interaction/sauge-des-bois-carte-sobre-v3.png",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-188e79cc-a6f3-47ca-a6b5-b1a0b7aebabc.png",
+      "sha256": "2b96d7ebfee4eec86c37b8481b290c8f4c3e87468739da7077d34e0fb513b4b1",
+      "name": "Fleur de l’arbre-monde",
+      "level": 200,
+      "previous_skin": null
+    }
+  ],
+  "preserved": [
+    6,
+    8,
+    5
+  ],
+  "blue_mushroom_css_reduction_px": 4,
+  "web_palette": {
+    "method": "CSS saturate / hue-rotate; original PNG unchanged",
+    "values": {
+      "champignon-bleu-carte-sobre-v3": [
+        2.2,
+        0
+      ],
+      "mine-cuivre-carte-sobre-v4": [
+        1.25,
+        0
+      ],
+      "mine-etain-carte-sobre-v4": [
+        1,
+        0
+      ],
+      "mine-charbon-carte-sobre-v4": [
+        1,
+        0
+      ],
+      "mine-cobalt-carte-sobre-v4": [
+        1.45,
+        0
+      ],
+      "mine-corrompu-carte-sobre-v4": [
+        1.6,
+        0
+      ],
+      "mine-argent-carte-sobre-v4": [
+        1,
+        0
+      ],
+      "mine-enchante-carte-sobre-v4": [
+        1.5,
+        0
+      ],
+      "mine-quartz-carte-sobre-v4": [
+        1.1,
+        0
+      ],
+      "mine-amethyste-carte-sobre-v4": [
+        1.55,
+        0
+      ],
+      "mine-serpentine-carte-sobre-v4": [
+        1.55,
+        10
+      ],
+      "mine-or-carte-sobre-v4": [
+        1.2,
+        0
+      ],
+      "mine-rubis-carte-sobre-v4": [
+        1.8,
+        0
+      ],
+      "mine-saphir-carte-sobre-v4": [
+        1.6,
+        0
+      ],
+      "mine-cristal-pur-carte-sobre-v4": [
+        1.1,
+        0
+      ],
+      "arbre-frene-carte-sobre-v4": [
+        1.35,
+        12
+      ],
+      "arbre-chataignier-carte-sobre-v4": [
+        1.35,
+        -8
+      ],
+      "arbre-bouleau-carte-sobre-v4": [
+        1.2,
+        10
+      ],
+      "arbre-erable-carte-sobre-v4": [
+        1.35,
+        -12
+      ],
+      "arbre-corrompu-carte-sobre-v4": [
+        1.65,
+        0
+      ],
+      "arbre-noyer-carte-sobre-v4": [
+        1.4,
+        10
+      ],
+      "arbre-enchante-carte-sobre-v4": [
+        1.65,
+        20
+      ],
+      "arbre-if-carte-sobre-v4": [
+        1.4,
+        12
+      ],
+      "arbre-ebene-carte-sobre-v4": [
+        1.35,
+        -8
+      ],
+      "arbre-fer-carte-sobre-v4": [
+        1.65,
+        18
+      ],
+      "arbre-ancestral-carte-sobre-v4": [
+        1.2,
+        -5
+      ],
+      "arbre-arbre-monde-carte-sobre-v4": [
+        1.35,
+        18
+      ],
+      "herbe-ortie-carte-sobre-v4": [
+        1.45,
+        8
+      ],
+      "herbe-camomille-carte-sobre-v4": [
+        1.4,
+        0
+      ],
+      "herbe-bolet-luisant-carte-sobre-v4": [
+        1.8,
+        -8
+      ],
+      "herbe-menthe-carte-sobre-v4": [
+        1.65,
+        18
+      ],
+      "herbe-lavande-carte-sobre-v4": [
+        1.9,
+        0
+      ],
+      "herbe-champignon-corrompu-carte-sobre-v4": [
+        1.85,
+        0
+      ],
+      "herbe-fleur-enchantee-carte-sobre-v4": [
+        1.9,
+        0
+      ],
+      "herbe-morille-songes-carte-sobre-v4": [
+        1.9,
+        0
+      ],
+      "herbe-trefle-astral-carte-sobre-v4": [
+        1.6,
+        12
+      ],
+      "herbe-orchidee-lunaire-carte-sobre-v4": [
+        1.65,
+        0
+      ],
+      "herbe-amanite-spectrale-carte-sobre-v4": [
+        2,
+        0
+      ],
+      "herbe-fleur-arbre-monde-carte-sobre-v4": [
+        1.5,
+        0
+      ]
+    },
+    "unavailable": "Existing grayscale state preserved"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "lot": "recolte-niveau0-images-008",
+  "method": "builtin-imagegen",
+  "prompt": "Edit the supplied transparent game sprite with an EXTREMELY SUBTLE refinement only: make it just a tiny bit less blocky/pixelated. Keep the retro top-down RPG sprite character, limited palette, crisp chunky readable color clusters. Gently soften only the harshest staircase edges and blend a few large color-block transitions, about 10% smoother, NOT a painterly redesign, NOT glossy 3D, NOT blurred. Preserve EXACT subject, silhouette, composition, colors, lighting, orientation, object count, proportions and occupied bounds on canvas. Keep true transparent background and the SAME margins. Do NOT shrink the object; display sizing is handled separately in CSS. No additional elements, no text, no glow, no scenery.",
+  "display": "Web : boîte réduite de 4 px en largeur et hauteur, centrage horizontal et ancrage bas conservés ; image-rendering auto pour ces trois sprites seulement.",
+  "items": [
+    {
+      "id": 6,
+      "skin": "recolte-fer-niv0-v2",
+      "previous_skin": "recolte-fer-niv0-v1",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-c0d8336d-3813-4087-9fec-dc3007a4972a.png",
+      "sha256": "619879ed724d0e746711df4085a01ec1981a5cbd62547e3a3c6db7330df3b331"
+    },
+    {
+      "id": 189,
+      "skin": "recolte-frene-niv0-v2",
+      "previous_skin": "recolte-frene-niv0-v1",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-5dee28e2-6a92-4dab-9f3c-647d890dd982.png",
+      "sha256": "6d2ecf9aa1f9b2e29f615d2f5818e50e394fdd06514b77cf100ab596ed2b4bdc"
+    },
+    {
+      "id": 177,
+      "skin": "recolte-ortie-niv0-v2",
+      "previous_skin": "recolte-ortie-niv0-v1",
+      "generated_path": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-d6e1fb49-8488-4825-af51-51c49789c276.png",
+      "sha256": "9d46b938b638a838a931a1467e5d75b5eec1758dd66c63d23fa01a637f8fdcbb"
+    }
+  ]
+}

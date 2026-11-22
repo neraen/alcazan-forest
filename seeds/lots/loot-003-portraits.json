@@ -1,0 +1,72 @@
+{
+  "tool": "image_gen (outil intégré)",
+  "transparent_background": false,
+  "portraits": [
+    {
+      "key": "mycotaure",
+      "name": "Mycotaure des sous-bois",
+      "skin": "loot-003-mycotaure-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-35ca9e07-c534-4201-abc3-5c4d545d397a.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One stocky mushroom beast with ochre stalk body, broad burgundy red spotted cap, smaller brown and blue-green shelf fungi on shoulders, rootlike feet, stern amber eyes. Damp forest floor, strong chunky silhouette.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-003-mycotaure-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 22
+    },
+    {
+      "key": "sylve",
+      "name": "Sylvain des ruches",
+      "skin": "loot-003-sylve-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-d74f6cc8-7be2-49ae-9ff4-08bf85246796.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One friendly-looking but formidable living oak guardian with amber wood body, leafy green crown, autumn-orange leaves, honeycomb embedded in chest, hanging small beehive, acorns and berries growing on branches. Warm sunlit enchanted woodland, a few tiny bees.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-003-sylve-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 23
+    },
+    {
+      "key": "gelee",
+      "name": "Gelée prismatique",
+      "skin": "loot-003-gelee-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-5206ca8a-6cd1-4f90-a22a-5b6f5485dad3.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One large translucent magical slime creature with cobalt blue base flowing into emerald green and warm amber lobes, bright ruby-red and turquoise crystal nucleus, tiny suspended bubbles, mischievous simple luminous eyes. Iridescent mineral cave, no skull or victim inside.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-003-gelee-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 24
+    },
+    {
+      "key": "chimere",
+      "name": "Chimère des brumes",
+      "skin": "loot-003-chimere-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-06a298e0-82d5-424f-8721-daa4175ac457.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One quadrupedal fantasy chimera with thick silver-white fur, copper mane and tail tuft, two large pale ivory horns, dark crimson bat wings folded partly open, pale gold slit-pupil eyes, clawed paws. Cool misty mountain forest, dignified dangerous stance.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-003-chimere-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 25
+    },
+    {
+      "key": "harpie",
+      "name": "Harpie aux plumes d’opale",
+      "skin": "loot-003-harpie-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-d4c03490-1fb3-4dbe-a4c7-0678612e9f48.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One avian fantasy harpy with an elegant birdlike face and hooked pale beak, two blue feathered wing-arms, iridescent opal feather crest, grey feather body, two pink scaly legs ending in talons, necklace of carved brown trophies. Fully feather-covered creature, no human nudity. High forest nesting ledge with two eggs.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-003-harpie-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 26
+    },
+    {
+      "key": "rampant",
+      "name": "Rampant cuirassé",
+      "skin": "loot-003-rampant-v1",
+      "source": "/Users/clement/.codex/generated_images/01a1eee1-21ed-7f41-beac-56e43d2d7852/exec-9885fb75-0c90-4420-b6d3-a46e2d347408.png",
+      "prompt": "Use case: stylized-concept. Asset: square bestiary portrait for Alcazan Forest 2D fantasy MMORPG, consistent with polished hand-painted angular fantasy art. Exactly ONE creature illustration per image, no sheet. Bold readable silhouette, rich colors, confident painterly planes, soft cel shading, not photorealistic, not pixel art, not 3D. Full body or near-full body centered occupying 80% of canvas, three-quarter view, clear face and atmospheric simplified environment, foreground/background separation. No frame, text, labels or watermark. Subject: One large segmented underground crawler with orange-brown chitin plates, slate-grey studded armored back, ivory mandibles, small green eyes, long jointed tail and six hooked legs. Mossy cavern floor with scattered shell fragments, no gore.",
+      "file": "alcazan-front-prod/public/img/monstre/loot-003-rampant-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "monster_id": 27
+    }
+  ]
+}
