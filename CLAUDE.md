@@ -250,6 +250,72 @@ est capturé automatiquement) :
   de défilement, et comme la SpellBar est plus large que la zone, le navigateur scrollait `main`
   au premier clic dans une modale, décalant TOUT le contenu (dont `#game-modal-root`) et
   rognant la modale sur son bord gauche. Ne pas revenir à `hidden`.
+- **Repop + armure des monstres (16/11/2026, doc §23)** : `MonstreRepopService` est l'UNIQUE
+  point de mutation de `monstre_carreau.quantity` en jeu et l'UNIQUE écrivain de
+  `monstre_repop` (liste noire du dump) — une ligne PAR MISE À MORT, à l'heure du retour.
+  Le décrément est SQL ATOMIQUE (`quantity > 0`) : `tuer()` renvoie false sur une case déjà
+  vide et `dieMonster` ne distribue alors RIEN. `app:monstres:repop` tourne dans une boucle
+  DÉDIÉE de 5 s du scheduler ; ce n'est PAS un filet (seul chemin de retour) et il planifie
+  aussi les déficits sans échéance. `temps_repop` NULL/≤ 0 = 30 s (`MonstreConfig`).
+  `monstre.armure` suit la formule joueur via `SpellService::damageOnMonstre`, appliquée au
+  monde ouvert ET aux monstres d'instance — pas aux boss. Une case vide est refusée en 400
+  `{"message"}` par `/joueur/attack/monster`.
+- **Atlas du monde (18/11/2026, doc §24)** : onglet « Monde » = `MondeAtlasService` (LECTURE
+  pure) + `MondeLayout` (calcul pur). **Aucune position de carte n'est stockée** : la
+  géographie est REDÉDUITE des wraps à chaque appel — passage de bord → bord OPPOSÉ =
+  frontière (voisine), tout le reste = porte (intérieur). Les cartes de `donjon_salle` sont
+  hors grille. Ne jamais ajouter de colonne de position « pour aller plus vite » : l'atlas
+  divergerait du jeu. `MondeEditorService::prolonger` crée carte + paire de wraps en UNE
+  transaction (le passage est actif tout de suite) ; `creerCarteVierge` sert aussi
+  `/api/map/create`. Fonds de carte : TOUJOURS `fondCarte(id)` (`components/map/imageCarte.js`),
+  jamais `require("…/"+id+".png")` nu, qui jette quand l'image n'est pas encore déposée.
+  ⚠️ En dev, après une recompilation à chaud, un `<iframe>` invisible de react-error-overlay
+  (« process is not defined », react-scripts 4) peut rester par-dessus la page et avaler les
+  clics : recharger.
+- **Contenu des coffres (19/11/2026, doc §29)** : `recompense_ligne` (garanti / au tirage
+  + poids, quantité min–max) + `recompense.tirages`, distribués par
+  `RecompenseService::lignesObtenues` (tirage SANS remise). Les champs historiques de
+  `Recompense` restent ceux des quêtes, du boss, des recettes et de la RÉCOLTE (l'image de
+  la case vient de `recompense.objet`) — l'éditeur n'envoie `lignes` que hors récolte, et
+  enregistrer des lignes vide les champs historiques. ⚠️ `lignes: []` + champs historiques
+  remplis = simple écho de `get`, PAS un « vider » (sinon la récolte perdait sa récompense).
+- **Bonus des potions (19/11/2026, doc §28)** : l'effet d'une potion « buff » vit dans
+  `buff` + `buff_caracteristique`, édités par `ItemEditorService::enregistrerBuff`
+  (`/api/admin/items/buff/save`, effets resynchronisés, toujours `is_carac`). ⚠️ Lu EN
+  DIRECT à chaque coup et PARTAGÉ (potions, sorts) : modifier un bonus les change tous,
+  potions déjà bues comprises — l'écran compte les usages et propose une copie. ⚠️ Un bonus
+  n'agit que sur les caractéristiques utilisées par un sort (`effective`, déduit de
+  `sortilege`) ; la description de la potion n'est qu'un texte libre.
+- **Gomme du MapMaker (19/11/2026, doc §27)** : `/api/map/update` passe par
+  `MapCaseEditorService` — **un champ présent et VIDE = retirer** (`pnjId`,
+  `interactionId`, `hasMonstre`, `bossId` à null, `isWrap` false qui efface aussi la cible).
+  ⚠️ `hasMonstre` est l'id de la ligne `monstre_carreau`, PAS du monstre : une pose passe
+  par `monstreId` (le confondre ajoutait un monstre fantôme à toute case retouchée).
+  Front : `GommeForm` + reducer `ERASE_CASE`/`gommerCase` ; retirer un PNJ ou un passage
+  rend la case foulable.
+- **Item Maker (18/11/2026, doc §25)** : `ItemAtlasService` (LECTURE pure) recoud les
+  sources (butin, boss, quête, récolte/coffre, recette, marchand) et usages (ingrédient,
+  quête, prérequis) de chaque item — aucune table ne dit « d'où vient un item ».
+  `ItemEditorService` porte les consommables et les butins de monstres (`monstre_objet`,
+  RESYNCHRONISÉ, ids stables) ; les objets passent par
+  `ArtisanatEditorService::enregistrerObjet`, SEUL écrivain d'`Objet` de l'admin, et les
+  équipements par `/api/equipement/create`. Chance de butin saisie en % : entier → `/100`,
+  décimale → `/10000` (`ItemConfig::DIVISEUR_BUTIN`). Collection d'images `consommable`
+  (`img/consommables`, bind-mount docker-compose). ⚠️ Dans un CSS Module, deux classes du
+  même nom FUSIONNENT : un `.barre` de jauge avait écrasé la barre d'en-tête (6 px, overflow
+  caché) — nommer sans collision.
+- **Effets et contrôles (22/11/2026, doc §30)** : `EffetService` est l'UNIQUE point
+  d'application/lecture de `user_buff` (ne flushe pas). Un sort ne porte AUCUN code : il
+  cite un effet `buff` (contenu) avec `controle` (enum `ControleEffet`, ex. `immobilisation`)
+  et `nefaste` ; `buff` → lanceur, `attack` → cible. Ajouter une entrave = du contenu ;
+  ajouter un NOUVEAU contrôle = un case d'enum + son garde-fou. Un effet ne se cumule ni ne
+  se RAFRAÎCHIT, deux plafonds distincts bienfaits/affaiblissements (`EffetConfig`), et un
+  contrôle laisse une IMMUNITÉ (sans elle, entrave à vie). L'immobilisation est appliquée
+  par `DeplacementService::verifierMobilite` sur les TROIS déplacements volontaires (pas,
+  passage, auberge) ; la mort la dissipe. `GrimoireService::maitrise` (classe + niveau) est
+  vérifié au lancer PvP et `/spell/self` — pas encore monstre/boss. `is_blocage` n'existe
+  plus. Front : `useEffetsActifs` alimente la grille 3×2 (haut = bienfaits, bas =
+  affaiblissements) ET le Profil — ne pas refaire de fetch ailleurs.
 - Repositories orphelins (entités supprimées) : `ExperienceRepository`,
   `ExperienceJoueurRepository`, `ActionParamsRepository`.
 - Le schéma BDD est baseliné par des migrations (marquées exécutées) : toute évolution passe
@@ -501,6 +567,11 @@ est capturé automatiquement) :
   ce que son prochain niveau ouvrira. Ne jamais confondre les trois vides du catalogue (aucun
   métier de fabrication / métier sans recette / recherche infructueuse) — d'où
   `recettesDuMetier` à côté de `recettesFiltrees`.
+- **ArtisanatMaker en cartes (18/11/2026, doc §26)** : métiers en cartes → fiche du métier
+  (`?metier=<id>`) : ressources pour la récolte, recettes par paliers de 20 niveaux avec
+  composants en mini-icônes pour la fabrication ; les formulaires historiques s'ouvrent dans
+  un panneau latéral. Noms/images des items : catalogue de l'Item Maker par clé `type:id`
+  (`lister()` renvoie `produit.cle` / `ingredients[].cle`), jamais de chemin d'image côté back.
 - **ArtisanatMaker (lot 4, doc §16.5)** : `/administration/artisanat`, API
   `/api/artisanat/editor/*` (ROLE_ADMIN, règle placée AVANT `^/api`). Trois onglets — Métiers,
   Ressources (= premier éditeur d'`Objet`), Recettes. `ArtisanatEditorService` : une

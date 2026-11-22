@@ -86,7 +86,8 @@ Incohérences à connaître :
   ou un boss.
 - Déplacement clavier **ZQSD**, 1 case = **1 PM** (`/joueur/case/update_position`).
   Régénération : **+10 PA / +20 PM par heure** (plafonds 600/800) via `app:regen-points`,
-  lancée par le conteneur `alcazan-scheduler`.
+  lancée par le conteneur `alcazan-scheduler`, qui fait aussi tourner `app:monstres:repop`
+  toutes les 5 s (§23).
 - **Wraps** : cases de téléportation (`targetMapId`, `targetWrap`) avec condition optionnelle
   (`Wrap.mapCondition`) : `boss` (tué il y a < 3 h), `level`, `alignement`, `quest` (terminée).
   À l'arrivée, le joueur est posé sur une case libre adjacente (rayon 1 puis 2, sinon exception).
@@ -98,7 +99,9 @@ Incohérences à connaître :
   caracPrincipale×coefPrincipal)` où carac = points investis + bonus équipement + buffs actifs.
   Chaque sort : coût PA, cooldown, portée, niveau minimum, lié à une classe.
 - Réduction d'armure (PvP uniquement) : `réduction = (1 − 2.2^(−armure/400)) × 0.4` (plafond 40 %).
-- Types de sorts : `attack`, `soin`, `buff` (max 3 buffs simultanés, un même buff non cumulable).
+- Types de sorts : `attack`, `soin`, `buff`. Un sort peut CITER un effet (`sortilege.buff_id`) :
+  sur soi pour un `buff`, sur la cible pour une `attack` (affaiblissement, ex. immobilisation) —
+  règles et plafonds en §30.
 - **PvE monstre** : riposte automatique `rand(puissance, puissance×2.2) − armure×0.2` (armure
   réelle du joueur : points investis + bonus d'équipement). Mort du monstre : `quantity−1` sur la case, vie reset, loot
   par `MonstreObjet` (`rand(1, diviseurTauxDrop) ≤ tauxDrop`).
@@ -365,8 +368,9 @@ d'équipements. **Aucun contrôle de rôle côté back** (voir §6).
   *Relations monstre en double (OneToOne `monstres` + ManyToOne/OneToMany) — à assainir.*
 - **`carreau`** : référentiel terrain. **`wrap`** : mapCondition (boss/level/alignement/quest)
   + value.
-- **`monstre`** (maxLife, puissance, skin, temps_repop) ; **`monstre_carreau`** = pack sur une
-  case (quantity, quantity_base, current_life) ; **`monstre_objet`** = loot (taux_drop,
+- **`monstre`** (maxLife, puissance, **armure**, skin, temps_repop — NULL = 30 s, cf. §23) ;
+  **`monstre_carreau`** = pack sur une case (quantity, quantity_base, current_life) ;
+  **`monstre_repop`** = réapparitions en attente (runtime, §23) ; **`monstre_objet`** = loot (taux_drop,
   diviseurTauxDrop, typeDrop objet|equipement).
 - **`boss`** (maxLife, **actualLife globale/persistée**, puissance) + **`boss_sortilege`** (sort
   selon lifePercent → `non_player_sortillege`), **`boss_equipement`**/**`boss_objet`** (loot),
@@ -3472,6 +3476,14 @@ trois endpoints d'attaque) ; `diePlayer` sans transaction propre ; `chusei_test`
 
 ### 21.15 Images des ressources sur la carte — 15/11/2026
 
+**Ajustement du 16/11/2026** : sprites agrandis (boîte 150 % × 180 %), ancrés
+au bas de la case, avec une compensation de 18 % pour les marges transparentes des PNG
+actuels. Les nouveaux PNG doivent garder des marges similaires. Le dessin peut dépasser
+vers le haut ; sa zone de clic reste la case et le débordement ne capture pas les voisins.
+Surbrillance dorée suivant la silhouette uniquement si l’état serveur indique disponible
+(sans épuisement ni recharge future) : drop-shadow web, silhouette teintée/floutée dans
+l’app. Les ressources indisponibles restent assombries, sans halo.
+
 `objet.image_carte` (nullable, PNG dans `img/interaction`, sans extension) est indépendant
  de `objet.image` (inventaire). Le champ « Image affichée sur la carte » dans ArtisanatMaker
 réutilise l’uploader de la collection `interaction`. Le DTO et la liste de l’éditeur
@@ -3588,3 +3600,688 @@ Leopold (PNJ 1) est posé sur DEUX cartes : « Tutoriel Boisé » (6, 11) et « 
 quand le joueur n'est sur aucune des deux, et annonce donc « Le bois de Hal · case 0, 0 ».
 À trancher dans le MapMaker (retirer la case parasite), pas dans le code.
 
+## 23. Repop et armure des monstres — 16/11/2026
+
+### 23.1 Repop
+
+Avant : `DeathService::dieMonster` décrémentait `monstre_carreau.quantity` sans plancher et
+RIEN ne repeuplait (`monstre.temps_repop` n'était lu nulle part) — des populations à −151,
+et une case vide restait attaquable, butin compris.
+
+- **`MonstreRepopService`** est l'UNIQUE point de mutation de la population en jeu et
+  l'UNIQUE écrivain de **`monstre_repop`** (table RUNTIME, liste noire de `content-dump.sh`).
+  Il écrit en SQL natif sur la connexion de l'appelant, ne flushe pas.
+- **Une ligne `monstre_repop` par mise à mort**, à l'heure du retour : chaque monstre tué a
+  SON délai (cinq loups tués en 10 s reviennent tous ~30 s plus tard, pas un toutes les 30 s).
+- **`tuer()`** décrémente en SQL ATOMIQUE avec garde `quantity > 0`, et renvoie `false` si la
+  case était déjà vide (deux joueurs sur le même dernier loup) : `dieMonster` ne compte alors
+  ni compteur, ni cumul, ni journal, ni butin — un monstre ne meurt qu'une fois.
+- **`app:monstres:repop`** (`repopper()`) : +1 par échéance passée, **plafonné à
+  `quantity_base`**, puis **planifie les déficits sans échéance** (base relevée au MapMaker,
+  populations héritées — la migration a ramené les négatifs à 0 et ce filet les a
+  repeuplées). Ce n'est PAS un filet comme `app:echanges:expirer` : c'est le SEUL chemin de
+  retour, la désactiver vide le monde.
+- **Scheduler** : boucle DÉDIÉE toutes les **5 s** dans `alcazan-scheduler` (la boucle
+  principale est à la minute, trop grossière pour 30 s). Un monstre revient donc entre
+  `temps_repop` et `temps_repop + 5 s` après sa mort.
+- **Défaut** : `temps_repop` NULL ou ≤ 0 → `MonstreConfig::TEMPS_REPOP_DEFAUT_SECONDES` (30).
+  Le MonsterMaker envoie un champ vide = NULL ; 0 n'est pas « instantané ».
+- **Attaquer une case vide** : `/joueur/attack/monster` répond 400 `{"message"}` (« Il n'y a
+  plus de … ici »). Le web toaste désormais ce refus (le `try/catch` manquait sur la branche
+  monstre de `Spell.jsx`) ; le mobile le faisait déjà.
+
+### 23.2 Armure
+
+- **`monstre.armure`** (INT, défaut 0, jamais négative), saisie dans le MonsterMaker.
+- Même formule que l'armure d'un joueur (`SpellService::computeDamageWithArmor`, réduction
+  plafonnée à 40 %), arrondie à l'entier par `SpellService::damageOnMonstre`.
+- Appliquée aux sorts encaissés par un monstre **du monde ouvert** (`doDamageOnMonster`) ET
+  **d'instance** (`getSpellDamageOnMonstre`, appelé par `DonjonController::attaquerRenfort`) :
+  un même monstre encaisse pareil partout. **Les boss n'ont pas d'armure** (entité `Boss`
+  distincte, hors périmètre).
+
+Tests : `tests/Functional/MonstreRepopFunctionalTest.php`, `SpellServiceTest` (armure).
+
+---
+
+## 24. Atlas du monde (onglet « Monde » de l'administration) — 18/11/2026
+
+L'ancien onglet « Monde » alignait les fonds de carte dans l'ordre des ids. Il est remplacé
+par un **atlas** qui dessine le monde tel que le joueur le parcourt, et qui permet de
+l'agrandir.
+
+### 24.1 Principe : la géographie est DÉDUITE des passages
+
+Le jeu ne stocke **aucune position de carte** (`carte.abscisse/ordonnee/position` ne sont pas
+renseignées). L'atlas relit donc les wraps (`carte_carreau.is_wrap`, `target_map_id`,
+`target_wrap`) à chaque appel — rien n'est stocké, l'atlas ne peut pas diverger du jeu.
+`MondeLayout` (calcul pur, testé à plat) applique deux règles :
+
+- **Frontière** (`nature: bord`) : un passage posé sur un bord, dont la case d'arrivée est
+  sur le bord OPPOSÉ de la cible. La cible est la voisine dans cette direction (l'ordonnée
+  croît vers le sud). Une case de coin est sur deux bords : c'est l'autre extrémité qui
+  tranche (`(0,14) → (23,15)` = ouest, pas sud).
+- **Porte** (`nature: porte`) : tout le reste (case intérieure, bords non opposés). La cible
+  n'a pas de place sur la grille.
+
+Les composantes connexes par frontières deviennent des **régions** ; la plus grande est le
+monde principal (`type: monde`), les autres des régions détachées. Hors grille : `donjon`
+(toute carte de `donjon_salle`, exclue du graphe — instances hors du monde), `special`
+(cimetière/auberge), `interieur` (atteint par une porte ; `parentId` = la carte qui y mène),
+`orpheline` (aucun passage).
+
+**Un monde dessiné à la main n'est pas forcément euclidien** : si deux frontières réclament
+la même place, la carte est posée sur la case libre la plus proche et le passage marqué
+`conflit`. Ce n'est jamais bloquant, c'est une information de conception.
+
+### 24.2 États d'un passage
+
+| état          | sens                                                                   |
+|---------------|------------------------------------------------------------------------|
+| `ok`          | la case d'arrivée est un passage qui ramène à la carte de départ       |
+| `sens_unique` | aboutit, mais rien ne ramène (normal pour une PORTE : sortie d'auberge, de cimetière ; alerte sur une FRONTIÈRE : le joueur est coincé) |
+| `casse`       | carte ou case cible absente, ou case cible hors de la carte annoncée   |
+| `conflit`     | frontière contredite par une autre                                     |
+
+Au premier passage sur le contenu actuel, l'atlas a remonté un vrai défaut : le passage
+(13,0) de « Rivière de l'Auberlême » (#7) vise la case 2291 de « l'Étang de la Courmasse »
+(#6), qui n'est pas un wrap (sa voisine 2290 l'est) — frontière sans retour.
+
+### 24.3 API (`MondeAdminController`, `/api/admin/monde/*`, ROLE_ADMIN par `security.yaml`)
+
+- `POST /atlas` → `MondeAtlasService::atlas()` : `cartes` (placement, contenu : PNJ,
+  monstres, interactions, joueurs présents, % d'obstacles), `passages` (nature, direction,
+  état, retour, condition lisible), `regions`, `donjons` (salles ordonnées, entrées depuis le
+  monde, sortie), `alertes` (erreur / attention / info), `spawnCarteId`. SQL natif agrégé :
+  on n'hydrate pas 15 000 cases pour compter des PNJ.
+- `POST /prolonger` `{carteId, direction, nom}` → `MondeEditorService::prolonger()` : crée
+  une carte vierge (mêmes dimensions) ET la paire de wraps réciproques au milieu de la
+  frontière commune, en UNE transaction — sans le passage, la carte serait orpheline et
+  n'apparaîtrait pas « au nord de X ». La case de départ est la plus proche du milieu du bord
+  qui soit libre (foulable, sans passage/PNJ/monstre/interaction/boss, coins exclus).
+  Refus 400 `{"message"}` : salle de donjon, frontière déjà présente dans ce sens, place
+  prise. `direction` est une chaîne résolue par `tryFrom()` (inconnue → 422, pas 500).
+- `MondeEditorService::creerCarteVierge()` est désormais aussi la fabrique de
+  `POST /api/map/create` (MapMaker), qui faisait 384 flushes et renvoie maintenant `{"id"}`.
+
+### 24.4 Front (`administration/pages/WorldMakerPage.jsx`, `components/monde/`)
+
+- `CanevasMonde` : la grille, glisser pour se déplacer, molette pour zoomer (listener natif
+  non passif), boutons zoom/tout voir. Une case de jeu = 9 px (vignette 216×144) ; les
+  frontières sont tracées **aux positions réelles** des passages (un passage décalé se voit),
+  dorées, bleues sous condition, orange pointillées en aller simple, rouges si contradiction.
+  Les portes sont des pastilles posées sur la vignette (clic = ouvrir la destination).
+  Survoler une carte fait ressortir ses liens et propose un **« + Nouvelle carte »** sur les
+  places libres (option « Toutes les extensions » pour les voir toutes). Le clic se décide au
+  RELÂCHEMENT (seuil 8 px) : un micro-mouvement ne doit pas avaler un clic.
+- `FicheCarte` : aperçu avec passages et PNJ pointés, passages sortants, arrivées sans
+  retour, intérieurs, PNJ, monstres, rose des vents « Agrandir le monde », lien
+  **« Éditer dans le MapMaker »** (`/administration/mapmaker?carte=<id>`, que le MapMaker
+  lit désormais). La sélection vit dans l'URL (`/administration/world?carte=<id>`).
+- `HorsMonde` : donjons en chaîne de salles (entrée → salles avec leur condition → sortie),
+  régions détachées (même canevas, compact), intérieurs groupés par carte porteuse, lieux
+  spéciaux, cartes isolées.
+- `components/map/imageCarte.js` : un fond manquant ne fait plus planter. `require("…/" + id
+  + ".png")` JETTE quand le fichier n'existe pas — une carte neuve cassait l'écran de jeu
+  (`Map.jsx`), le MapMaker et l'ancien onglet. `fondCarte(id)` renvoie `none` et l'atlas
+  affiche « Fond à peindre » avec le chemin attendu (`src/img/map/<id>.png`).
+
+⚠️ Le passage créé par « prolonger » est **actif immédiatement** : une carte neuve est
+praticable (décor par défaut, sans fond) dès sa création. Peindre avant d'annoncer.
+
+Tests : `tests/Service/MondeLayoutTest.php` (règles de géographie, coin, non-euclidien,
+donjons, région principale), `tests/Functional/MondeAtlasApiFunctionalTest.php` (sécurité,
+invariants sur le contenu réel, `prolonger` sur des cartes créées puis supprimées — la base de
+test n'est pas réinitialisée).
+
+---
+
+## 25. Item Maker (onglet « Item Maker » de l'administration) — 18/11/2026
+
+Un seul écran pour TOUT le contenu d'items — objets, ressources de métier, consommables,
+équipements — avec, pour chacun, d'où il vient et à quoi il sert, et leur édition.
+
+### 25.1 Le problème qu'il règle
+
+Un item n'a pas de « source » en base : il est cité par une demi-douzaine de tables qui ne
+se connaissent pas. Sans vue unique, un objet que rien ne donne est **inobtenable** sans que
+rien ne le dise. `ItemAtlasService::catalogue()` (LECTURE PURE, SQL natif) recoud :
+
+| source      | table(s)                                                     |
+|-------------|--------------------------------------------------------------|
+| `monstre`   | `monstre_objet` (+ lieux : `monstre_carreau`, `donjon_salle.monstre_id`) |
+| `boss`      | `boss_recompense` → `recompense`                             |
+| `quete`     | `recompense.action_id` → `sequence_action` → `sequence` → `quete` |
+| `recolte` / `coffre` | `interaction.recompense_id` (+ cases posées)        |
+| `recette`   | `recette.recompense_id` (sortie de fabrication)              |
+| `marchand`  | `shop_objet` / `shop_consommable` / `shop_equipement` (+ PNJ tenancier et sa carte) |
+
+| usage        | table(s)                                                    |
+|--------------|-------------------------------------------------------------|
+| `ingredient` | `recette_ingredient`                                        |
+| `quete`      | `action` de type DONNER_* / POSSEDER_OBJET / RECOLTER_RESSOURCE |
+| `prerequis`  | `quete.objet_id` (objet requis pour démarrer)               |
+
+`boss_objet` / `boss_equipement` (vides, lus nulle part) sont ignorés. Alertes par item :
+`inobtenable` (aucune source), `monstres_absents` (seuls des monstres le donnent et aucun
+n'est posé sur une carte ni dans une salle), `sans_usage` (OBJET sans recette, sans quête et
+sans prix de revente — un consommable ou un équipement a un usage par nature),
+`sans_image`. Au premier passage : 15 inobtenables, 50 `monstres_absents` (les monstres 9 à
+16 ne sont posés nulle part).
+
+### 25.2 API (`ItemAdminController`, `/api/admin/items/*`, ROLE_ADMIN par `security.yaml`)
+
+Chaque écriture renvoie `{cle, catalogue}` — le catalogue FRAIS, sources et usages
+recalculés.
+
+- `POST /catalogue` → `{items, referentiels}` ; un item a une clé `type:id` (`objet:12`).
+- `POST /objet/save` (`RessourceSaveDTO`) → `ArtisanatEditorService::enregistrerObjet`, extrait
+  de `sauvegarderRessource` : **un seul écrivain d'`Objet`** dans l'administration.
+- `POST /consommable/save` → `ItemEditorService::enregistrerConsommable`. `type` doit être une
+  clé de `Config\ItemConfig::TYPES_CONSOMMABLE` (`vie`, `mana` : les seuls effets appliqués
+  par `useConsommable`) ; les buffs n'ont aucun effet de jeu, on n'en crée pas.
+- `POST /objet/butins` `{objetId, butins: [{id?, monstreId, chance %, metierId?,
+  niveauMetierMin?, experienceMetier?}]}` → `ItemEditorService::remplacerButins` :
+  **RESYNCHRONISATION** de `monstre_objet` (ids conservés, absents supprimés). Une chance
+  entière garde l'échelle historique `/100` ; une décimale passe sur
+  `ItemConfig::DIVISEUR_BUTIN` (10 000 → 0,01 %). `DeathService` tire `rand(1, diviseur) <=
+  taux`, les deux échelles cohabitent sans conversion. Doublon (même monstre, même métier)
+  refusé. C'est le **premier éditeur de butins** du jeu.
+- Équipements : inchangés, `/api/equipement/create` via le `CreateEquipementForm` existant,
+  embarqué dans le panneau (il lit désormais `externalSelectedId` dès sa construction).
+- Images de consommable : nouvelle collection `CollectionImage::CONSOMMABLE`
+  (`public/img/consommables`, extension stockée), miroir dans `adminImageApi.js`, ligne de
+  bind-mount ajoutée dans docker-compose → refaire `docker compose up -d`.
+
+### 25.3 Front (`administration/pages/ItemMakerPage.jsx`, `components/itemMaker/`)
+
+- **Catalogue** : cartes illustrées groupées (ressources par métier, objets, consommables,
+  équipements par position), bordure de rareté, pictos des types de source, pastille
+  d'alerte. Filtres par famille, métier, « À traiter » ; la recherche porte aussi sur les
+  noms de sources et d'usages (« psilofrost » liste ce qu'il fait tomber).
+- **Cartographie** (`CartographieItems`) : trois colonnes *d'où ça vient → items → à quoi ça
+  sert*, une source partagée n'apparaissant qu'une fois. Sources et usages sont rangés par
+  barycentre de leurs items et posés à SA hauteur (repoussés seulement s'ils se
+  chevauchent). Survoler un nœud allume ses liens ; `∅` marque un item sans source.
+- **Fiche** (`FicheItem`) : sources avec chance, condition de métier et LIEUX (liens vers
+  l'atlas du monde `?carte=`), usages, liens vers le maker qui édite chaque source.
+- **Formulaires** (`FormulairesItem`) : objet/ressource, consommable, butins (« ≈ 7 combats
+  sur 10 » plutôt qu'un pourcentage nu, lieux du monstre choisi).
+- Sélection dans l'URL : `/administration/items?item=objet:12`. Aucune slice Redux.
+
+Tests : `tests/Functional/ItemMakerApiFunctionalTest.php` (sécurité, concordance catalogue ↔
+base, création + resynchronisation des butins, refus sans écriture, consommable).
+
+
+### Alchimie et ressources — 18 novembre 2026
+
+Catalogue : [Alchimiste](docs/metier/alchimiste.md), [Mineur](docs/metier/mineur.md),
+[Herboriste](docs/metier/herboriste.md). Manifeste `seeds/lots/alchimie-001.json` :
+28 ressources (dont trois objets existants réutilisés), 79 potions et 79 recettes.
+Les points de récolte restent à configurer. La recette historique de potion de vie
+mineure utilise désormais l’Ortie à la place de la Sauge devenue niveau 100.
+
+`ConsommableService::utiliser` est le point d’entrée atomique de consommation :
+verrou utilisateur, retrait via SacService, soin/mana bornés ou création de UserBuff.
+`consommable.buff_id` relie une potion à un Buff de caractéristiques (migration
+`Version20261118150900`, appliquée en dev et test). Une seule potion de caractéristiques
+active, dans la limite générale de trois buffs. UserBuffRepository exclut les buffs
+expirés du calcul et de l’affichage ; SpellService utilise aussi cette sélection pour
+les limites des sorts. ItemMaker peut éditer l’association au bonus.
+Le cooldown du bouton reste côté client ; aucun verrou serveur ajouté pour ce délai.
+
+Validation : `AlchimieApiFunctionalTest` (vie/mana, refus sans consommation, bonus,
+non-cumul, expiration, fabrication puis consommation), régressions ItemMaker/Craft/SpellService,
+schéma Doctrine et build frontend. Exporter après toute édition via `./scripts/content-dump.sh`.
+
+---
+
+## 26. ArtisanatMaker en cartes — 18/11/2026
+
+L'onglet Artisanat de l'administration (trois onglets à listes déroulantes, §16.5) devient
+une navigation en cartes, sans changer ses formulaires ni leurs règles.
+
+- **Accueil** : les métiers en cartes, groupés par famille (récolte / fabrication), avec
+  description, nombre de ressources ou de recettes et niveau max. Une carte « + Nouveau
+  métier de … » ouvre le formulaire avec la famille pré-choisie (`MetierForm` prend
+  `familleParDefaut`). L'icône vient de `img/metier/<icone>.png` ; les fichiers n'existant
+  pas encore, la carte se replie sur l'initiale dans un médaillon aux couleurs de la famille.
+- **Métier de récolte** (`?metier=<id>`) : une carte par ressource, triées par niveau —
+  image, palier, sources (points de récolte, monstres, autres), prix, nombre de recettes qui
+  l'emploient, pastille si elle est inobtenable. « + Nouvelle ressource » ouvre
+  `RessourceForm` avec le métier et le niveau 1 pré-remplis.
+- **Métier de fabrication** : une carte par recette, regroupées par paliers de 20 niveaux
+  (l'alchimie en compte 80) — produit illustré et quantité, niveau, temps, difficulté,
+  « inactive », fabrications en cours, et la liste des composants en mini-icônes
+  (« 8 × Ortie »). La recherche porte aussi sur les composants. « + Nouvelle recette » ouvre
+  `RecetteForm` avec le métier pré-choisi (`metierParDefaut`) et une ligne d'ingrédient.
+- Les formulaires s'ouvrent dans un **panneau latéral**, fermé à chaque changement de métier
+  (sinon le formulaire de l'ancien métier restait affiché à côté du nouveau).
+
+**Données** : `ArtisanatEditorService::lister()` porte en plus `metiers[].icone/description`
+et, par recette, `metierId`, `difficulte`, `tempsSecondes`, `produit {cle, quantite}` et
+`ingredients [{cle, quantite}]`. Les **clés `type:id`** sont celles du catalogue de l'Item
+Maker (`/api/admin/items/catalogue`), que l'écran charge pour les noms, images et sources :
+la liste de l'ArtisanatMaker ne connaît toujours aucun chemin d'image.
+
+Fichiers : `administration/pages/ArtisanatMakerPage.jsx`,
+`administration/components/artisanat/` (`VuesMetier.jsx`, `Artisanat.module.scss`).
+Test : `ArtisanatEditorApiFunctionalTest::testLaListeDecritProduitEtComposantsDesRecettes`.
+
+
+### Complément métiers — 18 novembre 2026
+
+`seeds/lots/metiers-002.json` : 25 nouveaux objets (12 bois + 13 peaux), chêne existant
+objet 8 réutilisé au palier 40 et sept associations d’images du pack background.
+Les listes de ressources Mineur (15), Herboriste (13), Bûcheron (13) et Dépeceur (13)
+sont désormais intégrées. Les ressources historiques hors progression sont conservées.
+Les nouveaux points de récolte, drops de dépeçage et usages des bois/peaux restent à
+configurer : créer une ressource ne la rend pas obtenable automatiquement.
+Références : `docs/metier/bucheron.md`, `docs/metier/depeceur.md`, `docs/items.md`.
+
+
+### Images d’herboriste — 18 novembre 2026
+
+Lot `seeds/lots/herboriste-images-003.json` : 12 images d’objets mises à jour
+(9 manquantes + 3 remplacements). Seule la Mandragore reste sans visuel dans la
+progression validée. PNG sous `public/img/objet/herboriste-003-<id>.png` ; aucune
+modification des images de carte, niveaux, recettes ou effets. Manifestes précédents
+conservés comme historique ; table actuelle dans `docs/metier/herboriste.md`.
+
+
+### Trèfle astral — 18 novembre 2026
+
+La Mandragore (objet 185) est remplacée par le Trèfle astral, niveau 150,
+avec l’image `herboriste-trefle-astral.png` (pack de plantes, visuel 28).
+Identifiant, prix et recettes inchangés. Les 13 ressources d’herboriste sont illustrées.
+Historique : `seeds/lots/herboriste-trefle-004.json`.
+
+
+### Images des 13 bois — 19 novembre 2026
+
+Treize icônes générées via imagegen intégré, associées aux objets de bûcheron.
+Seul le champ image est modifié ; niveaux, prix et références conservés.
+Manifestes et prompts : `seeds/lots/bois-images-005.json`. Originaux conservés dans
+`output/imagegen/bois-v1/`, fichiers servis dans `public/img/objet/bois-generes-v1-*.png`.
+
+
+### Peaux et derniers minerais illustrés — 19 novembre 2026
+
+18 icônes générées via imagegen intégré : les 13 ressources de la progression Dépeceur
+et les 5 ressources minières sans image (étain, charbon, cobalt, serpentine, saphir).
+Les autres minerais et la peau historique ne sont pas modifiés. Seul le champ image
+est mis à jour : aucun changement de niveau, prix, recette ou drop.
+Les quatre progressions de récolte sont désormais entièrement illustrées.
+Prompts et associations : `seeds/lots/peaux-minerais-images-006.json`.
+Originaux : `output/imagegen/peaux-minerais-v1/`.
+
+
+### Sprites de récolte niveau 0 — 19 novembre 2026
+
+Fer (objet 6), Bois de frêne (189), Ortie (177) : nouveaux PNG transparents
+`recolte-{fer,frene,ortie}-niv0-v1.png`, liés via `objet.image_carte` sans extension.
+Les inventaires, recettes et points de récolte ne sont pas modifiés. La résolution
+des interactions RECOLTER existantes utilise automatiquement cette image d’objet.
+Les nouveaux points de frêne et d’orties restent à placer/configurer dans le maker.
+
+Images générées via imagegen intégré en prenant le screenshot utilisateur comme
+référence de style et d’échelle. Alpha contrôlé ; silhouettes couvrant 91 à 96 %
+de la largeur des PNG. CSS actuel conservé (120 % × 145 %, contain, ancrage bas),
+soit environ 109 à 115 % de largeur de case pour le dessin. Aucune modification CSS.
+Aperçu simulé : `output/qa/recolte-niveau0.html` ; son ouverture dans le navigateur
+intégré a été bloquée (protocole file), donc pas de validation visuelle en session de jeu.
+Originaux et référence : `output/imagegen/recolte-niveau0-v1/`.
+Manifeste et prompts : `seeds/lots/recolte-niveau0-images-007.json`.
+
+
+### Essai sprites niveau 0 v2 — 19 novembre 2026
+
+Fer, frêne et orties utilisent désormais `recolte-*-niv0-v2`, variantes imagegen
+très légèrement adoucies. Les v1 sont conservées. Sur la carte web, seuls ces trois
+fichiers reçoivent `image-rendering: auto`, `width: calc(120% - 4px)` et
+`height: calc(145% - 4px)`, avec centrage horizontal compensé de 2 px et ancrage bas
+inchangé. Règles ciblées dans InteractionMap.module.scss ; les autres sprites ne changent pas.
+Alpha contrôlé, SCSS compilé. Rendu final à confirmer par l’utilisateur en jeu.
+Images : `output/imagegen/recolte-niveau0-v2/`.
+Prompt et associations : `seeds/lots/recolte-niveau0-images-008.json`.
+
+
+### Harmonisation des récoltes historiques — 19 novembre 2026
+
+La capture utilisateur montrait encore les anciens chêne turquoise et champignon bleu
+saturé : les sprites du frêne et de l’Ortie ne sont pas utilisés par ces points historiques.
+Objets 8 (chêne), 4 (champignon bleu) et 5 (sauge) : `image_carte` remplacée par
+`chene-carte-sobre-v3`, `champignon-bleu-carte-sobre-v3`, `sauge-des-bois-carte-sobre-v3`.
+Palette naturelle olive/brun, bleu ardoise et gris-vert/mauve discret ; contours moins épais.
+Le fer, le frêne et les orties ne sont pas modifiés. Aucun changement de niveau ou de récolte.
+Le halo doré permanent est remplacé pour ces trois sprites web par une ombre discrète ;
+le survol conserve un léger éclaircissement. Marqueur et clic inchangés.
+Images générées par imagegen : `output/imagegen/recolte-sobre-v3/`.
+Prompts et historique : `seeds/lots/recolte-sobre-images-009.json`.
+Alpha et associations vérifiés, SCSS compilé ; rendu final à confirmer en jeu par l’utilisateur.
+
+
+### Série complète des sprites de récolte — 19 novembre 2026
+
+38 sprites générés avec imagegen intégré : 14 gisements, 12 arbres, 12 plantes/champignons.
+Le fer, le chêne et la sauge validés sont conservés : les 41 ressources des trois
+progressions disposent désormais d’une image de carte. Le champignon bleu historique
+est réduit de 4 px sur le web. Aucun niveau, recette, icône d’inventaire ou placement modifié.
+
+Après validation des formes, palette renforcée au rendu web : saturation et petites
+variations de teinte par ressource dans `InteractionMap.module.scss`, PNG intacts.
+Le gris d’indisponibilité reste fonctionnel ; survol discret sans halo permanent.
+Ces filtres concernent la carte web, pas les fichiers PNG bruts ni le client mobile.
+
+Manifeste, prompts et palette : `seeds/lots/recolte-complete-images-010.json`.
+Originaux : `output/imagegen/recolte-complete-v4/`. Fichiers servis :
+`alcazan-front-prod/public/img/interaction/*-carte-sobre-v4.png`.
+Associations vérifiées en transaction (seul image_carte change), alpha et copies contrôlés,
+SCSS compilé. Rendu des nouvelles couleurs à confirmer en jeu ; pas de validation navigateur.
+
+---
+
+## 27. Gomme du MapMaker — 19/11/2026
+
+Le MapMaker savait POSER (collision, passage, PNJ, monstre, interaction) mais presque rien
+retirer : `/api/map/update` ignorait un `pnjId` ou un `hasMonstre` vidé, et un passage
+« retiré » gardait sa cible en base (que l'atlas du monde, §24, lit pour déduire la
+géographie). Seule l'interaction avait un retrait (option « ✕ Retirer » de son outil).
+
+### 27.1 Back — `MapCaseEditorService`
+
+`/api/map/update` délègue désormais à `src/service/MapCaseEditorService.php` (une
+transaction, mêmes garde-fous qu'avant : seules les cases qui diffèrent de la base, et
+seulement celles de la carte éditée). **Règle : un champ PRÉSENT et VIDE veut dire
+« retirer »** — `pnjId`, `interactionId`, `hasMonstre`, `bossId` à null, `isWrap` à false
+(cible, case cible et `wrap_id` sont alors remis à NULL). Un champ ABSENT ne touche à rien.
+
+- Le monstre retiré : `carte_carreau.monstre_carreau_id` remis à NULL **puis** les lignes
+  `monstre_carreau` de la case supprimées (FK en NO ACTION, l'ordre compte) ;
+  `monstre_repop` part en cascade.
+- ⚠️ **`hasMonstre` est l'id de la LIGNE `monstre_carreau`, pas du monstre.** La POSE passe
+  par une clé à part, `monstreId` (+ `monstreQuantity`). L'ancien contrôleur prenait
+  `hasMonstre` pour un id de monstre : retoucher une case à monstre pour autre chose (une
+  collision) lui ajoutait un second monstre. Corrigé, avec test de régression.
+- Un monstre par case : poser un AUTRE monstre remplace l'ancien (il restait orphelin) ;
+  reposer le même ne touche pas à sa population.
+- Le boss ne se pose pas depuis le MapMaker (pas d'outil) : il ne peut qu'y être retiré.
+
+### 27.2 Front — outil « Gomme »
+
+`administration/components/forms/GommeForm.jsx` arme le mode `gomme` avec une cible :
+Tout (case vierge, hors boss) / Monstre / PNJ / Interaction-ressource / Passage /
+Collision / Boss. Le reducer `ERASE_CASE` (`gommerCase` dans `store/reducers.js`) vide les
+champs de la case ; rien ne part avant « Sauvegarder les changements ». **Retirer un PNJ ou
+un passage rend la case foulable** (leurs outils l'avaient bloquée) ; « Tout » la remet
+foulable aussi. Les cases de boss ont maintenant leur couleur, et le survol nomme
+monstre/boss/interaction. L'outil monstre propose une quantité de 1 par défaut (0
+posait une case vide).
+
+Limite assumée : retirer UN côté d'un passage laisse l'autre côté (sur l'autre carte) en
+place — l'atlas le signale comme passage à sens unique.
+
+Tests : `tests/Functional/MapMakerApiFunctionalTest.php` (403 joueur, pose puis gomme de
+PNJ/monstre avec repop planifiée/passage, régression collision sur case à monstre). Vérifié
+au navigateur sur une carte jetable (supprimée depuis).
+
+---
+
+## 28. Bonus des potions éditables dans l'Item Maker — 19/11/2026
+
+Une potion à effet « Bonus temporaire » ne porte pas son effet : elle CITE une ligne `buff`
+(`consommable.buff_id`), dont les effets vivent dans `buff_caracteristique`
+(caractéristique + valeur) et la durée dans `buff.duree`. Les 51 bonus d'alchimie avaient
+été écrits en SQL (`seeds/lots/alchimie-001.json`) et aucun écran ne les montrait : la
+liste ne donnait que le nom et la durée, la carte affichait « +0 buff » (le champ
+`points`, remis à 0 pour un bonus) et l'effet n'était lisible que dans la description —
+un texte libre qui peut mentir.
+
+### 28.1 Back
+
+- `POST /api/admin/items/buff/save` (`BuffSaveDTO`) → `ItemEditorService::enregistrerBuff`
+  : `{id, nom, duree, effets: [{caracteristiqueId, valeur}]}`, une transaction, effets
+  RESYNCHRONISÉS (ligne réutilisée par caractéristique, absentes supprimées, relues depuis
+  le repository). Refus en 400 `{message}` : nom vide, durée ≤ 0, aucun effet, valeur 0,
+  caractéristique en double ou inconnue. Un bonus créé ici est toujours `is_carac = 1`,
+  jamais dispel ni blocage — les seuls que `ConsommableService` accepte de boire. Réponse
+  `{buffId, catalogue}`.
+- Le catalogue (`ItemAtlasService`) expose : `referentiels.buffs[]` avec `effets`,
+  `consommables` et `sortileges` (combien le CITENT), `referentiels.caracteristiques[]` avec
+  `effective`, et `consommable.buff` sur chaque potion (son effet réel).
+- ⚠️ **Le bonus est lu EN DIRECT** (`SpellService::getCaracBuffed`, à chaque coup) :
+  modifier un bonus change aussi les potions déjà bues et encore actives, et TOUT ce qui le
+  partage (autres potions, sorts). D'où les compteurs d'usage et la copie côté écran.
+- ⚠️ **Un bonus n'agit que sur les caractéristiques qu'un sort utilise** (dégâts ou
+  équilibre) — aujourd'hui force, dextérité, intelligence, concentration. `effective` est
+  DÉDUIT de `sortilege` (pas de liste en dur) : un bonus de constitution s'enregistre mais
+  ne fait rien en jeu, et l'éditeur le dit.
+
+### 28.2 Front (`components/itemMaker/FormulairesItem.jsx`)
+
+Dans le formulaire de la potion, encart « Bonus appliqué » : liste des bonus avec leur
+effet réel, résumé (effets + durée + « Partagé avec … »), « Modifier ce bonus » et
+« Nouveau bonus (copie) » ouvrant `BuffEditor` sur place (un `<div>`, pas de `<form>`
+imbriqué ; Entrée n'y soumet rien, sinon elle enregistrerait la potion). Un bonus créé est
+adopté aussitôt par la potion, qu'il reste à « Enregistrer ». « Écrire la description
+d'après cet effet » régénère la description. Cartes et fiche affichent l'effet réel
+(`resumeBuff` dans `itemModele.js`) au lieu de « +0 buff ».
+
+Tests : `ItemMakerApiFunctionalTest` (création, effet exposé sur la potion, partage
+compté, resynchronisation retrait compris, quatre refus). Vérifié au navigateur sur la
+potion 47 avec un bonus jetable (supprimé depuis, potion inchangée).
+
+
+## Coffres plaçables — 19 novembre 2026
+
+Créés comme interactions `ouvrir`, selon le coffre du Bois de Hal (interaction 10, carte 1, case 203).
+Disponibles dans **MapMaker → Poser une interaction**. Réglages dans **Administration → Interactions**.
+
+Base initiale commune : 0 PA, recharge 7 200 secondes, portée monde (partagée entre joueurs pour chaque case),
+usage répétable, sans métier ni condition. Butin initial repris du modèle : 500 or + 200 XP.
+Chaque rareté possède sa propre récompense modifiable ; ces valeurs ne constituent pas un équilibrage par rareté.
+Le coffre existant et les placements de carte sont conservés.
+
+| Nom | Interaction ID | Récompense ID |
+|---|---|---|
+| Coffre classique | 13 | 104 |
+| Coffre non commun | 14 | 105 |
+| Coffre rare | 15 | 106 |
+| Coffre épique | 16 | 107 |
+| Coffre légendaire | 17 | 108 |
+
+
+## Récoltes automatiques — 19 novembre 2026
+
+Les deux éditeurs d’objets créent automatiquement une interaction pour chaque ressource
+liée à un métier de famille `recolte`. Point commun : `ArtisanatEditorService::enregistrerObjet`
+appelle `RecolteRessourceService` dans sa transaction avec verrou sur l’objet.
+Réutilisation par le lien `interaction(RECOLTER) → recompense → objet` ; réglages préservés,
+nom/métier/palier synchronisés, image résolue depuis l’objet. Retirer le métier de récolte
+désactive les points existants, sans toucher aux coffres. Aucune migration de schéma.
+
+Commande idempotente `app:recoltes:synchroniser` appliquée aux 56 ressources existantes
+(dépeceur inclus) : 52 interactions ajoutées, 4 réutilisées, aucun placement ajouté.
+Valeurs initiales : 3 PA, 1 objet, 12 XP métier, recharge personnelle 300 s, choix mesuré/intensif.
+Les anciens points adoptent les paliers de leurs objets : fer 0, chêne 40, sauge 100/herboriste.
+L’Item Maker expose maintenant aussi l’image de carte ; réglages avancés dans Interactions.
+Guide utilisateur et limites : `docs/RECOLTES_AUTOMATIQUES.md`.
+Validation : 42 tests fonctionnels / 279 assertions, JSX vérifié, double synchronisation sans doublon.
+
+---
+
+## 29. Contenu des coffres : lignes garanties ou tirées au sort — 19/11/2026
+
+Une `Recompense` ne portait qu'UN objet, UN équipement, UN consommable, une quantité, de
+l'or et de l'XP, toujours tous donnés. Un coffre ne pouvait donc ni contenir plusieurs
+objets, ni rien tirer au sort.
+
+### 29.1 Modèle (`migrations/Version20261119192537`)
+
+- `recompense_ligne` (entité `RecompenseLigne`, table de CONTENU donc dans le seed) :
+  `type` (`TypeLigneRecompense` : objet / equipement / consommable / or / experience), un
+  item par FK typée (`objet_id`, `equipement_id`, `consommable_id` — l'intégrité
+  référentielle protège le contenu), `quantite_min`/`quantite_max` (égales = fixe),
+  `garanti`, `poids`. FK vers `recompense` en `ON DELETE CASCADE`.
+- `recompense.tirages` : nombre de lignes NON garanties tirées par ouverture (NULL = 1).
+- Les champs historiques de `Recompense` restent, et restent ceux des quêtes, du butin de
+  boss, des recettes et de la RÉCOLTE (l'image d'une case de récolte vient de
+  `recompense.objet`, cf. `getAllCasesOfMap`).
+
+### 29.2 Distribution (`RecompenseService`, toujours l'unique point de conversion)
+
+`distribuer()` donne les champs historiques PUIS `lignesObtenues()` : toutes les lignes
+garanties, puis `tirages` lignes DISTINCTES parmi les autres au prorata du poids (tirage
+sans remise ; `tirages` est plafonné au nombre de lignes au tirage). La quantité est tirée
+entre min et max à chaque ouverture. Le multiplicateur (récolte intensive) porte sur les
+items et l'or, jamais sur l'XP ni les équipements — même règle que l'historique.
+`apercu()` n'annonce que les lignes garanties : promettre une ligne au tirage serait
+mentir au joueur.
+
+### 29.3 Éditeur (onglet Interactions)
+
+`InteractionEditorService` : `recompense.lignes` + `recompense.tirages` dans `get`/`save`,
+ids stables, absentes supprimées, refus en 400 `{error}` (contrat de cet éditeur) : type
+inconnu, item non choisi, quantité < 1 ou max < min, poids < 1 au tirage, tirages hors
+[1, lignes au tirage]. Enregistrer des lignes REMET À VIDE les champs historiques (un
+coffre n'a qu'une vérité). ⚠️ Une liste vide n'est prise pour « vider le coffre » que si
+les champs historiques sont vides aussi : `get` renvoie `lignes: []` sur une récolte, et
+l'écho de ce payload effaçait sinon sa récompense (test de régression).
+
+Front : `forms/InteractionMaker/ContenuRecompenseForm.jsx`, rendu pour tout type sauf
+`recolter` (qui garde le bloc historique). Chaque ligne : quoi, quel item, quantité « min
+à max », « Toujours donné » / « Au tirage » + poids et chance approchée ; boutons « Tout
+donner » / « Tirage au sort » ; nombre de lignes tirées. Un coffre d'avant les lignes est
+PRÉSENTÉ en lignes garanties (`lignesDepuisHistorique`) et converti au premier
+enregistrement. Types proposés : `referentiels.typesLigneRecompense` (aucun en dur).
+
+L'Item Maker compte chaque ligne d'item comme une source (« Coffre / case »), avec sa
+chance réelle pour une ligne au tirage (poids / poids total × tirages).
+
+Tests : `InteractionEditorApiFunctionalTest` (saisie, ids stables, retrait, trois refus,
+régression de l'écho récolte), `InteractionApiFunctionalTest` (ouverture : garanties +
+exactement N tirages distincts, quantité dans la fourchette). Vérifié au navigateur sur
+une interaction jetable (supprimée), sans toucher au « Coffre légendaire ».
+
+## 30. Effets de contrôle : l'immobilisation (« Flèche d'entrave », archer niv. 80) — 22/11/2026
+
+Demande : un sort d'archer de niveau 80, peu de dégâts, qui empêche la cible de bouger
+12 s ; buffs et debuffs visibles dans le Profil et dans les cases prévues de la barre de sorts.
+
+### 30.1 Architecture retenue : des effets en DONNÉES, cités par les sorts
+
+Pas de fonction PHP par sort. Un sort ne porte aucun code : il CITE un effet
+(`sortilege.buff_id`), et l'effet est une ligne de contenu `buff` — nom, icône, durée,
+caractéristiques (`buff_caracteristique`), **contrôle** (`buff.controle`, enum
+`ControleEffet`) et **nature** (`buff.nefaste`). Le type du sort décide qui le reçoit :
+`buff` → le lanceur, `attack` → la cible. Conséquence : une entrave de 6 s, une potion qui
+immobilise, un sort de gel… = des lignes de contenu, zéro code. Seule une capacité
+NOUVELLE (silence, étourdissement) demande du code : un `case` dans `ControleEffet` et le
+garde-fou qui la fait respecter.
+
+`is_blocage` (jamais lu par aucune règle, nom en collision avec le contrôle) est supprimée.
+Migration `Version20261122203523` : `controle`, `nefaste`, et rattrapage `nefaste = 1` des
+effets déjà cités par une attaque (Engelure, Corruption).
+
+### 30.2 Les pièces
+
+- **`EffetService`** — UNIQUE point d'application et de lecture de `user_buff` (ne flushe
+  pas). `appliquer()` renvoie un RÉSULTAT et pas une exception : une flèche sur une cible
+  immunisée fait ses dégâts, seule l'entrave ne prend pas. La règle pure
+  `motifDeRefus()` (testée sans base) : même effet actif → refus, **sans rafraîchissement**
+  (sinon on prolonge une entrave à l'infini) ; même contrôle actif → refus ; contrôle
+  dissipé depuis moins de `IMMUNITE_IMMOBILISATION_SECONDES` (15 s) → immunité ; plafonds
+  DISTINCTS bienfaits / affaiblissements (`EffetConfig`, 3 + 3). L'ancienne limite unique
+  de 3 rendait un joueur sous trois potions immunisé à toute entrave.
+  `dissiperAffaiblissements()` (DQL, clôt les lignes sans les supprimer — elles servent au
+  calcul d'immunité) est appelée par `DeathService::diePlayer` : la mort libère.
+  `actifs()` est la forme de `/joueur/buffs` (`name` ET `nom`, `nefaste`, `controle`,
+  `controleLabel`, `controleDescription`, `caracteristiques`, `finAt`, `secondesRestantes`).
+- **`DeplacementService::verifierMobilite`** — LA règle de mobilité, appelée par
+  `verifierPas` (en premier : c'est la vraie raison du refus), par
+  `/joueur/map/update_position` (sinon on s'échappe par un bord de carte) et par
+  `/auberge/entrer` (qui téléporte). Refus `{"message": "Vous êtes immobilisé par Entrave :
+  encore N s…"}`, toasté par les deux clients.
+- **`PvpService`** pose l'effet du sort APRÈS les dégâts, sauf mise à mort, et l'ajoute au
+  message + clé `effet` de la réponse (contrat partagé inchangé). `SpellService` perd
+  `applyBuffEffect`/`playerCanBeBuffed` : il redevient un calculateur.
+- **`GrimoireService::maitrise`** — un sort de SA classe, de niveau atteint. Le lancer n'était
+  pas contrôlé : l'entrave du niveau 80 partait au niveau 1 depuis un client modifié.
+  Appliqué au PvP (attaque ET soin) et à `/joueur/spell/self` ; ⚠️ PAS encore à
+  `/attack/monster` ni `/attack/boss` (même trou, hors lot).
+- `ConsommableService` passe aussi par `EffetService` (garde sa règle « une potion de
+  caractéristiques à la fois »).
+
+### 30.3 Contenu (seed)
+
+- Effet **« Entrave »** (`buff` 55) : `controle = immobilisation`, néfaste, 12 s, icône
+  `archer/fleche-entrave.png`.
+- Sort **« Flèche d'entrave »** (`sortilege` 16) : archer, niveau 80, 3 PA, portée 5,
+  cooldown 30 s, dégâts de base 25, coefs 1,2 (dextérité) / 0,6 (force) — à comparer à
+  « Tir rapide » (45, 3,3 / 1,8). Icône déposée dans `public/img/spell/archer/`.
+- Sur un monstre ou un boss, le sort ne fait que ses (faibles) dégâts : ils ne bougent pas.
+
+### 30.4 Front web
+
+- `components/spells/buff/useEffetsActifs` — source UNIQUE de la grille et du profil :
+  sondage 5 s + `buffVersion`, compte à rebours recalé sur `secondesRestantes` à chaque
+  réponse (pas sur l'horloge de la machine). `effetsUtils` ne connaît aucun effet en dur.
+- **Barre de sorts** (`Buff.jsx`) : grille 3 × 2 — ligne du HAUT = bienfaits (cadre vert),
+  ligne du BAS = affaiblissements (cadre rouge, emplacements vides teintés), un contrôle
+  PULSE (désactivé sous `prefers-reduced-motion`). Compteur de secondes dans la case,
+  infobulle : nature, contrôle + description, caractéristiques signées, temps restant.
+- **Profil** : panneau « Effets actifs » (icône, nature/contrôle, résumé, temps restant) ;
+  le panneau « Équipement » devient « Statistiques » avec une colonne `effets` (±, éteinte
+  à zéro) comprise dans le total ; les cartes de caractéristiques affichent `· effets ±N`.
+
+### 30.5 Tests
+
+`EffetServiceTest` (10 tests purs : non-cumul, expiration, deux plafonds, trois potions ne
+protègent pas d'une entrave, déjà immobilisé, immunité, extinction, immunité par contrôle) ;
+`EffetApiFunctionalTest` (pose + `/joueur/buffs` + pas et auberge refusés, retour de la
+mobilité, immunité qui laisse passer les dégâts, pas de prolongation, la mort libère,
+niveau 79 et autre classe refusés). `PvpApiFunctionalTest` choisit désormais un sort de la
+classe de l'attaquant. Vérifié au navigateur à deux comptes (archer niv. 80 / cible).
+
+### 30.6 Reste à faire (hors lot)
+
+- Mobile : `/joueur/buffs` lui renvoie désormais `finAt`/`nefaste`/`controle`, mais l'app
+  n'affiche pas encore la grille d'effets (le refus de pas est déjà toasté).
+- La victime découvre l'entrave au sondage (≤ 5 s) ou à son premier pas refusé : une
+  publication Mercure `effet.subi` sur `user/{id}` la rendrait instantanée.
+- `lifeCible` de la réponse PvP est lu sur une entité périmée (`updateTargetLife` est en
+  DQL) : le panneau Cible garde l'ancienne vie jusqu'au prochain rafraîchissement.
+- Cooldown des sorts toujours non contrôlé côté serveur (trou général §21.11) — l'immunité
+  borne l'entrave à ~44 % du temps même sans lui.
+
+
+## 31. Échanger les positions entre voisins — 22/11/2026
+
+Dans la fiche **Cible**, le bouton **⇄** apparaît pour un autre joueur présent sur une
+case voisine (diagonales comprises). Un clic échange immédiatement les places, sans
+invitation : **1 PM pour l'initiateur**, aucun coût pour la cible, même à zéro PM.
+Les passages, obstacles et l'immobilisation de l'un des deux interdisent l'échange.
+
+`POST /api/joueur/position/echanger` (`EchangerPositionDTO` : `targetId`, `mapId`,
+`abscisse`, `ordonnee` de l'initiateur) appelle `EchangePositionService`. Transaction
+unique, utilisateurs relus sous verrous pessimistes ordonnés, contrôle de proximité,
+de carte et de même instance de donjon. En monde ouvert, les deux liens
+`carte_carreau.joueur_id` sont libérés puis inversés pour respecter l'index unique.
+En donjon, ces liens ne sont ni lus ni écrits : seules les positions des membres changent.
+Les coordonnées envoyées protègent des clics périmés et des doubles requêtes.
+
+Le pas ordinaire prend désormais le même verrou utilisateur et accepte les coordonnées
+de départ optionnelles `depuisAbscisse` / `depuisOrdonnee` : si un échange a déplacé le
+joueur entre-temps, il renvoie l'état frais sans consommer de PM. Les anciens clients
+qui n'envoient pas ces champs restent compatibles.
+
+Après commit, l'événement privé Mercure `position.echangee` avertit les deux joueurs.
+`EchangeHost` réutilise son abonnement personnel pour recharger la carte ; retour sur
+l'onglet et reconnexion rechargent aussi les positions. `Map` remonte les joueurs visibles
+pour que `Target` calcule le voisinage sur la carte courante et actualise les collisions.
+Le prochain déplacement resynchronise aussi un client qui a manqué l'événement.
+
+Tests dédiés : `EchangePositionApiFunctionalTest` (échange, occupation, coût, pas périmé,
+reprise de marche, refus, isolation des instances et décor intact) ; `Target.test.jsx`
+(visibilité, un clic, double clic, refus et état désactivé). Aucun changement de schéma
+ni de contenu du jeu.
