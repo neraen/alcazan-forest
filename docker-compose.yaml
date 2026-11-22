@@ -21,6 +21,7 @@ services:
       - ./alcazan-front-prod/public/img/pnj:/var/www/html/public/img/pnj
       - ./alcazan-front-prod/public/img/monstre:/var/www/html/public/img/monstre
       - ./alcazan-front-prod/public/img/interaction:/var/www/html/public/img/interaction
+      - ./alcazan-front-prod/public/img/consommables:/var/www/html/public/img/consommables
     environment:
       DATABASE_URL: mysql://root:password@mysql:3306/chusei
       # Publication vers le hub par le réseau interne ; URL publique pour les EventSource du navigateur.
@@ -75,7 +76,7 @@ services:
       - /var/www/html/var/cache
     environment:
       DATABASE_URL: mysql://root:password@mysql:3306/chusei
-    command: bash -c "sleep 30; MINUTES=0; while true; do php bin/console app:echanges:expirer || true; php bin/console app:hdv:expirer || true; if [ $$((MINUTES % 60)) = 0 ]; then php bin/console app:regen-points || true; php bin/console app:journal:purger || true; fi; MINUTES=$$((MINUTES + 1)); sleep 60; done"
+    command: bash -c "sleep 30; (while true; do php bin/console app:monstres:repop || true; sleep 5; done) & MINUTES=0; while true; do php bin/console app:echanges:expirer || true; php bin/console app:hdv:expirer || true; if [ $$((MINUTES % 60)) = 0 ]; then php bin/console app:regen-points || true; php bin/console app:journal:purger || true; fi; MINUTES=$$((MINUTES + 1)); sleep 60; done"
     depends_on:
       - mysql
     restart: unless-stopped

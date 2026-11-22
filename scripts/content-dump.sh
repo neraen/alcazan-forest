@@ -32,7 +32,7 @@ donjon_instance donjon_instance_membre donjon_verrou donjon_groupe donjon_groupe
 donjon_instance_zone donjon_instance_monstre donjon_instance_levier donjon_instance_salle
 interaction_recharge joueur_metier
 craft_commande joueur_compteur joueur_cumul
-hotel_vente
+hotel_vente monstre_repop
 evenement_jeu
 doctrine_migration_versions
 "
