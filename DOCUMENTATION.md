@@ -4312,3 +4312,21 @@ Tests dédiés : `EchangePositionApiFunctionalTest` (échange, occupation, coût
 reprise de marche, refus, isolation des instances et décor intact) ; `Target.test.jsx`
 (visibilité, un clic, double clic, refus et état désactivé). Aucun changement de schéma
 ni de contenu du jeu.
+
+
+## 32. Ciblage des groupes épuisés — 24/11/2026
+
+Web (`MonstreCible`) et mobile (`useMonstreCible`) suivent le groupe de la case
+occupée via `/target/monstre`, à l'arrivée puis toutes les 5 s, même à population zéro.
+Le reducer retire une cible monstre dès que `quantiteMonstre <= 0`, y compris lors
+du rafraîchissement après une attaque. Le repop rend le groupe à nouveau ciblable
+sans quitter la case. Le sondage ne remplace pas un joueur ou boss choisi manuellement.
+
+Le ciblage monde ouvert quitte `Player` (également rendu pour autrui) et la branche
+d'arrivée mobile : aucune cible provisoire vide n'est affichée avant la réponse serveur.
+Les réponses reçues après avoir quitté la case ou changé la cible sont ignorées ;
+le sondage cesse à la sortie de la case. `hasMonstre` garde son sens d'identifiant de
+placement, même épuisé, notamment pour le MapMaker. Aucun changement de contenu ou BDD.
+
+Validation : tests React de population vide, repop sur place, dernier coup, épuisement
+par autrui, départ pendant une requête et sélection manuelle ; contrôle TypeScript mobile.

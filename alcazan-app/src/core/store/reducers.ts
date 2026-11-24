@@ -72,6 +72,10 @@ export function playerStatsReducer(state: AppState = etatInitial, action: AnyAct
       };
 
     case actions.FETCH_TARGET_SUCCESS:
+      if ((action.target?.type || state.data.target.type) === 'monstre'
+          && Number(action.target?.quantiteMonstre) <= 0) {
+        return { ...state, loading: false, data: { ...state.data, target: {} } };
+      }
       if (action.target) {
         return {
           ...state,

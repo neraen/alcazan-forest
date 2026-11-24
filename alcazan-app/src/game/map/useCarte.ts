@@ -1,3 +1,4 @@
+import { useMonstreCible } from './useMonstreCible';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import * as mapApi from '@/src/core/api/map';
@@ -72,6 +73,9 @@ export function useCarte(user: JoueurMinimal | null) {
   const [chargement, setChargement] = useState(false);
   const etatRef = useRef(etat);
   etatRef.current = etat;
+  const maCase = etat.cases.find(c => c.abscisse === etat.abscisseJoueur && c.ordonnee === etat.ordonneeJoueur);
+  useMonstreCible(maCase?.renfortId ? null : maCase?.hasMonstre,
+    `${etat.mapId}:${etat.abscisseJoueur}:${etat.ordonneeJoueur}`);
 
   /**
    * Cases atteignables : les 8 voisines (plus la sienne, filtrée ensuite), utilisables,
@@ -104,14 +108,7 @@ export function useCarte(user: JoueurMinimal | null) {
    * LA CASE — donc sur la carte, qui redescend à chaque déplacement — et surtout pas dans
    * l'état de combat, qui ne se rafraîchit qu'au sondage :
    *  - `renfortId`  → monstre d'instance (`Map.majCibleMonstreInstance` du web) ;
-   *  - `hasMonstre` → monstre du monde ouvert. Le web fait ce ciblage au MONTAGE du
-   *    composant `Player` (prop `hasMonstre`), composant qui n'a pas d'équivalent ici :
-   *    sans cette branche, marcher sur un monstre ne ciblait rien.
-   *
-   * `arrivee` reproduit ce « au montage » : le monstre du monde ouvert n'est ciblé que
-   * lorsqu'on ARRIVE sur sa case, pas à chaque rechargement de la carte. Après une mise à
-   * mort le web ne recible pas (il faut revenir sur la case) ; un rechargement qui
-   * reciblerait changerait la règle du jeu, pas seulement son affichage.
+   * Le monde ouvert est suivi séparément par useMonstreCible, repop comprise.
    */
   const majCibleMonstre = useCallback(
     (cases: CaseCarte[], abscisse: number, ordonnee: number, arrivee: boolean) => {
@@ -121,9 +118,7 @@ export function useCarte(user: JoueurMinimal | null) {
       const courante = cibleRef.current;
       const voulue = maCase?.renfortId
         ? { targetId: maCase.renfortId, type: 'renfort' as const }
-        : arrivee && maCase?.hasMonstre
-          ? { targetId: maCase.hasMonstre, type: 'monstre' as const }
-          : null;
+        : null;
 
       if (voulue) {
         // Déjà la bonne cible (pas refusé, on n'a pas bougé) : ne rien toucher, sinon la

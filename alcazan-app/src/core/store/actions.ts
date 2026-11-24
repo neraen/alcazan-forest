@@ -1,3 +1,4 @@
+import type { AppState } from './reducers';
 import type { Echange } from '../api/echange';
 import * as targetApi from '../api/target';
 import type { Cible, TypeCible } from '../types';
@@ -65,10 +66,13 @@ export const fetchTargetError = (error: unknown) =>
 /** Thunk : même séquence requête → succès/erreur que le web. */
 export const fetchTargetInfo =
   (targetId: number, type: TypeCible) =>
-  async (dispatch: (action: unknown) => void) => {
+  async (dispatch: (action: unknown) => void, getState: () => AppState) => {
     dispatch(requestTarget());
     try {
-      dispatch(fetchTargetSuccess(await targetApi.getTargetInfos(targetId, type)));
+      const infos = await targetApi.getTargetInfos(targetId, type);
+      const current = getState().data.target;
+      if (current.targetId !== targetId || current.type !== type) return;
+      dispatch(fetchTargetSuccess(infos));
     } catch (error) {
       dispatch(fetchTargetError(error));
     }
