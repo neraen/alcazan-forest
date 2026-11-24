@@ -246,10 +246,13 @@ const styles = StyleSheet.create({
   remplir: { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' },
   sprite: { width: '92%', height: '92%' },
   spriteBoss: { width: '130%', height: '130%' },
-  // Même ancrage que le web : compensation de la marge transparente des sprites.
+  // MÊMES chiffres que `.skin` d'`InteractionMap.module.scss` (web) : 120 % × 145 % de la
+  // case, posé 4 % sous son pied. Les sprites recadrés occupent presque tout le PNG, donc
+  // cette boîte rend une ressource de la taille d'une case. L'ancienne (150 % × 180 %,
+  // -18 %) la dessinait sur près de deux cases, à cheval sur la rangée du dessous.
   // Les vues décoratives ne capturent aucun toucher sur les cases voisines.
-  visuelRessource: { position: 'absolute', left: '-25%', bottom: '-18%', width: '150%', height: '180%' },
-  haloRessource: { position: 'absolute', left: '-25%', bottom: '-18%', width: '150%', height: '180%', opacity: 0.95 },
+  visuelRessource: { position: 'absolute', left: '-10%', bottom: '-4%', width: '120%', height: '145%' },
+  haloRessource: { position: 'absolute', left: '-10%', bottom: '-4%', width: '120%', height: '145%', opacity: 0.95 },
   spriteRessource: { width: '100%', height: '100%' },
   epuise: { opacity: 0.4 },
   /** Disque aplati pour faire une ellipse AU SOL : `borderRadius` seul sur un rectangle
