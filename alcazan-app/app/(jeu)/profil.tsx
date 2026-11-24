@@ -6,9 +6,17 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import * as inventaireApi from '@/src/core/api/inventaire';
 import * as usersApi from '@/src/core/api/users';
 import { cumulerCaracteristiquesEquipement } from '@/src/core/domain/caracteristiques';
+import {
+  bonusParCaracteristique,
+  cleEffet,
+  dureeLongue,
+  resumeEffet,
+  signe,
+} from '@/src/core/domain/effets';
 import { messageErreur } from '@/src/core/http';
-import { iconeAlignement, mediaUrl } from '@/src/core/media';
+import { iconeAlignement, iconeSort, mediaUrl } from '@/src/core/media';
 import type { JoueurMinimal } from '@/src/core/types';
+import { useEffetsActifs } from '@/src/game/hud/useEffetsActifs';
 import GameButton from '@/src/ui/GameButton';
 import GaugeBar from '@/src/ui/GaugeBar';
 import ModalShell from '@/src/ui/ModalShell';
@@ -34,6 +42,11 @@ type Caracs = Record<string, number>;
  * Répartition des points : le client additionne pour afficher le « reste à placer », mais
  * c'est `POST /joueur/caracteristiques/update` qui tranche. `maxCaracsAllowed` vient du
  * serveur à chaque lecture — ne jamais le recalculer depuis le niveau.
+ *
+ * Effets temporaires : MÊME hook que la grille de la barre d'action (`useEffetsActifs`),
+ * pour que les deux annoncent les mêmes valeurs et le même temps restant. Leur apport aux
+ * caractéristiques est affiché à part (pastille verte/rouge) et n'entre jamais dans la
+ * répartition des points : il s'en ira tout seul.
  */
 export default function ProfilScreen() {
   const router = useRouter();
@@ -48,6 +61,8 @@ export default function ProfilScreen() {
   const [chargement, setChargement] = useState(true);
   const [envoi, setEnvoi] = useState(false);
   const [largeurKarma, setLargeurKarma] = useState(0);
+  const { effets } = useEffetsActifs();
+  const bonusEffets = useMemo(() => bonusParCaracteristique(effets), [effets]);
 
   useEffect(() => {
     (async () => {
@@ -201,16 +216,29 @@ export default function ProfilScreen() {
               const base = caracs[carac.cle] ?? 0;
               const enregistre = caracsEnregistrees[carac.cle] ?? 0;
               const bonusCarac = bonus[carac.cle] ?? 0;
+              const effetCarac = bonusEffets[carac.cle] ?? 0;
               return (
                 <View key={carac.cle} style={styles.ligneCarac}>
                   <Text style={[styles.nomCarac, { color: carac.couleur }]}>{carac.label}</Text>
-                  <Text style={styles.valeurCarac}>
-                    {base}
-                    {base > enregistre ? (
-                      <Text style={styles.enAttente}> +{base - enregistre}</Text>
-                    ) : null}
-                    {bonusCarac ? <Text style={styles.bonus}> (+{bonusCarac})</Text> : null}
-                  </Text>
+                  {/* Valeur et apport des effets EMPILÉS dans la même colonne : une colonne de
+                      plus ne tient pas dans un tiers d'écran (les noms se coupaient en plein
+                      mot), et la pastille à côté de la valeur la décalait sur sa seule ligne. */}
+                  <View style={styles.colonneValeur}>
+                    <Text style={styles.valeurCarac}>
+                      {base}
+                      {base > enregistre ? (
+                        <Text style={styles.enAttente}> +{base - enregistre}</Text>
+                      ) : null}
+                      {bonusCarac ? <Text style={styles.bonus}> (+{bonusCarac})</Text> : null}
+                    </Text>
+                    {effetCarac !== 0 && (
+                      <Text
+                        style={[styles.pastilleEffet, effetCarac < 0 && styles.pastilleEffetMalus]}
+                        accessibilityLabel={`Effets temporaires : ${signe(effetCarac)}`}>
+                        {signe(effetCarac)}
+                      </Text>
+                    )}
+                  </View>
                   <Pressable
                     onPress={() => ajouter(carac.cle, -1)}
                     disabled={base <= enregistre}
@@ -236,19 +264,64 @@ export default function ProfilScreen() {
             </GameButton>
           </Panel>
 
-          {/* Faits d'armes */}
-          <Panel style={styles.colonne}>
-            <SectionTitle size="sm">Faits d'armes</SectionTitle>
-            {!stats && <Text style={styles.vide}>Chargement…</Text>}
-            {[...(stats?.faitsDArmes ?? []), ...(stats?.etats ?? [])].map((entree: any) => (
-              <View key={entree.cle} style={styles.ligneStat}>
-                <Text style={styles.statLabel}>{entree.label}</Text>
-                <Text style={styles.statValeur}>
-                  {entree.valeur} {entree.unite ?? ''}
-                </Text>
-              </View>
-            ))}
-          </Panel>
+          <View style={styles.colonne}>
+            {/* Effets actifs — même ordre que le serveur : bienfaits, puis affaiblissements,
+                chacun par échéance. */}
+            <Panel style={styles.panneau}>
+              <SectionTitle
+                size="sm"
+                right={<Text style={styles.note}>{effets.length} actif(s)</Text>}>
+                Effets actifs
+              </SectionTitle>
+              {effets.length === 0 ? (
+                <Text style={styles.vide}>Aucun bienfait ni affaiblissement en cours.</Text>
+              ) : (
+                effets.map((effet) => (
+                  <View
+                    key={cleEffet(effet)}
+                    style={[styles.ligneEffet, effet.nefaste && styles.ligneEffetNefaste]}>
+                    <Image
+                      source={{ uri: iconeSort(effet.icone) }}
+                      style={styles.iconeEffet}
+                      contentFit="contain"
+                    />
+                    {/* Colonne étroite (un tiers de l'écran) : nom + durée sur une ligne, nature
+                        et résumé sur TOUTE la largeur dessous — sur une seule, tout finissait
+                        tronqué. */}
+                    <View style={styles.texteEffet}>
+                      <View style={styles.teteEffet}>
+                        <Text style={styles.nomEffet} numberOfLines={2}>
+                          {effet.name}
+                        </Text>
+                        <Text style={styles.tempsEffet}>{dureeLongue(effet.restant)}</Text>
+                      </View>
+                      <Text style={styles.resumeEffet}>
+                        <Text
+                          style={[styles.tagEffet, effet.nefaste ? styles.tagNefaste : styles.tagBienfait]}>
+                          {effet.controleLabel || (effet.nefaste ? 'Affaiblissement' : 'Bienfait')}
+                        </Text>
+                        {resumeEffet(effet) ? ` · ${resumeEffet(effet)}` : ''}
+                      </Text>
+                    </View>
+                  </View>
+                ))
+              )}
+            </Panel>
+
+            {/* Faits d'armes */}
+            <Panel style={styles.panneau}>
+              <SectionTitle size="sm">Faits d'armes</SectionTitle>
+              {!stats && <Text style={styles.vide}>Chargement…</Text>}
+              {[...(stats?.faitsDArmes ?? []), ...(stats?.etats ?? [])].map((entree: any) => (
+                <View key={entree.cle} style={styles.ligneStat}>
+                  <Text style={styles.statLabel}>{entree.label}</Text>
+                  <Text style={styles.statValeur}>
+                    {entree.valeur} {entree.unite ?? ''}
+                  </Text>
+                </View>
+              ))}
+            </Panel>
+          </View>
         </View>
       </ScrollView>
     </ModalShell>
@@ -298,9 +371,57 @@ const styles = StyleSheet.create({
   restantActif: { color: colors.level, borderColor: colors.level },
   ligneCarac: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   nomCarac: { flex: 1, fontFamily: fonts.bodyBold, fontSize: 12 },
-  valeurCarac: { fontFamily: fonts.body, fontSize: 12, color: colors.text, minWidth: 40 },
+  valeurCarac: { fontFamily: fonts.body, fontSize: 12, color: colors.text },
   enAttente: { color: colors.level },
   bonus: { color: colors.bonus },
+  /** Apport des effets temporaires : une PASTILLE et non un « (+N) » de plus, pour ne pas
+      se confondre avec l'équipement — lui est permanent. */
+  colonneValeur: { minWidth: 40, alignItems: 'flex-start', gap: 2 },
+  pastilleEffet: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 9,
+    color: colors.bonus,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.successBorder,
+    backgroundColor: colors.successBg,
+    overflow: 'hidden',
+  },
+  pastilleEffetMalus: {
+    color: colors.dangerText,
+    borderColor: colors.dangerBorder,
+    backgroundColor: colors.dangerBgHover,
+  },
+  panneau: { gap: spacing.sm },
+  note: { fontFamily: fonts.body, fontSize: 11, color: colors.textFaint },
+  ligneEffet: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    borderRadius: radius.bar,
+    borderLeftWidth: 2,
+    borderLeftColor: colors.bonus,
+    backgroundColor: colors.rowBg,
+  },
+  ligneEffetNefaste: { borderLeftColor: colors.danger },
+  iconeEffet: { width: 26, height: 26, borderRadius: radius.bar },
+  texteEffet: { flex: 1, minWidth: 0, gap: 1 },
+  teteEffet: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.xs },
+  nomEffet: { flex: 1, fontFamily: fonts.bodyBold, fontSize: 12, color: colors.text },
+  tagEffet: { fontFamily: fonts.bodyBold, fontSize: 9, letterSpacing: 0.4, textTransform: 'uppercase' },
+  tagBienfait: { color: colors.bonus },
+  tagNefaste: { color: colors.dangerText },
+  resumeEffet: { fontFamily: fonts.body, fontSize: 11, color: colors.textDim },
+  tempsEffet: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 11,
+    color: colors.textMute,
+    fontVariant: ['tabular-nums'],
+  },
   stepper: {
     width: 28,
     height: 28,

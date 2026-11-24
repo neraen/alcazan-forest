@@ -105,6 +105,9 @@ export default function SpellSlotButton({
         message: resultat.message ?? '',
         lifeJoueur: resultat.life,
         needRefresh: true,
+        // Un sort sur soi peut poser un bienfait : la grille d'effets se relit tout de
+        // suite au lieu d'attendre son prochain sondage (même signal que le web).
+        buffVersion: Date.now(),
       }),
     );
     if (resultat.message) toast.info(resultat.message);

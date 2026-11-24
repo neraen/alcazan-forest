@@ -44,7 +44,11 @@ export default function ConsommableSlotButton({ consommable }: { consommable: Co
 
     try {
       const apres = await boutiqueApi.takeConsommable(consommable.id);
-      dispatch(updateJoueurState({ lifeJoueur: apres.life, manaJoueur: apres.mana }));
+      // `buffVersion` : une potion « buff » pose un effet, que la grille doit montrer
+      // sans attendre son prochain sondage (même signal que le web).
+      dispatch(
+        updateJoueurState({ lifeJoueur: apres.life, manaJoueur: apres.mana, buffVersion: Date.now() }),
+      );
       if (apres.message) toast.info(apres.message);
       // La pile a pu tomber à zéro : la barre se relit (le serveur fait foi sur le stock).
       dispatch(updateJoueurState({ consommableBarVersion: Date.now() }));

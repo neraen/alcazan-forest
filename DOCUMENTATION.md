@@ -4234,6 +4234,35 @@ effets déjà cités par une attaque (Engelure, Corruption).
   le panneau « Équipement » devient « Statistiques » avec une colonne `effets` (±, éteinte
   à zéro) comprise dans le total ; les cartes de caractéristiques affichent `· effets ±N`.
 
+### 30.4 bis App mobile (24/11/2026)
+
+Port fidèle du web, mêmes règles, même endpoint :
+
+- `src/core/domain/effets.ts` = `effetsUtils` ; `src/game/hud/useEffetsActifs.ts` = le hook
+  (sondage 5 s + `buffVersion`, recalage sur `secondesRestantes`). Deux ajouts mobiles :
+  le sondage S'ARRÊTE hors premier plan (iOS suspend les minuteurs) et une relecture part
+  IMMÉDIATEMENT au retour ; le tic d'une seconde ne tourne que s'il y a un effet.
+- **Barre d'action** (`GrilleEffets`) : même grille 3 × 2, à droite des potions mais HORS
+  du défilement (un effet subi ne doit jamais sortir de l'écran). Elle n'apparaît que s'il
+  y a au moins un effet — écart assumé avec le web, cohérent avec la barre mobile qui ne
+  dessine pas les emplacements vides de sorts ; DANS la grille, les vides restent dessinés
+  (sinon un affaiblissement seul remonterait sur la ligne des bienfaits). 2 × 26 + 4 pt
+  avec une marge négative de 3 pt : la barre ne grandit pas à l'apparition du premier effet.
+  Pas de survol au doigt : un appui ouvre le DÉTAIL (l'infobulle du web) au-dessus de la
+  barre, un second le ferme ; il suit le compte à rebours et disparaît avec l'effet. Rendu
+  DANS LE FLUX et non en absolu : hors des limites de son parent, une vue RN ne reçoit
+  pas les touchers. Le contrôle pulse en opacité (pilote natif), cadre fixe si
+  « Réduire les animations ».
+- **Profil** : panneau « Effets actifs » au-dessus des Faits d'armes (nom + durée, puis
+  nature et résumé sur toute la largeur), et l'apport des effets en pastille verte/rouge
+  SOUS la valeur de chaque caractéristique — une colonne de plus ne tient pas dans un
+  tiers d'écran (les noms se coupaient en plein mot).
+- `buffVersion` est posé après une potion et un sort sur soi, comme sur le web.
+
+Vérifié au simulateur avec les comptes de §30.5 : deux bienfaits sur la ligne du haut,
+l'Entrave sur celle du bas avec son décompte, détail ouvert puis effacé à l'expiration,
+Profil (+45 Dextérité = 40 + 5).
+
 ### 30.5 Tests
 
 `EffetServiceTest` (10 tests purs : non-cumul, expiration, deux plafonds, trois potions ne
@@ -4245,8 +4274,6 @@ classe de l'attaquant. Vérifié au navigateur à deux comptes (archer niv. 80 /
 
 ### 30.6 Reste à faire (hors lot)
 
-- Mobile : `/joueur/buffs` lui renvoie désormais `finAt`/`nefaste`/`controle`, mais l'app
-  n'affiche pas encore la grille d'effets (le refus de pas est déjà toasté).
 - La victime découvre l'entrave au sondage (≤ 5 s) ou à son premier pas refusé : une
   publication Mercure `effet.subi` sur `user/{id}` la rendrait instantanée.
 - `lifeCible` de la réponse PvP est lu sur une entité périmée (`updateTargetLife` est en

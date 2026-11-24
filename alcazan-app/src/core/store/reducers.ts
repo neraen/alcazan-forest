@@ -49,6 +49,7 @@ const etatInitial: AppState = {
       needRefresh: false,
       consommableBarVersion: 0,
       spellBarVersion: 0,
+      buffVersion: 0,
     },
   },
   loading: false,

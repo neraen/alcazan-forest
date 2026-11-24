@@ -156,11 +156,34 @@ export type Consommable = {
   description?: string;
 };
 
+/**
+ * Effet actif du joueur — réponse de `POST /joueur/buffs` (`EffetService::actifs`, doc §30).
+ * Le client ne connaît AUCUN effet en dur : libellé de contrôle, description et
+ * caractéristiques viennent du serveur. `secondesRestantes` fait foi (pas `finAt` comparé
+ * à l'horloge du téléphone, qui peut dériver de celle du serveur).
+ */
 export type Buff = {
+  /** id de l'EFFET (`buff.id`), partagé par tous ceux qui le subissent. */
   id: number;
+  /** id de l'APPLICATION (`user_buff.id`) : la vraie clé d'une ligne. */
+  userBuffId: number;
+  /** Même valeur que `name` (clé historique du web). */
   nom: string;
+  name: string;
   icone: string;
-  finAt?: string;
+  isCarac: boolean;
+  isDispell: boolean;
+  /** true = affaiblissement (ligne du bas), false = bienfait (ligne du haut). */
+  nefaste: boolean;
+  /** `ControleEffet` (ex. `immobilisation`), null pour un simple effet de caractéristiques. */
+  controle: string | null;
+  controleLabel: string | null;
+  controleDescription: string | null;
+  duree: number;
+  dateDebut: string | null;
+  finAt: string;
+  secondesRestantes: number;
+  caracteristiques: { nom: string; value: number }[];
 };
 
 /**

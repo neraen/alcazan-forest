@@ -315,7 +315,10 @@ est capturé automatiquement) :
   passage, auberge) ; la mort la dissipe. `GrimoireService::maitrise` (classe + niveau) est
   vérifié au lancer PvP et `/spell/self` — pas encore monstre/boss. `is_blocage` n'existe
   plus. Front : `useEffetsActifs` alimente la grille 3×2 (haut = bienfaits, bas =
-  affaiblissements) ET le Profil — ne pas refaire de fetch ailleurs.
+  affaiblissements) ET le Profil — ne pas refaire de fetch ailleurs. Mobile (§30.4 bis) :
+  même hook (`game/hud/useEffetsActifs`), grille HORS du défilement de la barre d'action,
+  détail au toucher rendu DANS LE FLUX (en absolu hors du parent, il ne recevrait pas les
+  touchers).
 - Repositories orphelins (entités supprimées) : `ExperienceRepository`,
   `ExperienceJoueurRepository`, `ActionParamsRepository`.
 - Le schéma BDD est baseliné par des migrations (marquées exécutées) : toute évolution passe

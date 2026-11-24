@@ -45,6 +45,8 @@ export type JoueurState = {
   mapId?: number;
   consommableBarVersion: number;
   spellBarVersion: number;
+  /** Relecture des effets actifs (potion bue, sort lancé sur soi) — cf. `useEffetsActifs`. */
+  buffVersion: number;
 };
 
 export const updatePlayerTarget = (payload: { targetId: number; type: TypeCible }) =>

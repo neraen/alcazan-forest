@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import * as usersApi from '@/src/core/api/users';
+import { cleEffet } from '@/src/core/domain/effets';
 import { useAppSelector } from '@/src/core/store';
 import type { Consommable, Sort } from '@/src/core/types';
 import { colors, radius, spacing } from '@/src/ui/tokens';
 
 import ConsommableSlotButton from './ConsommableSlotButton';
+import GrilleEffets, { DetailEffet } from './GrilleEffets';
 import SpellSlotButton from './SpellSlotButton';
+import { useEffetsActifs } from './useEffetsActifs';
 
 const NB_SORTS = 8;
 
@@ -23,6 +26,12 @@ const NB_SORTS = 8;
  *
  * La barre se cale donc à droite et ne fait que la largeur de ce qu'elle contient ; elle
  * défile si un jour les dix emplacements ne tiennent plus.
+ *
+ * Au bout, HORS du défilement (comme sur le web, à droite des potions) : la grille 3 × 2
+ * des effets actifs, dès qu'il y en a au moins un — un effet subi ne doit jamais pouvoir
+ * sortir de l'écran par un défilement. Le détail d'une case s'ouvre AU-DESSUS de la barre,
+ * dans le flux (et non en absolu) : hors des limites de son parent, une vue ne reçoit pas
+ * les touchers en React Native, et l'appui qui referme le détail se perdrait.
  */
 export default function ActionBar() {
   const consommableBarVersion = useAppSelector((s) => s.data.joueurState.consommableBarVersion);
@@ -30,6 +39,10 @@ export default function ActionBar() {
   const [spells, setSpells] = useState<Sort[] | null>(null);
   const [consommables, setConsommables] = useState<Consommable[] | null>(null);
   const [tousDesactives, setTousDesactives] = useState(false);
+  const { effets, bienfaits, affaiblissements } = useEffetsActifs();
+  const [effetOuvert, setEffetOuvert] = useState<string | null>(null);
+  // Un effet terminé (ou dissipé par une mort) emporte son détail avec lui.
+  const detail = effetOuvert ? effets.find((effet) => cleEffet(effet) === effetOuvert) : undefined;
 
   // Les `.catch` ne sont pas décoratifs : sans eux un échec réseau au montage devenait
   // un rejet de promesse non géré — écran rouge en développement, silence en production.
@@ -60,44 +73,66 @@ export default function ActionBar() {
 
   const sorts = sortsOrdonnes();
   const potions = consommables ?? [];
-  if (sorts.length === 0 && potions.length === 0) return null;
+  const avecEffets = effets.length > 0;
+  if (sorts.length === 0 && potions.length === 0 && !avecEffets) return null;
 
   return (
-    <View style={styles.barre}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.slots}>
-        {sorts.map((spell) => (
-          <SpellSlotButton
-            key={spell.id}
-            spell={spell}
-            tousDesactives={tousDesactives}
-            setTousDesactives={setTousDesactives}
-          />
-        ))}
+    <View style={styles.colonne} pointerEvents="box-none">
+      {!!detail && <DetailEffet effet={detail} onFermer={() => setEffetOuvert(null)} />}
+      <View style={[styles.barre, avecEffets && styles.barreAvecEffets]}>
+        <ScrollView
+          horizontal
+          style={styles.defilement}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.slots}>
+          {sorts.map((spell) => (
+            <SpellSlotButton
+              key={spell.id}
+              spell={spell}
+              tousDesactives={tousDesactives}
+              setTousDesactives={setTousDesactives}
+            />
+          ))}
 
-        {sorts.length > 0 && potions.length > 0 && <View style={styles.separateur} />}
+          {sorts.length > 0 && potions.length > 0 && <View style={styles.separateur} />}
 
-        {potions.map((consommable) => (
-          <ConsommableSlotButton key={consommable.id} consommable={consommable} />
-        ))}
-      </ScrollView>
+          {potions.map((consommable) => (
+            <ConsommableSlotButton key={consommable.id} consommable={consommable} />
+          ))}
+        </ScrollView>
+        {avecEffets && (
+          <>
+            {(sorts.length > 0 || potions.length > 0) && <View style={styles.separateur} />}
+            <GrilleEffets
+              bienfaits={bienfaits}
+              affaiblissements={affaiblissements}
+              selection={effetOuvert}
+              onSelection={setEffetOuvert}
+            />
+          </>
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  colonne: { maxWidth: '100%', alignItems: 'flex-end', gap: spacing.xs },
   /** `maxWidth: 100%` + `flexShrink` : la barre épouse son contenu, et ne déborde pas de
       la zone que lui laisse l'écran de carte (elle défile alors). */
   barre: {
     maxWidth: '100%',
     flexShrink: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: radius.panel,
     borderWidth: 1,
     borderColor: colors.hudBorder,
     backgroundColor: colors.hudBg,
   },
+  /** La grille d'effets est hors du défilement : c'est lui qui rétrécit, jamais elle. */
+  defilement: { flexGrow: 0, flexShrink: 1 },
+  barreAvecEffets: { paddingRight: 6 },
   slots: {
     flexDirection: 'row',
     alignItems: 'center',
